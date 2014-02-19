@@ -1,6 +1,6 @@
 <?php
 /* @var $this RidesController */
-/* @var $model Rides */
+/* @var $model Ride */
 /* @var $form CActiveForm */
 ?>
 
@@ -17,23 +17,23 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'users_id'); ?>
-		<?php echo $form->textField($model,'users_id'); ?>
+		<?php echo $form->label($model,'driver'); ?>
+		<?php echo $form->textField($model,'driver'); ?>
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'towns_id'); ?>
-		<?php echo $form->textField($model,'towns_id'); ?>
+		<?php echo $form->label($model,'departuretown'); ?>
+		<?php echo $form->textField($model,'departuretown'); ?>
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'towns_id1'); ?>
-		<?php echo $form->textField($model,'towns_id1'); ?>
+		<?php echo $form->label($model,'arrivaltown'); ?>
+		<?php echo $form->textField($model,'arrivaltown'); ?>
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'rides_id'); ?>
-		<?php echo $form->textField($model,'rides_id'); ?>
+		<?php echo $form->label($model,'bindedride'); ?>
+		<?php echo $form->textField($model,'bindedride'); ?>
 	</div>
 
 	<div class="row">

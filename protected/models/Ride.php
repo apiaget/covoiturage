@@ -5,10 +5,10 @@
  *
  * The followings are the available columns in table 'rides':
  * @property integer $id
- * @property integer $users_id
- * @property integer $towns_id
- * @property integer $towns_id1
- * @property integer $rides_id
+ * @property integer $driver
+ * @property integer $departuretown
+ * @property integer $arrivaltown
+ * @property integer $bindedride
  * @property string $description
  * @property string $departure
  * @property string $arrival
@@ -21,13 +21,13 @@
  * @property Comments[] $comments
  * @property Registrations[] $registrations
  * @property Ridebadges[] $ridebadges
- * @property Rides $rides
- * @property Rides[] $rides1
- * @property Towns $towns
- * @property Towns $townsId1
- * @property Users $users
+ * @property Towns $departuretown0
+ * @property Towns $arrivaltown0
+ * @property Ride $bindedride0
+ * @property Ride[] $rides
+ * @property Users $driver0
  */
-class Rides extends CActiveRecord
+class Ride extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
@@ -45,12 +45,12 @@ class Rides extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('users_id, towns_id, towns_id1', 'required'),
-			array('users_id, towns_id, towns_id1, rides_id, seats, day', 'numerical', 'integerOnly'=>true),
+			array('driver, departuretown, arrivaltown', 'required'),
+			array('driver, departuretown, arrivaltown, bindedride, seats, day', 'numerical', 'integerOnly'=>true),
 			array('description, departure, arrival, startDate, endDate', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, users_id, towns_id, towns_id1, rides_id, description, departure, arrival, seats, startDate, endDate, day', 'safe', 'on'=>'search'),
+			array('id, driver, departuretown, arrivaltown, bindedride, description, departure, arrival, seats, startDate, endDate, day', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -62,14 +62,14 @@ class Rides extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'comments' => array(self::HAS_MANY, 'Comments', 'rides_id'),
-			'registrations' => array(self::HAS_MANY, 'Registrations', 'rides_id'),
-			'ridebadges' => array(self::HAS_MANY, 'Ridebadges', 'rides_idr'),
-			'rides' => array(self::BELONGS_TO, 'Rides', 'rides_id'),
-			'rides1' => array(self::HAS_MANY, 'Rides', 'rides_id'),
-			'towns' => array(self::BELONGS_TO, 'Towns', 'towns_id'),
-			'townsId1' => array(self::BELONGS_TO, 'Towns', 'towns_id1'),
-			'users' => array(self::BELONGS_TO, 'Users', 'users_id'),
+			'comments' => array(self::HAS_MANY, 'Comments', 'ride'),
+			'registrations' => array(self::HAS_MANY, 'Registrations', 'ride'),
+			'ridebadges' => array(self::HAS_MANY, 'Ridebadges', 'ride'),
+			'departuretown0' => array(self::BELONGS_TO, 'Town', 'departuretown'),
+			'arrivaltown0' => array(self::BELONGS_TO, 'Town', 'arrivaltown'),
+			'bindedride0' => array(self::BELONGS_TO, 'Ride', 'bindedride'),
+			'rides' => array(self::HAS_MANY, 'Ride', 'bindedride'),
+			'driver0' => array(self::BELONGS_TO, 'User', 'driver'),
 		);
 	}
 
@@ -78,13 +78,12 @@ class Rides extends CActiveRecord
 	 */
 	public function attributeLabels()
 	{
-		//print_r(CHtml::listData(users::model()->findAll(), 'id', 'telephone'));
 		return array(
 			'id' => 'ID',
-			'users_id' => 'Users',
-			'towns_id' => 'Towns',
-			'towns_id1' => 'Towns Id1',
-			'rides_id' => 'Rides',
+			'driver' => 'Driver',
+			'departuretown' => 'Departuretown',
+			'arrivaltown' => 'Arrivaltown',
+			'bindedride' => 'Bindedride',
 			'description' => 'Description',
 			'departure' => 'Departure',
 			'arrival' => 'Arrival',
@@ -93,22 +92,6 @@ class Rides extends CActiveRecord
 			'endDate' => 'End Date',
 			'day' => 'Day',
 		);
-		/*return array(
-			'id' => 'ID',
-			//'users_id' => current(CHtml::listData(users::model()->findAll(), 'users_id', 'telephone')),
-			current(CHtml::listData(users::model()->findAll(), 'users_id', 'telephone')) => 'Users',
-
-			'towns_id' => 'Towns',
-			'towns_id1' => 'Towns Id1',
-			'rides_id' => 'Rides',
-			'description' => 'Description',
-			'departure' => 'Departure',
-			'arrival' => 'Arrival',
-			'seats' => 'Seats',
-			'startDate' => 'Start Date',
-			'endDate' => 'End Date',
-			'day' => 'Day',
-		);*/
 	}
 
 	/**
@@ -130,10 +113,10 @@ class Rides extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
-		$criteria->compare('users_id',$this->users_id);
-		$criteria->compare('towns_id',$this->towns_id);
-		$criteria->compare('towns_id1',$this->towns_id1);
-		$criteria->compare('rides_id',$this->rides_id);
+		$criteria->compare('driver',$this->driver);
+		$criteria->compare('departuretown',$this->departuretown);
+		$criteria->compare('arrivaltown',$this->arrivaltown);
+		$criteria->compare('bindedride',$this->bindedride);
 		$criteria->compare('description',$this->description,true);
 		$criteria->compare('departure',$this->departure,true);
 		$criteria->compare('arrival',$this->arrival,true);
@@ -151,7 +134,7 @@ class Rides extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Rides the static model class
+	 * @return Ride the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

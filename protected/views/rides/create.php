@@ -1,6 +1,6 @@
 <?php
 /* @var $this RidesController */
-/* @var $model Rides */
+/* @var $model Ride */
 
 $this->breadcrumbs=array(
 	'Rides'=>array('index'),
@@ -8,11 +8,11 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'List Rides', 'url'=>array('index')),
-	array('label'=>'Manage Rides', 'url'=>array('admin')),
+	array('label'=>'List Ride', 'url'=>array('index')),
+	array('label'=>'Manage Ride', 'url'=>array('admin')),
 );
 ?>
 
-<h1>Create Rides</h1>
+<h1>Create Ride</h1>
 
 <?php $this->renderPartial('_form', array('model'=>$model)); ?>

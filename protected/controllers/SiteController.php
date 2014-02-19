@@ -27,15 +27,15 @@ class SiteController extends Controller
 	 */
 	public function actionIndex()
 	{
-		// renders the view file 'protected/views/site/index.php'
-		// using the default layout 'protected/views/layouts/main.php'
-		$this->render('index');
+		$datetime = date('Y-m-d 00:00:00', time());
+		$rides = Ride::model()->findAll('endDate>:today', array(':today'=>$datetime));
+		$this->render('index', array('rides' => $rides));
 	}
 
 	/**
 	 * This is the action to handle external exceptions.
 	 */
-	public function actionError()
+	/*public function actionError()
 	{
 		if($error=Yii::app()->errorHandler->error)
 		{
@@ -44,12 +44,12 @@ class SiteController extends Controller
 			else
 				$this->render('error', $error);
 		}
-	}
+	}*/
 
 	/**
 	 * Displays the contact page
 	 */
-	public function actionContact()
+	/*public function actionContact()
 	{
 		$model=new ContactForm;
 		if(isset($_POST['ContactForm']))
@@ -71,11 +71,11 @@ class SiteController extends Controller
 		}
 		$this->render('contact',array('model'=>$model));
 	}
-
+*/
 	/**
 	 * Displays the login page
 	 */
-	public function actionLogin()
+	/*public function actionLogin()
 	{
 		$model=new LoginForm;
 
@@ -96,14 +96,14 @@ class SiteController extends Controller
 		}
 		// display the login form
 		$this->render('login',array('model'=>$model));
-	}
+	}*/
 
 	/**
 	 * Logs out the current user and redirect to homepage.
 	 */
-	public function actionLogout()
+	/*public function actionLogout()
 	{
 		Yii::app()->user->logout();
 		$this->redirect(Yii::app()->homeUrl);
-	}
+	}*/
 }

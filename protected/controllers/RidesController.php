@@ -62,14 +62,14 @@ class RidesController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new Rides;
+		$model=new Ride;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Rides']))
+		if(isset($_POST['Ride']))
 		{
-			$model->attributes=$_POST['Rides'];
+			$model->attributes=$_POST['Ride'];
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->id));
 		}
@@ -91,9 +91,9 @@ class RidesController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Rides']))
+		if(isset($_POST['Ride']))
 		{
-			$model->attributes=$_POST['Rides'];
+			$model->attributes=$_POST['Ride'];
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->id));
 		}
@@ -122,7 +122,7 @@ class RidesController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Rides');
+		$dataProvider=new CActiveDataProvider('Ride');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));
@@ -133,10 +133,10 @@ class RidesController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		$model=new Rides('search');
+		$model=new Ride('search');
 		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['Rides']))
-			$model->attributes=$_GET['Rides'];
+		if(isset($_GET['Ride']))
+			$model->attributes=$_GET['Ride'];
 
 		$this->render('admin',array(
 			'model'=>$model,
@@ -147,12 +147,12 @@ class RidesController extends Controller
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded
-	 * @return Rides the loaded model
+	 * @return Ride the loaded model
 	 * @throws CHttpException
 	 */
 	public function loadModel($id)
 	{
-		$model=Rides::model()->findByPk($id);
+		$model=Ride::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -160,11 +160,11 @@ class RidesController extends Controller
 
 	/**
 	 * Performs the AJAX validation.
-	 * @param Rides $model the model to be validated
+	 * @param Ride $model the model to be validated
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='rides-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='ride-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();

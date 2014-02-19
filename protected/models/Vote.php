@@ -1,27 +1,27 @@
 <?php
 
 /**
- * This is the model class for table "comments".
+ * This is the model class for table "votes".
  *
- * The followings are the available columns in table 'comments':
+ * The followings are the available columns in table 'votes':
  * @property integer $id
- * @property integer $users_id
- * @property integer $rides_id
+ * @property integer $passenger
+ * @property integer $targetuser
  * @property string $date
- * @property string $comment
+ * @property integer $vote
  *
  * The followings are the available model relations:
- * @property Users $users
- * @property Rides $rides
+ * @property Registrations $passenger0
+ * @property Users $targetuser0
  */
-class Comments extends CActiveRecord
+class Vote extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'comments';
+		return 'votes';
 	}
 
 	/**
@@ -32,12 +32,12 @@ class Comments extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('users_id, rides_id', 'required'),
-			array('users_id, rides_id', 'numerical', 'integerOnly'=>true),
-			array('date, comment', 'safe'),
+			array('id, passenger, targetuser', 'required'),
+			array('id, passenger, targetuser, vote', 'numerical', 'integerOnly'=>true),
+			array('date', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, users_id, rides_id, date, comment', 'safe', 'on'=>'search'),
+			array('id, passenger, targetuser, date, vote', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -49,8 +49,8 @@ class Comments extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'users' => array(self::BELONGS_TO, 'Users', 'users_id'),
-			'rides' => array(self::BELONGS_TO, 'Rides', 'rides_id'),
+			'passenger0' => array(self::BELONGS_TO, 'Registrations', 'passenger'),
+			'targetuser0' => array(self::BELONGS_TO, 'Users', 'targetuser'),
 		);
 	}
 
@@ -61,10 +61,10 @@ class Comments extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'users_id' => 'Users',
-			'rides_id' => 'Rides',
+			'passenger' => 'Passenger',
+			'targetuser' => 'Targetuser',
 			'date' => 'Date',
-			'comment' => 'Comment',
+			'vote' => 'Vote',
 		);
 	}
 
@@ -87,10 +87,10 @@ class Comments extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
-		$criteria->compare('users_id',$this->users_id);
-		$criteria->compare('rides_id',$this->rides_id);
+		$criteria->compare('passenger',$this->passenger);
+		$criteria->compare('targetuser',$this->targetuser);
 		$criteria->compare('date',$this->date,true);
-		$criteria->compare('comment',$this->comment,true);
+		$criteria->compare('vote',$this->vote);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -101,7 +101,7 @@ class Comments extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Comments the static model class
+	 * @return Vote the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

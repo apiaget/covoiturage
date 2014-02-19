@@ -1,22 +1,24 @@
 <?php
 
 /**
- * This is the model class for table "holidays".
+ * This is the model class for table "towns".
  *
- * The followings are the available columns in table 'holidays':
+ * The followings are the available columns in table 'towns':
  * @property integer $id
  * @property string $name
- * @property string $begin
- * @property string $end
+ *
+ * The followings are the available model relations:
+ * @property Rides[] $rides
+ * @property Rides[] $rides1
  */
-class Holidays extends CActiveRecord
+class Town extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'holidays';
+		return 'towns';
 	}
 
 	/**
@@ -28,10 +30,9 @@ class Holidays extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('name', 'length', 'max'=>45),
-			array('begin, end', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, begin, end', 'safe', 'on'=>'search'),
+			array('id, name', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -43,6 +44,8 @@ class Holidays extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'rides' => array(self::HAS_MANY, 'Rides', 'departuretown'),
+			'rides1' => array(self::HAS_MANY, 'Rides', 'arrivaltown'),
 		);
 	}
 
@@ -54,8 +57,6 @@ class Holidays extends CActiveRecord
 		return array(
 			'id' => 'ID',
 			'name' => 'Name',
-			'begin' => 'Begin',
-			'end' => 'End',
 		);
 	}
 
@@ -79,8 +80,6 @@ class Holidays extends CActiveRecord
 
 		$criteria->compare('id',$this->id);
 		$criteria->compare('name',$this->name,true);
-		$criteria->compare('begin',$this->begin,true);
-		$criteria->compare('end',$this->end,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -91,7 +90,7 @@ class Holidays extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Holidays the static model class
+	 * @return Town the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

@@ -1,6 +1,6 @@
 <?php
 /* @var $this RidesController */
-/* @var $model Rides */
+/* @var $model Ride */
 
 $this->breadcrumbs=array(
 	'Rides'=>array('index'),
@@ -8,8 +8,8 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'List Rides', 'url'=>array('index')),
-	array('label'=>'Create Rides', 'url'=>array('create')),
+	array('label'=>'List Ride', 'url'=>array('index')),
+	array('label'=>'Create Ride', 'url'=>array('create')),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -18,7 +18,7 @@ $('.search-button').click(function(){
 	return false;
 });
 $('.search-form form').submit(function(){
-	$('#rides-grid').yiiGridView('update', {
+	$('#ride-grid').yiiGridView('update', {
 		data: $(this).serialize()
 	});
 	return false;
@@ -41,15 +41,15 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 </div><!-- search-form -->
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
-	'id'=>'rides-grid',
+	'id'=>'ride-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
 	'columns'=>array(
 		'id',
-		'users_id',
-		'towns_id',
-		'towns_id1',
-		'rides_id',
+		'driver',
+		'departuretown',
+		'arrivaltown',
+		'bindedride',
 		'description',
 		/*
 		'departure',

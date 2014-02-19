@@ -1,24 +1,24 @@
 <?php
 
 /**
- * This is the model class for table "towns".
+ * This is the model class for table "badges".
  *
- * The followings are the available columns in table 'towns':
+ * The followings are the available columns in table 'badges':
  * @property integer $id
  * @property string $name
+ * @property string $picture
  *
  * The followings are the available model relations:
- * @property Rides[] $rides
- * @property Rides[] $rides1
+ * @property Ridebadges[] $ridebadges
  */
-class Towns extends CActiveRecord
+class Badge extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'towns';
+		return 'badges';
 	}
 
 	/**
@@ -29,10 +29,10 @@ class Towns extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name', 'length', 'max'=>45),
+			array('name, picture', 'length', 'max'=>90),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name', 'safe', 'on'=>'search'),
+			array('id, name, picture', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -44,8 +44,7 @@ class Towns extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'rides' => array(self::HAS_MANY, 'Rides', 'towns_id'),
-			'rides1' => array(self::HAS_MANY, 'Rides', 'towns_id1'),
+			'ridebadges' => array(self::HAS_MANY, 'Ridebadges', 'badge'),
 		);
 	}
 
@@ -57,6 +56,7 @@ class Towns extends CActiveRecord
 		return array(
 			'id' => 'ID',
 			'name' => 'Name',
+			'picture' => 'Picture',
 		);
 	}
 
@@ -80,6 +80,7 @@ class Towns extends CActiveRecord
 
 		$criteria->compare('id',$this->id);
 		$criteria->compare('name',$this->name,true);
+		$criteria->compare('picture',$this->picture,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -90,7 +91,7 @@ class Towns extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Towns the static model class
+	 * @return Badge the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

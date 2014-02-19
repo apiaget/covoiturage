@@ -24,7 +24,7 @@
  * @property Rides[] $rides
  * @property Votes[] $votes
  */
-class Users extends CActiveRecord
+class User extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
@@ -59,10 +59,10 @@ class Users extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'comments' => array(self::HAS_MANY, 'Comments', 'users_id'),
-			'registrations' => array(self::HAS_MANY, 'Registrations', 'users_id'),
-			'rides' => array(self::HAS_MANY, 'Rides', 'users_id'),
-			'votes' => array(self::HAS_MANY, 'Votes', 'users_id'),
+			'comments' => array(self::HAS_MANY, 'Comments', 'author'),
+			'registrations' => array(self::HAS_MANY, 'Registrations', 'user'),
+			'rides' => array(self::HAS_MANY, 'Rides', 'driver'),
+			'votes' => array(self::HAS_MANY, 'Votes', 'targetuser'),
 		);
 	}
 
@@ -129,10 +129,15 @@ class Users extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Users the static model class
+	 * @return User the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
 	}
+    
+    public function name()
+    {
+        return $this->email;
+    }
 }

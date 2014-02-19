@@ -1,6 +1,6 @@
 <?php
 /* @var $this RidesController */
-/* @var $data Rides */
+/* @var $data Ride */
 ?>
 
 <div class="view">
@@ -9,20 +9,20 @@
 	<?php echo CHtml::link(CHtml::encode($data->id), array('view', 'id'=>$data->id)); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('users_id')); ?>:</b>
-	<?php echo CHtml::encode($data->users_id); ?>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('driver')); ?>:</b>
+	<?php echo CHtml::encode($data->driver); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('towns_id')); ?>:</b>
-	<?php echo CHtml::encode($data->towns_id); ?>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('departuretown')); ?>:</b>
+	<?php echo CHtml::encode($data->departuretown); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('towns_id1')); ?>:</b>
-	<?php echo CHtml::encode($data->towns_id1); ?>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('arrivaltown')); ?>:</b>
+	<?php echo CHtml::encode($data->arrivaltown); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('rides_id')); ?>:</b>
-	<?php echo CHtml::encode($data->rides_id); ?>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('bindedride')); ?>:</b>
+	<?php echo CHtml::encode($data->bindedride); ?>
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('description')); ?>:</b>

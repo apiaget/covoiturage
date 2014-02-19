@@ -40,7 +40,7 @@ return array(
 		'urlManager'=>array(
 			'urlFormat'=>'path',
 			'rules'=>array(
-				'<var:(login|logout|contact|home)>'=>'site/<var>',
+				/*'<var:(login|logout|contact|home)>'=>'site/<var>',*/
 				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
 				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',

@@ -1,13 +1,13 @@
 <?php
 /* @var $this RidesController */
-/* @var $model Rides */
+/* @var $model Ride */
 /* @var $form CActiveForm */
 ?>
 
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'rides-form',
+	'id'=>'ride-form',
 	// Please note: When you enable ajax validation, make sure the corresponding
 	// controller action is handling ajax validation correctly.
 	// There is a call to performAjaxValidation() commented in generated controller code.
@@ -20,32 +20,27 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'users_id'); ?>
-		<?php echo $form->textField($model,'users_id'); ?>
-		<?php echo $form->dropDownList($model,'users_id', CHtml::listData(users::model()->findAll(), 'id', 'cpnvId')); ?>
-		<?php //echo $form->dropDownList(
-			//$model,
-			//''
-		?>
-		<?php echo $form->error($model,'users_id'); ?>
+		<?php echo $form->labelEx($model,'driver'); ?>
+		<?php echo $form->textField($model,'driver'); ?>
+		<?php echo $form->error($model,'driver'); ?>
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'towns_id'); ?>
-		<?php echo $form->textField($model,'towns_id'); ?>
-		<?php echo $form->error($model,'towns_id'); ?>
+		<?php echo $form->labelEx($model,'departuretown'); ?>
+		<?php echo $form->textField($model,'departuretown'); ?>
+		<?php echo $form->error($model,'departuretown'); ?>
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'towns_id1'); ?>
-		<?php echo $form->textField($model,'towns_id1'); ?>
-		<?php echo $form->error($model,'towns_id1'); ?>
+		<?php echo $form->labelEx($model,'arrivaltown'); ?>
+		<?php echo $form->textField($model,'arrivaltown'); ?>
+		<?php echo $form->error($model,'arrivaltown'); ?>
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'rides_id'); ?>
-		<?php echo $form->textField($model,'rides_id'); ?>
-		<?php echo $form->error($model,'rides_id'); ?>
+		<?php echo $form->labelEx($model,'bindedride'); ?>
+		<?php echo $form->textField($model,'bindedride'); ?>
+		<?php echo $form->error($model,'bindedride'); ?>
 	</div>
 
 	<div class="row">

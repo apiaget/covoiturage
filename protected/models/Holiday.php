@@ -1,24 +1,22 @@
 <?php
 
 /**
- * This is the model class for table "badges".
+ * This is the model class for table "holidays".
  *
- * The followings are the available columns in table 'badges':
+ * The followings are the available columns in table 'holidays':
  * @property integer $id
  * @property string $name
- * @property string $picture
- *
- * The followings are the available model relations:
- * @property Ridebadges[] $ridebadges
+ * @property string $begin
+ * @property string $end
  */
-class Badges extends CActiveRecord
+class Holiday extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'badges';
+		return 'holidays';
 	}
 
 	/**
@@ -29,10 +27,11 @@ class Badges extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, picture', 'length', 'max'=>90),
+			array('name', 'length', 'max'=>45),
+			array('begin, end', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, picture', 'safe', 'on'=>'search'),
+			array('id, name, begin, end', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -44,7 +43,6 @@ class Badges extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'ridebadges' => array(self::HAS_MANY, 'Ridebadges', 'badges_idb'),
 		);
 	}
 
@@ -56,7 +54,8 @@ class Badges extends CActiveRecord
 		return array(
 			'id' => 'ID',
 			'name' => 'Name',
-			'picture' => 'Picture',
+			'begin' => 'Begin',
+			'end' => 'End',
 		);
 	}
 
@@ -80,7 +79,8 @@ class Badges extends CActiveRecord
 
 		$criteria->compare('id',$this->id);
 		$criteria->compare('name',$this->name,true);
-		$criteria->compare('picture',$this->picture,true);
+		$criteria->compare('begin',$this->begin,true);
+		$criteria->compare('end',$this->end,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -91,7 +91,7 @@ class Badges extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Badges the static model class
+	 * @return Holiday the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
