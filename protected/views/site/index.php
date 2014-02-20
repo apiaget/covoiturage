@@ -8,11 +8,12 @@ $this->pageTitle=Yii::app()->name;
 <?php
 echo "<table>";
 $i=0;
+$n=0;
 $date=$datetime = date('Y-m-d 00:00:00', time());
-while($i<20)
+while($i<20 || count($rides)==$n)
 {
     foreach ($rides as $ride) {
-        if($ride->startDate<$date && $ride->day==date('N',strtotime($date))){
+        if($ride->startDate<$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date))){
             echo "<tr onclick=";
             echo "\"document.location='/covoiturage/covoiturage/rides/".$ride->id."';";
             echo "\">";
@@ -58,6 +59,10 @@ while($i<20)
             echo "<td>".CHtml::link($day." ".$nextday,array('rides/view', 'id' => $ride->id) )."</td>";
             echo "</tr>";
             $i++;
+        }
+        if($ride->endDate<$date)
+        {
+            $n++;
         }
     }
     $date=date('Y-m-d 00:00:00', strtotime($date.' +1 day'));
