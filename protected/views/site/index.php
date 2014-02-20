@@ -6,16 +6,7 @@ $this->pageTitle=Yii::app()->name;
 ?>
 
 <?php
-/*
-echo "<ul>";
-foreach ($rides as $ride) {
-	echo // "<li>". CHtml::link($ride->driver->name(), array('rides/view', 'id' => $ride->id) ) ."</li>";
-}
-echo "</ul>";
-*/
 echo "<table>";
-/*var_dump($rides);
-die();*/
 $i=0;
 $date=$datetime = date('Y-m-d 00:00:00', time());
 while($i<20)
@@ -35,8 +26,6 @@ while($i<20)
             echo "<td>".CHtml::link($ride->bindedride, array('rides/view', 'id' => $ride->id) )."</td>";
             echo "<td>".CHtml::link(substr($ride->departure, 11, 5), array('rides/view', 'id' => $ride->id) )."</td>";
             echo "<td>".CHtml::link(substr($ride->arrival, 11, 5), array('rides/view', 'id' => $ride->id) )."</td>";
-            //echo "<td>".CHtml::link($ride->startDate, array('rides/view', 'id' => $ride->id) )."</td>";
-            //echo "<td>".CHtml::link($ride->endDate, array('rides/view', 'id' => $ride->id) )."</td>";
             
             switch ($ride->day) {
                     case '1':
@@ -71,11 +60,7 @@ while($i<20)
             echo "</tr>";
             $i++;
         }
-
     }
-
-    
-    
     $date=date('Y-m-d 00:00:00', strtotime($date.' +1 day'));
 }
 echo "</table>";
