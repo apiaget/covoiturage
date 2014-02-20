@@ -20,21 +20,21 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'driver'); ?>
-		<?php echo $form->textField($model,'driver'); ?>
-		<?php echo $form->error($model,'driver'); ?>
+		<?php echo $form->labelEx($model,'driver_fk'); ?>
+		<?php echo $form->textField($model,'driver_fk'); ?>
+		<?php echo $form->error($model,'driver_fk'); ?>
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'departuretown'); ?>
-		<?php echo $form->textField($model,'departuretown'); ?>
-		<?php echo $form->error($model,'departuretown'); ?>
+		<?php echo $form->labelEx($model,'departuretown_fk'); ?>
+		<?php echo $form->textField($model,'departuretown_fk'); ?>
+		<?php echo $form->error($model,'departuretown_fk'); ?>
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'arrivaltown'); ?>
-		<?php echo $form->textField($model,'arrivaltown'); ?>
-		<?php echo $form->error($model,'arrivaltown'); ?>
+		<?php echo $form->labelEx($model,'arrivaltown_fk'); ?>
+		<?php echo $form->textField($model,'arrivaltown_fk'); ?>
+		<?php echo $form->error($model,'arrivaltown_fk'); ?>
 	</div>
 
 	<div class="row">

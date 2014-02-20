@@ -5,14 +5,14 @@
  *
  * The followings are the available columns in table 'votes':
  * @property integer $id
- * @property integer $passenger
- * @property integer $targetuser
+ * @property integer $passenger_fk
+ * @property integer $targetuser_fk
  * @property string $date
  * @property integer $vote
  *
  * The followings are the available model relations:
- * @property Registrations $passenger0
- * @property Users $targetuser0
+ * @property Registrations $passengerFk
+ * @property Users $targetuserFk
  */
 class Vote extends CActiveRecord
 {
@@ -32,12 +32,12 @@ class Vote extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id, passenger, targetuser', 'required'),
-			array('id, passenger, targetuser, vote', 'numerical', 'integerOnly'=>true),
+			array('id, passenger_fk, targetuser_fk', 'required'),
+			array('id, passenger_fk, targetuser_fk, vote', 'numerical', 'integerOnly'=>true),
 			array('date', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, passenger, targetuser, date, vote', 'safe', 'on'=>'search'),
+			array('id, passenger_fk, targetuser_fk, date, vote', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -49,8 +49,8 @@ class Vote extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'passenger0' => array(self::BELONGS_TO, 'Registrations', 'passenger'),
-			'targetuser0' => array(self::BELONGS_TO, 'Users', 'targetuser'),
+			'passengerFk' => array(self::BELONGS_TO, 'Registrations', 'passenger_fk'),
+			'targetuserFk' => array(self::BELONGS_TO, 'Users', 'targetuser_fk'),
 		);
 	}
 
@@ -61,8 +61,8 @@ class Vote extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'passenger' => 'Passenger',
-			'targetuser' => 'Targetuser',
+			'passenger_fk' => 'Passenger Fk',
+			'targetuser_fk' => 'Targetuser Fk',
 			'date' => 'Date',
 			'vote' => 'Vote',
 		);
@@ -87,8 +87,8 @@ class Vote extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
-		$criteria->compare('passenger',$this->passenger);
-		$criteria->compare('targetuser',$this->targetuser);
+		$criteria->compare('passenger_fk',$this->passenger_fk);
+		$criteria->compare('targetuser_fk',$this->targetuser_fk);
 		$criteria->compare('date',$this->date,true);
 		$criteria->compare('vote',$this->vote);
 

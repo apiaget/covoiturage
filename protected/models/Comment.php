@@ -5,14 +5,14 @@
  *
  * The followings are the available columns in table 'comments':
  * @property integer $id
- * @property integer $author
- * @property integer $ride
+ * @property integer $author_fk
+ * @property integer $ride_fk
  * @property string $date
  * @property string $comment
  *
  * The followings are the available model relations:
- * @property Users $author0
- * @property Rides $ride0
+ * @property Users $authorFk
+ * @property Rides $rideFk
  */
 class Comment extends CActiveRecord
 {
@@ -32,12 +32,12 @@ class Comment extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('ride', 'required'),
-			array('author, ride', 'numerical', 'integerOnly'=>true),
+			array('ride_fk', 'required'),
+			array('author_fk, ride_fk', 'numerical', 'integerOnly'=>true),
 			array('date, comment', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, author, ride, date, comment', 'safe', 'on'=>'search'),
+			array('id, author_fk, ride_fk, date, comment', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -49,8 +49,8 @@ class Comment extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'author0' => array(self::BELONGS_TO, 'Users', 'author'),
-			'ride0' => array(self::BELONGS_TO, 'Rides', 'ride'),
+			'authorFk' => array(self::BELONGS_TO, 'Users', 'author_fk'),
+			'rideFk' => array(self::BELONGS_TO, 'Rides', 'ride_fk'),
 		);
 	}
 
@@ -61,8 +61,8 @@ class Comment extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'author' => 'Author',
-			'ride' => 'Ride',
+			'author_fk' => 'Author Fk',
+			'ride_fk' => 'Ride Fk',
 			'date' => 'Date',
 			'comment' => 'Comment',
 		);
@@ -87,8 +87,8 @@ class Comment extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
-		$criteria->compare('author',$this->author);
-		$criteria->compare('ride',$this->ride);
+		$criteria->compare('author_fk',$this->author_fk);
+		$criteria->compare('ride_fk',$this->ride_fk);
 		$criteria->compare('date',$this->date,true);
 		$criteria->compare('comment',$this->comment,true);
 

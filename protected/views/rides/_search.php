@@ -17,18 +17,18 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'driver'); ?>
-		<?php echo $form->textField($model,'driver'); ?>
+		<?php echo $form->label($model,'driver_fk'); ?>
+		<?php echo $form->textField($model,'driver_fk'); ?>
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'departuretown'); ?>
-		<?php echo $form->textField($model,'departuretown'); ?>
+		<?php echo $form->label($model,'departuretown_fk'); ?>
+		<?php echo $form->textField($model,'departuretown_fk'); ?>
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'arrivaltown'); ?>
-		<?php echo $form->textField($model,'arrivaltown'); ?>
+		<?php echo $form->label($model,'arrivaltown_fk'); ?>
+		<?php echo $form->textField($model,'arrivaltown_fk'); ?>
 	</div>
 
 	<div class="row">

@@ -5,15 +5,15 @@
  *
  * The followings are the available columns in table 'registrations':
  * @property integer $id
- * @property integer $user
- * @property integer $ride
+ * @property integer $user_fk
+ * @property integer $ride_fk
  * @property string $startDate
  * @property string $endDate
  * @property integer $accepted
  *
  * The followings are the available model relations:
- * @property Users $user0
- * @property Rides $ride0
+ * @property Users $userFk
+ * @property Rides $rideFk
  * @property Votes[] $votes
  */
 class Registration extends CActiveRecord
@@ -34,12 +34,12 @@ class Registration extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('user, ride', 'required'),
-			array('user, ride, accepted', 'numerical', 'integerOnly'=>true),
+			array('user_fk, ride_fk', 'required'),
+			array('user_fk, ride_fk, accepted', 'numerical', 'integerOnly'=>true),
 			array('startDate, endDate', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, user, ride, startDate, endDate, accepted', 'safe', 'on'=>'search'),
+			array('id, user_fk, ride_fk, startDate, endDate, accepted', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -51,9 +51,9 @@ class Registration extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'user0' => array(self::BELONGS_TO, 'Users', 'user'),
-			'ride0' => array(self::BELONGS_TO, 'Rides', 'ride'),
-			'votes' => array(self::HAS_MANY, 'Votes', 'passenger'),
+			'userFk' => array(self::BELONGS_TO, 'Users', 'user_fk'),
+			'rideFk' => array(self::BELONGS_TO, 'Rides', 'ride_fk'),
+			'votes' => array(self::HAS_MANY, 'Votes', 'passenger_fk'),
 		);
 	}
 
@@ -64,8 +64,8 @@ class Registration extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'user' => 'User',
-			'ride' => 'Ride',
+			'user_fk' => 'User Fk',
+			'ride_fk' => 'Ride Fk',
 			'startDate' => 'Start Date',
 			'endDate' => 'End Date',
 			'accepted' => 'Accepted',
@@ -91,8 +91,8 @@ class Registration extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
-		$criteria->compare('user',$this->user);
-		$criteria->compare('ride',$this->ride);
+		$criteria->compare('user_fk',$this->user_fk);
+		$criteria->compare('ride_fk',$this->ride_fk);
 		$criteria->compare('startDate',$this->startDate,true);
 		$criteria->compare('endDate',$this->endDate,true);
 		$criteria->compare('accepted',$this->accepted);

@@ -59,10 +59,10 @@ class User extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'comments' => array(self::HAS_MANY, 'Comments', 'author'),
-			'registrations' => array(self::HAS_MANY, 'Registrations', 'user'),
-			'rides' => array(self::HAS_MANY, 'Rides', 'driver'),
-			'votes' => array(self::HAS_MANY, 'Votes', 'targetuser'),
+			'comments' => array(self::HAS_MANY, 'Comments', 'author_fk'),
+			'registrations' => array(self::HAS_MANY, 'Registrations', 'user_fk'),
+			'rides' => array(self::HAS_MANY, 'Rides', 'driver_fk'),
+			'votes' => array(self::HAS_MANY, 'Votes', 'targetuser_fk'),
 		);
 	}
 
@@ -135,9 +135,4 @@ class User extends CActiveRecord
 	{
 		return parent::model($className);
 	}
-    
-    public function name()
-    {
-        return $this->email;
-    }
 }

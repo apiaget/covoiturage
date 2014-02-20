@@ -5,12 +5,12 @@
  *
  * The followings are the available columns in table 'ridebadges':
  * @property integer $id
- * @property integer $ride
- * @property integer $badge
+ * @property integer $ride_fk
+ * @property integer $badge_fk
  *
  * The followings are the available model relations:
- * @property Rides $ride0
- * @property Badges $badge0
+ * @property Rides $rideFk
+ * @property Badges $badgeFk
  */
 class Ridebadge extends CActiveRecord
 {
@@ -30,11 +30,11 @@ class Ridebadge extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('ride, badge', 'required'),
-			array('ride, badge', 'numerical', 'integerOnly'=>true),
+			array('ride_fk, badge_fk', 'required'),
+			array('ride_fk, badge_fk', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, ride, badge', 'safe', 'on'=>'search'),
+			array('id, ride_fk, badge_fk', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -46,8 +46,8 @@ class Ridebadge extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'ride0' => array(self::BELONGS_TO, 'Rides', 'ride'),
-			'badge0' => array(self::BELONGS_TO, 'Badges', 'badge'),
+			'rideFk' => array(self::BELONGS_TO, 'Rides', 'ride_fk'),
+			'badgeFk' => array(self::BELONGS_TO, 'Badges', 'badge_fk'),
 		);
 	}
 
@@ -58,8 +58,8 @@ class Ridebadge extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'ride' => 'Ride',
-			'badge' => 'Badge',
+			'ride_fk' => 'Ride Fk',
+			'badge_fk' => 'Badge Fk',
 		);
 	}
 
@@ -82,8 +82,8 @@ class Ridebadge extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
-		$criteria->compare('ride',$this->ride);
-		$criteria->compare('badge',$this->badge);
+		$criteria->compare('ride_fk',$this->ride_fk);
+		$criteria->compare('badge_fk',$this->badge_fk);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

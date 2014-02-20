@@ -16,14 +16,13 @@ while($i<20)
             echo "<tr onclick=";
             echo "\"document.location='/covoiturage/covoiturage/rides/".$ride->id."';";
             echo "\">";
-            echo "<td>".CHtml::link($ride->driver0->cpnvId, array('rides/view', 'id' => $ride->id) )."</td>";
+            echo "<td>".CHtml::link($ride->driver->cpnvId, array('rides/view', 'id' => $ride->id) )."</td>";
             echo "<td>".CHtml::link("0/".$ride->seats, array('rides/view', 'id' => $ride->id) )."</td>";
 
-            echo "<td>".CHtml::link($ride->departuretown0->name, array('rides/view', 'id' => $ride->id) )."</td>";
+            echo "<td>".CHtml::link($ride->departuretown->name, array('rides/view', 'id' => $ride->id) )."</td>";
             echo "<td>".CHtml::link("--->", array('rides/view', 'id' => $ride->id) )."</td>";
-            echo "<td>".CHtml::link($ride->arrivaltown0->name, array('rides/view', 'id' => $ride->id) )."</td>";
+            echo "<td>".CHtml::link($ride->arrivaltown->name, array('rides/view', 'id' => $ride->id) )."</td>";
             
-            echo "<td>".CHtml::link($ride->bindedride, array('rides/view', 'id' => $ride->id) )."</td>";
             echo "<td>".CHtml::link(substr($ride->departure, 11, 5), array('rides/view', 'id' => $ride->id) )."</td>";
             echo "<td>".CHtml::link(substr($ride->arrival, 11, 5), array('rides/view', 'id' => $ride->id) )."</td>";
             

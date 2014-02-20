@@ -22,9 +22,9 @@ $this->menu=array(
 	'data'=>$model,
 	'attributes'=>array(
 		'id',
-		'driver',
-		'departuretown',
-		'arrivaltown',
+		'driver_fk',
+		'departuretown_fk',
+		'arrivaltown_fk',
 		'bindedride',
 		'description',
 		'departure',

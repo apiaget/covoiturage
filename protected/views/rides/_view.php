@@ -9,16 +9,16 @@
 	<?php echo CHtml::link(CHtml::encode($data->id), array('view', 'id'=>$data->id)); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('driver')); ?>:</b>
-	<?php echo CHtml::encode($data->driver); ?>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('driver_fk')); ?>:</b>
+	<?php echo CHtml::encode($data->driver_fk); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('departuretown')); ?>:</b>
-	<?php echo CHtml::encode($data->departuretown); ?>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('departuretown_fk')); ?>:</b>
+	<?php echo CHtml::encode($data->departuretown_fk); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('arrivaltown')); ?>:</b>
-	<?php echo CHtml::encode($data->arrivaltown); ?>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('arrivaltown_fk')); ?>:</b>
+	<?php echo CHtml::encode($data->arrivaltown_fk); ?>
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('bindedride')); ?>:</b>

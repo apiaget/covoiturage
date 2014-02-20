@@ -44,8 +44,8 @@ class Town extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'rides' => array(self::HAS_MANY, 'Rides', 'departuretown'),
-			'rides1' => array(self::HAS_MANY, 'Rides', 'arrivaltown'),
+			'rides' => array(self::HAS_MANY, 'Rides', 'departuretown_fk'),
+			'rides1' => array(self::HAS_MANY, 'Rides', 'arrivaltown_fk'),
 		);
 	}
 

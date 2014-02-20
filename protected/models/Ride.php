@@ -5,9 +5,9 @@
  *
  * The followings are the available columns in table 'rides':
  * @property integer $id
- * @property integer $driver
- * @property integer $departuretown
- * @property integer $arrivaltown
+ * @property integer $driver_fk
+ * @property integer $departuretown_fk
+ * @property integer $arrivaltown_fk
  * @property integer $bindedride
  * @property string $description
  * @property string $departure
@@ -21,11 +21,11 @@
  * @property Comments[] $comments
  * @property Registrations[] $registrations
  * @property Ridebadges[] $ridebadges
- * @property Towns $departuretown0
- * @property Towns $arrivaltown0
+ * @property Towns $departuretownFk
+ * @property Towns $arrivaltownFk
  * @property Ride $bindedride0
  * @property Ride[] $rides
- * @property Users $driver0
+ * @property Users $driverFk
  */
 class Ride extends CActiveRecord
 {
@@ -45,12 +45,12 @@ class Ride extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('driver, departuretown, arrivaltown', 'required'),
-			array('driver, departuretown, arrivaltown, bindedride, seats, day', 'numerical', 'integerOnly'=>true),
+			array('driver_fk, departuretown_fk, arrivaltown_fk', 'required'),
+			array('driver_fk, departuretown_fk, arrivaltown_fk, bindedride, seats, day', 'numerical', 'integerOnly'=>true),
 			array('description, departure, arrival, startDate, endDate', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, driver, departuretown, arrivaltown, bindedride, description, departure, arrival, seats, startDate, endDate, day', 'safe', 'on'=>'search'),
+			array('id, driver_fk, departuretown_fk, arrivaltown_fk, bindedride, description, departure, arrival, seats, startDate, endDate, day', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -62,14 +62,14 @@ class Ride extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'comments' => array(self::HAS_MANY, 'Comments', 'ride'),
-			'registrations' => array(self::HAS_MANY, 'Registrations', 'ride'),
-			'ridebadges' => array(self::HAS_MANY, 'Ridebadges', 'ride'),
-			'departuretown0' => array(self::BELONGS_TO, 'Town', 'departuretown'),
-			'arrivaltown0' => array(self::BELONGS_TO, 'Town', 'arrivaltown'),
-			'bindedride0' => array(self::BELONGS_TO, 'Ride', 'bindedride'),
+			'comments' => array(self::HAS_MANY, 'Comment', 'ride_fk'),
+			'registrations' => array(self::HAS_MANY, 'Registration', 'ride_fk'),
+			'ridebadges' => array(self::HAS_MANY, 'Ridebadge', 'ride_fk'),
+			'departuretown' => array(self::BELONGS_TO, 'Town', 'departuretown_fk'),
+			'arrivaltown' => array(self::BELONGS_TO, 'Town', 'arrivaltown_fk'),
+			'trajetretour' => array(self::BELONGS_TO, 'Ride', 'bindedride'),
 			'rides' => array(self::HAS_MANY, 'Ride', 'bindedride'),
-			'driver0' => array(self::BELONGS_TO, 'User', 'driver'),
+			'driver' => array(self::BELONGS_TO, 'User', 'driver_fk'),
 		);
 	}
 
@@ -80,9 +80,9 @@ class Ride extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'driver' => 'Driver',
-			'departuretown' => 'Departuretown',
-			'arrivaltown' => 'Arrivaltown',
+			'driver_fk' => 'Driver Fk',
+			'departuretown_fk' => 'Departuretown Fk',
+			'arrivaltown_fk' => 'Arrivaltown Fk',
 			'bindedride' => 'Bindedride',
 			'description' => 'Description',
 			'departure' => 'Departure',
@@ -113,9 +113,9 @@ class Ride extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
-		$criteria->compare('driver',$this->driver);
-		$criteria->compare('departuretown',$this->departuretown);
-		$criteria->compare('arrivaltown',$this->arrivaltown);
+		$criteria->compare('driver_fk',$this->driver_fk);
+		$criteria->compare('departuretown_fk',$this->departuretown_fk);
+		$criteria->compare('arrivaltown_fk',$this->arrivaltown_fk);
 		$criteria->compare('bindedride',$this->bindedride);
 		$criteria->compare('description',$this->description,true);
 		$criteria->compare('departure',$this->departure,true);
