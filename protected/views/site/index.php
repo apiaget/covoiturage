@@ -6,26 +6,32 @@ $this->pageTitle=Yii::app()->name;
 ?>
 
 <?php
+echo CHtml::link("Accueil", array('/'));
+echo " | ";
+echo CHtml::link("Données personnelles", array('users/view', 'id'=>$user->id));
+foreach($rides as $ride)
+{
+    $r[$ride->id]=0;
+}
 echo "<table>";
 $i=0;
-$n=0;
 $date=$datetime = date('Y-m-d 00:00:00', time());
-while($i<20 || count($rides)==$n)
+while($i<20 && array_sum($r)<count($rides))
 {
     foreach ($rides as $ride) {
-        if($ride->startDate<$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date))){
+        if($ride->startDate<$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0){
             echo "<tr onclick=";
             echo "\"document.location='/covoiturage/covoiturage/rides/".$ride->id."';";
             echo "\">";
-            echo "<td>".CHtml::link($ride->driver->cpnvId, array('rides/view', 'id' => $ride->id) )."</td>";
-            echo "<td>".CHtml::link("0/".$ride->seats, array('rides/view', 'id' => $ride->id) )."</td>";
+            echo "<td>".CHtml::link($ride->driver->cpnvId, array('rides/view', 'id' => $ride->id))."</td>";
+            echo "<td>".CHtml::link("0/".$ride->seats, array('rides/view', 'id' => $ride->id))."</td>";
 
-            echo "<td>".CHtml::link($ride->departuretown->name, array('rides/view', 'id' => $ride->id) )."</td>";
+            echo "<td>".CHtml::link($ride->departuretown->name, array('rides/view', 'id' => $ride->id))."</td>";
             echo "<td>".CHtml::link("--->", array('rides/view', 'id' => $ride->id) )."</td>";
-            echo "<td>".CHtml::link($ride->arrivaltown->name, array('rides/view', 'id' => $ride->id) )."</td>";
+            echo "<td>".CHtml::link($ride->arrivaltown->name, array('rides/view', 'id' => $ride->id))."</td>";
             
-            echo "<td>".CHtml::link(substr($ride->departure, 11, 5), array('rides/view', 'id' => $ride->id) )."</td>";
-            echo "<td>".CHtml::link(substr($ride->arrival, 11, 5), array('rides/view', 'id' => $ride->id) )."</td>";
+            echo "<td>".CHtml::link(substr($ride->departure, 11, 5), array('rides/view', 'id' => $ride->id))."</td>";
+            echo "<td>".CHtml::link(substr($ride->arrival, 11, 5), array('rides/view', 'id' => $ride->id))."</td>";
             
             switch ($ride->day) {
                     case '1':
@@ -56,13 +62,13 @@ while($i<20 || count($rides)==$n)
 
             $nextday = date("d-m-Y",strtotime($date));
 
-            echo "<td>".CHtml::link($day." ".$nextday,array('rides/view', 'id' => $ride->id) )."</td>";
+            echo "<td>".CHtml::link($day." ".$nextday,array('rides/view', 'id' => $ride->id))."</td>";
             echo "</tr>";
             $i++;
         }
         if($ride->endDate<$date)
         {
-            $n++;
+            $r[$ride->id]=1;
         }
     }
     $date=date('Y-m-d 00:00:00', strtotime($date.' +1 day'));

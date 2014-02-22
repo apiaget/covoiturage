@@ -27,9 +27,11 @@ class SiteController extends Controller
 	 */
 	public function actionIndex()
 	{
+		$cpnvId="j.le.noob";
+		$user=User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$cpnvId));
 		$datetime = date('Y-m-d 00:00:00', time());
 		$rides = Ride::model()->findAll('endDate>:today', array(':today'=>$datetime));
-		$this->render('index', array('rides' => $rides));
+		$this->render('index', array('rides' => $rides, 'user' => $user));
 	}
 
 	/**
