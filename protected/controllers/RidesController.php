@@ -28,7 +28,7 @@ class RidesController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
+				'actions'=>array('index','view','create'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -51,9 +51,8 @@ class RidesController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-		));
+		//die($_GET['date']);
+		$this->render('view',array('ride'=>$this->loadModel($id),));
 	}
 
 	/**
@@ -108,30 +107,30 @@ class RidesController extends Controller
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
 	 */
-	public function actionDelete($id)
+	/*public function actionDelete($id)
 	{
 		$this->loadModel($id)->delete();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
-	}
+	}*/
 
 	/**
 	 * Lists all models.
 	 */
-	public function actionIndex()
+	/*public function actionIndex()
 	{
 		$dataProvider=new CActiveDataProvider('Ride');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));
-	}
+	}*/
 
 	/**
 	 * Manages all models.
 	 */
-	public function actionAdmin()
+	/*public function actionAdmin()
 	{
 		$model=new Ride('search');
 		$model->unsetAttributes();  // clear any default values
@@ -141,7 +140,7 @@ class RidesController extends Controller
 		$this->render('admin',array(
 			'model'=>$model,
 		));
-	}
+	}*/
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.

@@ -3,27 +3,32 @@
 
 $this->pageTitle=Yii::app()->name;
 
+echo CHtml::link("Créer un nouveau trajet", array('rides/create'));
 ?>
 
+<hr/>
 <?php
 /*echo CHtml::link("<strong>Accueil</strong>", array('/'));
 echo " | ";
 echo CHtml::link("Données personnelles", array('users/modif'));*/
+
 foreach($rides as $ride)
 {
     $r[$ride->id]=0;
 }
 echo "<table>";
+echo "<tr><th>Conducteur</th><th>Places</th><th>Départ</th><th>Arrivée</th><th>Jour</th></tr>";
 $i=0;
 $date=$datetime = date('Y-m-d 00:00:00', time());
 while($i<20 && array_sum($r)<count($rides))
 {
     foreach ($rides as $ride) {
         if($ride->startDate<$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0){
+            $daydate = date("d-m-Y",strtotime($date));
             echo "<tr onclick=";
-            echo "\"document.location='/covoiturage/covoiturage/rides/".$ride->id."';";
-            echo "\">";
-            echo "<td>".CHtml::link($ride->driver->cpnvId, array('rides/view', 'id' => $ride->id))."</td>";
+            echo "\"document.location='/covoiturage/covoiturage/rides/".$ride->id."?date=".$daydate."';";
+            echo "\" onmouseover='tablein(this);' onmouseout='tableout(this);'>";
+            /*echo "<td>".CHtml::link($ride->driver->cpnvId, array('rides/view', 'id' => $ride->id, 'date' => $daydate))."</td>";
             echo "<td>".CHtml::link("0/".$ride->seats, array('rides/view', 'id' => $ride->id))."</td>";
 
             echo "<td>".CHtml::link($ride->departuretown->name, array('rides/view', 'id' => $ride->id))."</td>";
@@ -32,6 +37,17 @@ while($i<20 && array_sum($r)<count($rides))
             
             echo "<td>".CHtml::link(substr($ride->departure, 11, 5), array('rides/view', 'id' => $ride->id))."</td>";
             echo "<td>".CHtml::link(substr($ride->arrival, 11, 5), array('rides/view', 'id' => $ride->id))."</td>";
+            */
+
+            echo "<td>".$ride->driver->cpnvId."</td>";
+            echo "<td>"."0/".$ride->seats."</td>";
+
+            echo "<td>".$ride->departuretown->name." à ".substr($ride->departure, 11, 5)."</td>";
+            //echo "<td>"."--->"."</td>";
+            echo "<td>".$ride->arrivaltown->name." vers ".substr($ride->arrival, 11, 5)."</td>";
+        
+            //echo "<td>".substr($ride->departure, 11, 5)."</td>";
+            //echo "<td>".substr($ride->arrival, 11, 5)."</td>";
             
             switch ($ride->day) {
                     case '1':
@@ -59,10 +75,10 @@ while($i<20 && array_sum($r)<count($rides))
                         $day = "?";
                         break;
                 }
+            //echo "<td>".CHtml::link($day." ".$daydate,array('rides/view', 'id' => $ride->id))."</td>";
 
-            $nextday = date("d-m-Y",strtotime($date));
+            echo "<td>".$day." ".$daydate."</td>";
 
-            echo "<td>".CHtml::link($day." ".$nextday,array('rides/view', 'id' => $ride->id))."</td>";
             echo "</tr>";
             $i++;
         }
@@ -92,3 +108,13 @@ endwhile
 */
 
 ?>
+<script type="text/javascript">
+function tablein(that){
+    that.style.backgroundColor="#E5F1F4";
+    that.style.cursor="pointer";
+}
+function tableout(that){
+    that.style.backgroundColor="white";
+    that.style.cursor="auto";
+}
+</script>

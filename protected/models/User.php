@@ -88,12 +88,12 @@ class User extends CActiveRecord
 			'votes' => array(self::HAS_MANY, 'Votes', 'targetuser_fk'),
 		);
 	}
+	public function attributeLabels()
+	{
 
 	/**
 	 * @return array customized attribute labels (name=>label)
 	 */
-	public function attributeLabels()
-	{
 		return array(
 			'id' => 'ID',
 			'cpnvId' => 'Cpnv',
