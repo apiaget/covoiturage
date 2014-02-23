@@ -74,8 +74,8 @@ while($i<20 && array_sum($r)<count($rides))
     $date=date('Y-m-d 00:00:00', strtotime($date.' +1 day'));
 }
 echo "</table>";
-/*
 
+/*
 //afficher 20 trajets en comptant les récurrences
 
 i=0 //dès qu'une ligne est affichée, augmente de 1
@@ -90,6 +90,5 @@ while i<=20
     j=j+1 jour
 endwhile
 */
-
 
 ?>

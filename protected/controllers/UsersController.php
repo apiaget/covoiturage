@@ -51,14 +51,6 @@ class UsersController extends Controller
 	 */
 	public function actionView($id)
 	{
-		/*$cpnvId="j.le.noob";
-		$user=User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$cpnvId));
-		$datetime = date('Y-m-d 00:00:00', time());
-		$rides = Ride::model()->findAll('endDate>:today', array(':today'=>$datetime));
-		$this->render('view', array('rides' => $rides, 'user' => $user));*/
-
-
-
 		$this->render('view',array(
 			'model'=>$this->loadModel($id),
 		));
@@ -68,44 +60,14 @@ class UsersController extends Controller
 	{
 		$cpnvId="j.le.noob";
 		$user=User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$cpnvId));
-		/*if(isset($_POST['userModif'])){
-			//$this->refresh();
-			//$this->render('modif', array('user' => $user, 'modif' => 1));
-			$this->redirect(array('user' => $user, 'modif' => 1));
-		}else{
-			//$this->refresh();
-			$this->render('modif', array('user' => $user));
-			//$this->redirect(array('modif'));
-		}*/
-
-
-		//$model=$this->loadModel($id);
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
 
 		if(isset($_POST['User']))
 		{
-			/*var_dump($_POST['User']);
-			die();*/
 			$user->attributes=$_POST['User'];
 			if($user->save())
 				$this->redirect(array('modif'));
 		}
-		/*if(isset($_POST['userModif'])){
-			//$this->refresh();
-			//$this->render('modif', array('user' => $user, 'modif' => 1));
-			//$this->redirect(array('user' => $user, 'modif' => 1));
-			$this->render('modif',array('user'=>$user, 'modif' => 1));
-		}else{*/
-			//$this->refresh();
-			//$this->render('modif', array('user' => $user));
-			$this->render('modif',array('user'=>$user,));
-			//$this->redirect(array('modif'));
-		//}
-			//$this->render('modif',array('user'=>$user, 'modif' => 1));
-
-
+		$this->render('modif',array('user'=>$user,));
 	}
 
 	/**
