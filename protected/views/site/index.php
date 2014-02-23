@@ -6,9 +6,9 @@ $this->pageTitle=Yii::app()->name;
 ?>
 
 <?php
-echo CHtml::link("Accueil", array('/'));
+/*echo CHtml::link("<strong>Accueil</strong>", array('/'));
 echo " | ";
-echo CHtml::link("Données personnelles", array('users/view', 'id'=>$user->id));
+echo CHtml::link("Données personnelles", array('users/modif'));*/
 foreach($rides as $ride)
 {
     $r[$ride->id]=0;

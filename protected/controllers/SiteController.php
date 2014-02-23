@@ -27,11 +27,9 @@ class SiteController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$cpnvId="j.le.noob";
-		$user=User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$cpnvId));
 		$datetime = date('Y-m-d 00:00:00', time());
 		$rides = Ride::model()->findAll('endDate>:today', array(':today'=>$datetime));
-		$this->render('index', array('rides' => $rides, 'user' => $user));
+		$this->render('index', array('rides' => $rides));
 	}
 
 	/**
@@ -77,7 +75,7 @@ class SiteController extends Controller
 	/**
 	 * Displays the login page
 	 */
-	/*public function actionLogin()
+	public function actionLogin()
 	{
 		$model=new LoginForm;
 
@@ -98,14 +96,14 @@ class SiteController extends Controller
 		}
 		// display the login form
 		$this->render('login',array('model'=>$model));
-	}*/
+	}
 
 	/**
 	 * Logs out the current user and redirect to homepage.
 	 */
-	/*public function actionLogout()
+	public function actionLogout()
 	{
 		Yii::app()->user->logout();
 		$this->redirect(Yii::app()->homeUrl);
-	}*/
+	}
 }

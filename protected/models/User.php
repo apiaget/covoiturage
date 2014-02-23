@@ -45,11 +45,32 @@ class User extends CActiveRecord
 			array('hideEmail, hideTelephone, notifInscription, notifComment, notifUnsuscribe, notifDeleteRide, notifModification, blacklisted, admin', 'numerical', 'integerOnly'=>true),
 			array('cpnvId, telephone', 'length', 'max'=>45),
 			array('email', 'length', 'max'=>60),
+			array('email', 'email'),
+			array('telephone', 'telephoneStrength'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, cpnvId, email, hideEmail, telephone, hideTelephone, notifInscription, notifComment, notifUnsuscribe, notifDeleteRide, notifModification, blacklisted, admin', 'safe', 'on'=>'search'),
 		);
 	}
+
+
+
+
+	/**
+	 * check if the user password is strong enough
+	 * check the password against the pattern requested
+	 * by the strength parameter
+	 * This is the 'passwordStrength' validator as declared in rules().
+	 */
+	public function telephoneStrength($attribute,$params)
+	{
+	    $pattern = '/^(0{1})([1-9]{2})(\s|-|.{0,1})(\d{3})(\s|-|.{0,1})(\d{2})(\s|-|.{0,1})(\d{2})$/';  
+	    if(!preg_match($pattern, $this->$attribute))
+	      $this->addError($attribute, 'Le numéro de téléphone ne semble pas valide');
+	}
+
+
+
 
 	/**
 	 * @return array relational rules.
@@ -76,7 +97,7 @@ class User extends CActiveRecord
 			'cpnvId' => 'Cpnv',
 			'email' => 'Email',
 			'hideEmail' => 'Hide Email',
-			'telephone' => 'Telephone',
+			'telephone' => 'Téléphone',
 			'hideTelephone' => 'Hide Telephone',
 			'notifInscription' => 'Notif Inscription',
 			'notifComment' => 'Notif Comment',
