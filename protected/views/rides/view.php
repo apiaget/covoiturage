@@ -7,51 +7,183 @@
 	$ride->id,
 );*/
 
-/*$this->menu=array(
-	array('label'=>'List Ride', 'url'=>array('index')),
-	array('label'=>'Create Ride', 'url'=>array('create')),
-	array('label'=>'Update Ride', 'url'=>array('update', 'id'=>$ride->id)),
-	array('label'=>'Delete Ride', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$ride->id),'confirm'=>'Are you sure you want to delete this item?')),
-	array('label'=>'Manage Ride', 'url'=>array('admin')),
-);*/
+?>
+<style type="text/css">
+#seats{
+	width: 900px;
+	overflow: auto;
+}
+#days td{
+	padding: 0 4px 0 4px;
+}
+#days{
+	margin-bottom: 0;
+}
+.chosen{
+	background-color: #E5F1F4;
+}
+</style>
+<table>
+	<tr>
+		<td>Conducteur</td><td><?php echo $ride->driver->cpnvId; ?></td>
+	</tr>
+	<tr>
+		<td>Départ</td><td><?php echo $ride->departuretown->name." à ".substr($ride->departure, 11, 5); ?></td>
+	</tr>
+	<tr>
+		<td>Arrivée prévue</td><td><?php echo $ride->arrivaltown->name." vers ".substr($ride->arrival, 11, 5); ?></td>
+	</tr>
+	<tr>
+		<td>Description</td><td><?php echo $ride->description; ?></td>
+	</tr>
+</table>
+<div name="seats" id="seats">	<!--Affichage de la liste des jours-->
+	<?php
+		$diff=($ride->day-date('N'));
+		if($diff<0){
+			$diff=7+$diff;
+		}
+		$date=date('Y-m-d 00:00:00', strtotime(date('Y-m-d 00:00:00', time()).' +'.$diff.' day'));
+		$dateA=$dateB=$date;
+		echo "<table id='days'><tr id='cool'><th width='70px'>Date</th>"; //Ligne du haut
+		while ($dateA<=$ride->endDate) {
+			if($ride->showDuringHolidays($dateA)){
+				if(isset($_GET['date']) && $_GET['date']==date('d-m-Y', strtotime($dateA))){
+					echo "<td class='chosen' width='68px'>".date('d.m.y', strtotime($dateA))."</td>";
+				}else{
+					echo "<td width='68px'>".date('d.m.y', strtotime($dateA))."</td>";
+				}
+			}
+			$dateA=date('Y-m-d 00:00:00', strtotime($dateA.'+7 day'));
+		}
+		echo "<td></td></tr><tr><th>Occupation</th>"; //ligne du bas
+		while ($dateB<=$ride->endDate) {
+			if($ride->showDuringHolidays($dateB)){
+				if(isset($_GET['date']) && $_GET['date']==date('d-m-Y', strtotime($dateB))){
+					echo "<td class='chosen'>";
+					$i=0;
+					foreach ($registrations as $registration) {
+						if($dateB>=$registration->startDate&&$dateB<=$registration->endDate&&$registration->accepted){$i++;	}
+					}
+					echo $i."/".$ride->seats;
+				}else{
+					echo "<td>";
+					$i=0;
+					foreach ($registrations as $registration) {
+						if($dateB>=$registration->startDate&&$dateB<=$registration->endDate&&$registration->accepted){$i++; }
+					}
+					echo $i."/".$ride->seats;
+				}
+				echo "</td>";
+			}
+			$dateB=date('Y-m-d 00:00:00', strtotime($dateB.'+7 day'));
+		}
+		echo "<td class='supp'></td></tr></table>";
+	?>
+</div>
+
+<?php
+	if($user->id!=$ride->driver_fk){ //pas conducteu
+?>
+	<form method="post">
+		<table>
+		<tr><td><label for="date">Date</label></td><td><input type="text" name="date" id="date" disabled/><input type="text" name="dateB" id="dateB" hidden/></td></tr>
+		<?php 
+		if($ride->startDate!=$ride->endDate) //aller retour 
+		{
+			echo "<tr><td><label for='recurrence'>Récurrence*</label></td><td><input type='checkbox' name='recurrence' id='recurrence' /><input type='checkbox' name='recurrenceON' id='recurrenceON' checked hidden/></td></tr>";
+		}else{
+			echo "<tr><td><input type='checkbox' name='recurrenceOFF' id='recurrenceOFF' checked hidden/></td></tr>";
+		}
+		?>
+		<?php 
+		if($ride->bindedride!="") //aller retour 
+		{
+			echo "<tr><td><label for='allerretour'>Aller-Retour</label></td><td><input type='checkbox' name='allerretour' id='allerretour' /><input type='checkbox' name='allerretourON' id='allerretourON' checked hidden/></td></tr>";
+		}else{
+			echo "<tr><td><input type='checkbox' name='allerretourOFF' id='allerretourOFF' checked hidden/></td></tr>";
+		}
+		?>
+		<tr><td rowspan="2"><input type="submit" value="S'inscrire"></td></tr>
+	</table>
+	</form>
+	<?php 
+	if($ride->startDate!=$ride->endDate) //aller retour 
+	{
+		echo "<small>*La récurrence s'effectue à partir de la date sélectionnée jusqu'à la fin des trajets proposés</small>";
+	}
+	?>
+<?php
+	}
+?>
+		
+
+<?php var_dump($registrations);
+
 ?>
 
-<?php 
-/*$this->widget('zii.widgets.CDetailView', array(
-	'data'=>$ride,
-	'attributes'=>array(
-		'id',
-		'driver_fk',
-		'departuretown_fk',
-		'arrivaltown_fk',
-		'bindedride',
-		'description',
-		'departure',
-		'arrival',
-		'seats',
-		'startDate',
-		'endDate',
-		'day',
-	),
-));*/ 
+<script type="text/javascript">
+	
+	var tds=document.getElementsByTagName('td');
+	var l=0
+	for(var i=0, iMax=tds.length ; i < iMax; i++)
+	{
 
+		if(tds[i].parentNode.parentNode.parentNode.id == 'days' && tds[i].className!="supp"){
+			if(l==0) {//s'assure que la date n'est pas vide
+				document.getElementById('date').value=tds[i].parentNode.parentNode.childNodes[0].childNodes[1].textContent;
+				document.getElementById('dateB').value=tds[i].parentNode.parentNode.childNodes[0].childNodes[1].textContent;
+			} 
+			tds[i].onclick = function(){
+				resetColorDayTable(); //reseter toutes les couleurs
+				var k = 0;
+				that=this;
+				while( (that = that.previousSibling) != null ) {k++;} //compte 
+				this.parentNode.parentNode.childNodes[0].childNodes[k].className="chosen";//mettre la couleur au jour choisi
+				this.parentNode.parentNode.childNodes[1].childNodes[k].className="chosen";
+				date=this.parentNode.parentNode.childNodes[0].childNodes[k].textContent;//récupérer valeur ligne du haut
+				document.getElementById('date').value=date;
+				document.getElementById('dateB').value=date;
+				return false;
+			};
+		}
+	}
 
-//	voit paramètre du ride
+	function resetColorDayTable()
+	{
+		var table = document.getElementById('days');
+		for(var i = 0; i<2; i++)
+		{
+			for(var j = 0, jMax = table.childNodes[0].childNodes[0].childNodes.length; j<jMax;j++)
+			{
+				table.childNodes[0].childNodes[i].childNodes[j].className="";
+			}
+		}
+	}
+
+</script>
+<?
+//	voit paramètre du ride ----OK
 //	Si driver
 //		voit personnes inscrites, validée ou non avec leur réputation et leur téléphone
 //		possibilité de valider les utilisateurs
 //		possibilité d'expulser des utilisateurs
 //		voit bouton "editer", "supprimer"
 //		voit commentaires, possibilités d'en supprimer et de répondre
-//	Si passager
+//	Ou Si passager
 //		voit natel du conducteur
 //		voit les autres utilisateurs inscrits
 //		possibilité de se désinscrire
 //		voit commentaires avec possibilité de répondre
 //	Sinon
-//		case contenant la date remplie si get la contient
-//		case à cocher récurrence / aller-retour
-//		bouton "s'inscrire"
+//		case contenant la date remplie si get la contient ----OK
+//		case à cocher récurrence / aller-retour ----OK
+//		bouton "s'inscrire" ----OK
 //		voit commentaires avec possibilité de répondre
 //	fin Si
+//
+//
+//
+//
+//
 ?>

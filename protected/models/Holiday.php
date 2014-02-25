@@ -97,4 +97,16 @@ class Holiday extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+	public function isHoliday($date){
+		$end = date("Y-m-d",strtotime($date));
+		$holidays=Holiday::model()->findAll('end>=:today AND begin<:inOneYear', array(':today'=>date("Y-m-d",strtotime($date)),':inOneYear'=>date('Y-m-d',strtotime($date.'+1 years'))));
+
+		foreach ($holidays as $holiday) {
+			if($date>=$holiday->begin&&$date<=$holiday->end){
+				return true;
+			}
+		}
+		return false;
+	}
 }

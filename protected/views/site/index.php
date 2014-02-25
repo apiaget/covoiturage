@@ -7,11 +7,8 @@ echo CHtml::link("Créer un nouveau trajet", array('rides/create'));
 ?>
 
 <hr/>
-<?php
-/*echo CHtml::link("<strong>Accueil</strong>", array('/'));
-echo " | ";
-echo CHtml::link("Données personnelles", array('users/modif'));*/
 
+<?php
 foreach($rides as $ride)
 {
     $r[$ride->id]=0;
@@ -23,62 +20,44 @@ $date=$datetime = date('Y-m-d 00:00:00', time());
 while($i<20 && array_sum($r)<count($rides))
 {
     foreach ($rides as $ride) {
-        if($ride->startDate<$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0){
+        if($ride->startDate<=$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0 && $ride->showDuringHolidays($date)){
             $daydate = date("d-m-Y",strtotime($date));
             echo "<tr onclick=";
             echo "\"document.location='/covoiturage/covoiturage/rides/".$ride->id."?date=".$daydate."';";
             echo "\" onmouseover='tablein(this);' onmouseout='tableout(this);'>";
-            /*echo "<td>".CHtml::link($ride->driver->cpnvId, array('rides/view', 'id' => $ride->id, 'date' => $daydate))."</td>";
-            echo "<td>".CHtml::link("0/".$ride->seats, array('rides/view', 'id' => $ride->id))."</td>";
 
-            echo "<td>".CHtml::link($ride->departuretown->name, array('rides/view', 'id' => $ride->id))."</td>";
-            echo "<td>".CHtml::link("--->", array('rides/view', 'id' => $ride->id) )."</td>";
-            echo "<td>".CHtml::link($ride->arrivaltown->name, array('rides/view', 'id' => $ride->id))."</td>";
+                echo "<td>".$ride->driver->cpnvId."</td>";
+                echo "<td>"."0/".$ride->seats."</td>";
+                echo "<td>".$ride->departuretown->name." à ".substr($ride->departure, 11, 5)."</td>";
+                echo "<td>".$ride->arrivaltown->name." vers ".substr($ride->arrival, 11, 5)."</td>";
             
-            echo "<td>".CHtml::link(substr($ride->departure, 11, 5), array('rides/view', 'id' => $ride->id))."</td>";
-            echo "<td>".CHtml::link(substr($ride->arrival, 11, 5), array('rides/view', 'id' => $ride->id))."</td>";
-            */
-
-            echo "<td>".$ride->driver->cpnvId."</td>";
-            echo "<td>"."0/".$ride->seats."</td>";
-
-            echo "<td>".$ride->departuretown->name." à ".substr($ride->departure, 11, 5)."</td>";
-            //echo "<td>"."--->"."</td>";
-            echo "<td>".$ride->arrivaltown->name." vers ".substr($ride->arrival, 11, 5)."</td>";
-        
-            //echo "<td>".substr($ride->departure, 11, 5)."</td>";
-            //echo "<td>".substr($ride->arrival, 11, 5)."</td>";
-            
-            switch ($ride->day) {
-                    case '1':
-                        $day = "Lundi";
-                        break;
-                    case '2':
-                        $day = "Mardi";
-                        break;
-                    case '3':
-                        $day = "Mercredi";
-                        break;
-                    case '4':
-                        $day = "Jeudi";
-                        break;
-                    case '5':
-                        $day = "Vendredi";
-                        break;
-                    case '6':
-                        $day = "Samedi";
-                        break;
-                    case '7':
-                        $day = "Dimanche";
-                        break;
-                    default:
-                        $day = "?";
-                        break;
-                }
-            //echo "<td>".CHtml::link($day." ".$daydate,array('rides/view', 'id' => $ride->id))."</td>";
-
-            echo "<td>".$day." ".$daydate."</td>";
-
+                switch ($ride->day) {
+                        case '1':
+                            $day = "Lundi";
+                            break;
+                        case '2':
+                            $day = "Mardi";
+                            break;
+                        case '3':
+                            $day = "Mercredi";
+                            break;
+                        case '4':
+                            $day = "Jeudi";
+                            break;
+                        case '5':
+                            $day = "Vendredi";
+                            break;
+                        case '6':
+                            $day = "Samedi";
+                            break;
+                        case '7':
+                            $day = "Dimanche";
+                            break;
+                        default:
+                            $day = "?";
+                            break;
+                    }
+                echo "<td>".$day." ".$daydate."</td>";
             echo "</tr>";
             $i++;
         }

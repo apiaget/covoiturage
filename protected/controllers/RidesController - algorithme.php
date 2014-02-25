@@ -56,101 +56,53 @@ class RidesController extends Controller
 		$user=User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$cpnvId));
 
 					//$registration=new Registration;
-				if(isset($_POST['dateB'])){ //l'utilisateur désire s'inscrire
-					if(isset($_POST['recurrenceON'])){ //le trajet PEUT être récurrent
-						if(isset($_POST['allerretourON'])){ //le trajet possède un aller-retour
-						//	SI la date est correcte
-						//		SI l'utilisateur a coché la réccurence
-						//			SI l'utilisateur a coché l'allerretour
-						//				créer un enregistrement pour l'utilisateur dans registrations avec une startDate égale à $_POST['date'] et une
-						//					endDate égale à l'endDate du ride avec un ride_fK égal à $ride->bindedride
-						//			FIN SI
-						//				créer un enregistrement pour l'utilisateur dans registrations avec une startDate égale à $_POST['date'] et une
-						//					endDate égale à l'endDate du ride
-						//			rediriger l'utilisateur sur la page d'accueil
-						//		SINON
-						//			SI l'utilisateur a coché l'allerretour
-						//				créer un enregistrement pour l'utilisateur dans registrations avec une startDate et une endDate égale à $_POST['date']
-						//					avec un ride_fK égal à $ride->bindedride
-						//			FIN SI
-						//				créer un enregistrement pour l'utilisateur dans registrations avec une startDate et une endDate égale à $_POST['date']
-						//				rediriger l'utilisateur sur la page d'accueil
-						//		FIN SI		
-						//	SINON
-						//		Rediriger l'utilisateur sur la page du trajet et afficher l'erreur comme quoi la date est incorrecte
-						//	FIN SI
-							if($_POST['dateB']!="")
-							{
-								if(isset($_POST['recurrence'])){
-									if(isset($_POST['allerretour']))
-									{
-
-									}
-
-								}else{
-									if(isset($_POST['allerretour'])){
-
-									}
-
-								}
-							}else{
-								die("date incorrecte");
-							}
-						
-						}else if(isset($_POST['allerretourOFF'])){ //le trajet ne possède PAS d'aller-retour
-						//	SI la date est correcte
-						//		SI l'utilisateur a coché la réccurence
-						//			créer un enregistrement pour l'utilisateur dans registrations avec une startDate égale à $_POST['date'] et une
-						//				endDate égale à l'endDate du ride
-						//			rediriger l'utilisateur sur la page d'accueil
-						//		SINON
-						//			créer un enregistrement pour l'utilisateur dans registrations avec une startDate et une endDate égale à $_POST['date']
-						//			rediriger l'utilisateur sur la page d'accueil
-						//		FIN SI		
-						//	SINON
-						//		Rediriger l'utilisateur sur la page du trajet et afficher l'erreur comme quoi la date est incorrecte
-						//	FIN SI
-							if($_POST['dateB']!=""){
-								if(isset($_POST['recurrence'])){
-
-								}else{
-
-								}
-							}else{
-								die("date incorrecte");
-							}
-						}
-					}else if(isset($_POST['recurrenceOFF'])){ //le trajet n'est JAMAIS récurrent
-						//	SI la date est correcte
-						//		créer un enregistrement pour l'utilisateur dans registrations avec une startDate et une endDate égale à $_POST['date']
-						//		rediriger l'utilisateur sur la page d'accueil
-						//	SINON
-						//		Rediriger l'utilisateur sur la page du trajet et afficher l'erreur comme quoi la date est incorrecte
-						//	FIN SI
-						if($_POST['dateB']!=""){
-							$similarRegistrations=Registration::model()->findAll('startDate<=:date AND endDate>=:date AND user_fk=:user AND ride_fk=:ride',
-								array(':date'=>date('Y-m-d 00:00:00',strtotime($_POST['dateB'])),
-									':user'=>$user->id,
-									':ride'=>$this->loadModel($id)->id
-								));
-							if(count($similarRegistrations)==0){
-								$registration=new Registration;
-								$registration->user_fk=$user->id;
-								$registration->ride_fk=$this->loadModel($id)->id;
-								$registration->startDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
-								$registration->endDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
-								$registration->accepted=0;
-								$registration->save();
-							}else{
-								die("déjà une registration !");
-							}
-						}else{
-							var_dump($_POST);
-							die("date incorrecte");
-						}
-					}
-					$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
-				}
+			    if(isset($_POST['date'])){ //l'utilisateur désire s'inscrire
+			    	if(isset($_POST['recurrence'])){ //le trajet PEUT être récurrent
+			    		if(isset($_POST['allerretour'])){ //le trajet possède un aller-retour
+			    		//	SI la date est correcte
+			    		//		SI l'utilisateur a coché la réccurence
+			    		//			SI allerretour existe et l'utilisateur a coché l'allerretour
+			    		//			créer un enregistrement pour l'utilisateur dans registrations avec une startDate égale à $_POST['date'] et une
+			    		//				endDate égale à l'endDate du ride avec un ride_fK égal à $ride->bindedride
+			    		//			FIN SI
+			    		//			créer un enregistrement pour l'utilisateur dans registrations avec une startDate égale à $_POST['date'] et une
+			    		//				endDate égale à l'endDate du ride
+			    		//			rediriger l'utilisateur sur la page d'accueil
+			    		//		SINON
+			    		//			SI allerretour existe et l'utilisateur a coché l'allerretour
+			    		//			créer un enregistrement pour l'utilisateur dans registrations avec une startDate et une endDate égale à $_POST['date']
+			    		//				avec un ride_fK égal à $ride->bindedride
+			    		//			FIN SI
+			    		//			créer un enregistrement pour l'utilisateur dans registrations avec une startDate et une endDate égale à $_POST['date']
+			    		//			rediriger l'utilisateur sur la page d'accueil
+			    		//		FIN SI		
+			    		//	SINON
+			    		//		Rediriger l'utilisateur sur la page du trajet et afficher l'erreur comme quoi la date est incorrecte
+			    		//	FIN SI
+			    		}else{ //le trajet ne possède PAS d'aller-retour
+			    		//	SI la date est correcte
+			    		//		SI l'utilisateur a coché la réccurence
+			    		//			créer un enregistrement pour l'utilisateur dans registrations avec une startDate égale à $_POST['date'] et une
+			    		//				endDate égale à l'endDate du ride
+			    		//			rediriger l'utilisateur sur la page d'accueil
+			    		//		SINON
+			    		//			créer un enregistrement pour l'utilisateur dans registrations avec une startDate et une endDate égale à $_POST['date']
+			    		//			rediriger l'utilisateur sur la page d'accueil
+			    		//		FIN SI		
+			    		//	SINON
+			    		//		Rediriger l'utilisateur sur la page du trajet et afficher l'erreur comme quoi la date est incorrecte
+			    		//	FIN SI
+			    		}
+			    	}else{ //le trajet n'est JAMAIS récurrent
+			    		//	SI la date est correcte
+			    		//		créer un enregistrement pour l'utilisateur dans registrations avec une startDate et une endDate égale à $_POST['date']
+			    		//		rediriger l'utilisateur sur la page d'accueil
+			    		//	SINON
+			    		//		Rediriger l'utilisateur sur la page du trajet et afficher l'erreur comme quoi la date est incorrecte
+			    		//	FIN SI
+			    	}
+			    	$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
+			    }
 
 		$today = date('Y-m-d 00:00:00', time());
 		$registrations=Registration::model()->findAll('ride_fk=:ride_fk AND endDate>=:today', array(':ride_fk'=>$id, ':today'=>$today));

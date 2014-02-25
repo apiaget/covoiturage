@@ -17,6 +17,6 @@
 		));
 		$this->endWidget();
 	?>
-	</div><!-- sidebar -->
+	</div><!-- sidebar-->
 </div>
 <?php $this->endContent(); ?>

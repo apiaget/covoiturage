@@ -140,4 +140,12 @@ class Ride extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+	public function showDuringHolidays($date)
+	{
+		if (strtotime($this->endDate)-strtotime($this->startDate)>0 && Holiday::model()->isHoliday($date)) {
+			return false;
+		}
+		return true;
+	}
 }
