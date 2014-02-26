@@ -47,18 +47,18 @@
 		$dateA=$dateB=$date;
 		echo "<table id='days'><tr id='cool'><th width='70px'>Date</th>"; //Ligne du haut
 		while ($dateA<=$ride->endDate) {
-			if($ride->showDuringHolidays($dateA)){
+			if($ride->showDuringHolidays($dateA) && $dateA>=$ride->startDate){
 				if(isset($_GET['date']) && $_GET['date']==date('d-m-Y', strtotime($dateA))){
-					echo "<td class='chosen' width='68px'>".date('d.m.y', strtotime($dateA))."</td>";
+					echo "<td class='chosen' width='68px'>".date('d.m.Y', strtotime($dateA))."</td>";
 				}else{
-					echo "<td width='68px'>".date('d.m.y', strtotime($dateA))."</td>";
+					echo "<td width='68px'>".date('d.m.Y', strtotime($dateA))."</td>";
 				}
 			}
 			$dateA=date('Y-m-d 00:00:00', strtotime($dateA.'+7 day'));
 		}
-		echo "<td></td></tr><tr><th>Occupation</th>"; //ligne du bas
+		echo "<td class='supp'></td></tr><tr><th>Occupation</th>"; //ligne du bas
 		while ($dateB<=$ride->endDate) {
-			if($ride->showDuringHolidays($dateB)){
+			if($ride->showDuringHolidays($dateB) && $dateB>=$ride->startDate){
 				if(isset($_GET['date']) && $_GET['date']==date('d-m-Y', strtotime($dateB))){
 					echo "<td class='chosen'>";
 					$i=0;
@@ -106,6 +106,11 @@
 		?>
 		<tr><td rowspan="2"><input type="submit" value="S'inscrire"></td></tr>
 	</table>
+	<?php
+    foreach(Yii::app()->user->getFlashes() as $key => $message) {
+        echo '<div class="flash-' . $key . '">' . $message . "</div>\n";
+    }
+?>
 	</form>
 	<?php 
 	if($ride->startDate!=$ride->endDate) //aller retour 
@@ -129,7 +134,7 @@
 	for(var i=0, iMax=tds.length ; i < iMax; i++)
 	{
 
-		if(tds[i].parentNode.parentNode.parentNode.id == 'days' && tds[i].className!="supp"){
+		if(tds[i].parentNode.parentNode.parentNode.id == 'days' && tds[i].className!="supp" && document.getElementById('date') != null){
 			if(l==0) {//s'assure que la date n'est pas vide
 				document.getElementById('date').value=tds[i].parentNode.parentNode.childNodes[0].childNodes[1].textContent;
 				document.getElementById('dateB').value=tds[i].parentNode.parentNode.childNodes[0].childNodes[1].textContent;

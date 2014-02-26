@@ -54,80 +54,273 @@ class RidesController extends Controller
 		//die($_GET['date']);
 		$cpnvId="j.le.noob";
 		$user=User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$cpnvId));
-
 					//$registration=new Registration;
-				if(isset($_POST['dateB'])){ //l'utilisateur désire s'inscrire
+
+
+				//trajet récurrent, aller-retour possible
+				//trajet récurrent, aller-retour pas possible
+				//trajet non récurrent, aller-retour possible
+				//trajet non récurrent, aller-retour pas possible
+				if(isset($_POST['dateB']) and $_POST['dateB']!=""){ //l'utilisateur désire s'inscrire
 					if(isset($_POST['recurrenceON'])){ //le trajet PEUT être récurrent
-						if(isset($_POST['allerretourON'])){ //le trajet possède un aller-retour
-						//	SI la date est correcte
-						//		SI l'utilisateur a coché la réccurence
-						//			SI l'utilisateur a coché l'allerretour
-						//				créer un enregistrement pour l'utilisateur dans registrations avec une startDate égale à $_POST['date'] et une
-						//					endDate égale à l'endDate du ride avec un ride_fK égal à $ride->bindedride
-						//			FIN SI
-						//				créer un enregistrement pour l'utilisateur dans registrations avec une startDate égale à $_POST['date'] et une
-						//					endDate égale à l'endDate du ride
-						//			rediriger l'utilisateur sur la page d'accueil
-						//		SINON
-						//			SI l'utilisateur a coché l'allerretour
-						//				créer un enregistrement pour l'utilisateur dans registrations avec une startDate et une endDate égale à $_POST['date']
-						//					avec un ride_fK égal à $ride->bindedride
-						//			FIN SI
-						//				créer un enregistrement pour l'utilisateur dans registrations avec une startDate et une endDate égale à $_POST['date']
-						//				rediriger l'utilisateur sur la page d'accueil
-						//		FIN SI		
+						if(isset($_POST['allerretourON'])){ //le trajet PEUT être aller-retour
+						//	SI l'utilisateur a coché la réccurence
+						//		SI l'utilisateur a coché l'allerretour
+						//			créer un enregistrement pour l'utilisateur dans registrations avec une startDate égale à $_POST['date'] et une
+						//				endDate égale à l'endDate du ride avec un ride_fK égal à $ride->bindedride
+						//		FIN SI
+						//			créer un enregistrement pour l'utilisateur dans registrations avec une startDate égale à $_POST['date'] et une
+						//				endDate égale à l'endDate du ride
+						//		rediriger l'utilisateur sur la page d'accueil
 						//	SINON
-						//		Rediriger l'utilisateur sur la page du trajet et afficher l'erreur comme quoi la date est incorrecte
+						//		SI l'utilisateur a coché l'allerretour
+						//			créer un enregistrement pour l'utilisateur dans registrations avec une startDate et une endDate égale à $_POST['date']
+						//				avec un ride_fK égal à $ride->bindedride
+						//		FIN SI
+						//			créer un enregistrement pour l'utilisateur dans registrations avec une startDate et une endDate égale à $_POST['date']
+						//			rediriger l'utilisateur sur la page d'accueil
 						//	FIN SI
-							if($_POST['dateB']!="")
-							{
-								if(isset($_POST['recurrence'])){
-									if(isset($_POST['allerretour']))
-									{
+							if(isset($_POST['recurrence'])){
+								$registrationA=new Registration;
+								$registrationA->user_fk=$user->id;
+								$registrationA->ride_fk=$this->loadModel($id)->id;
+								$registrationA->startDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
+								$registrationA->endDate=$this->loadModel($id)->endDate;
+								$registrationA->accepted=0;
 
+								$registrationR=new Registration;
+								$registrationR->user_fk=$user->id;
+								$registrationR->ride_fk=$this->loadModel($id)->bindedride;
+								$registrationR->startDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
+								$registrationR->endDate=$this->loadModel($id)->endDate;
+								$registrationR->accepted=0;
+
+								$similarRegistrationsA=Registration::model()->findAll('startDate<=:dateFinReserv AND endDate>=:dateDebutReserv AND user_fk=:user AND ride_fk=:ride',
+									array(':dateDebutReserv'=>date('Y-m-d 00:00:00',strtotime($_POST['dateB'])),
+										'dateFinReserv'=>$this->loadModel($id)->endDate,
+										':user'=>$user->id,
+										':ride'=>$this->loadModel($id)->id
+									));
+
+								$similarRegistrationsR=Registration::model()->findAll('startDate<=:dateFinReserv AND endDate>=:dateDebutReserv AND user_fk=:user AND ride_fk=:ride',
+									array(':dateDebutReserv'=>date('Y-m-d 00:00:00',strtotime($_POST['dateB'])),
+										'dateFinReserv'=>$this->loadModel($id)->endDate,
+										':user'=>$user->id,
+										':ride'=>$this->loadModel($id)->bindedride
+									));
+
+								if(isset($_POST['allerretour'])) //trajet récurrent coché, trajet aller retour coché
+								{
+									if(count($similarRegistrationsA)==0 && count($similarRegistrationsR)==0){
+										$registrationA->save();
+										$registrationR->save();
+									}else{
+										if(count($similarRegistrationsA)==0){
+											$registrationA->save();
+											Yii::app()->user->setFlash('error', "Vous aviez déjà des réservations durant ces jours-ci dans le trajet retour !<br/>Nous avons donc réservé uniquement le trajet aller.");
+											$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
+										}else if(count($similarRegistrationsR)==0){
+											$registrationR->save();
+											Yii::app()->user->setFlash('error', "Vous aviez déjà des réservations durant ces jours-ci dans le trajet aller !<br/>Nous avons donc réservé uniquement le trajet retour.");
+											$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
+										}else{
+											Yii::app()->user->setFlash('error', "Vous aviez déjà des réservations pour ces jour-ci dans les trajets aller et retour !");
+											$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
+										}
 									}
-
-								}else{
-									if(isset($_POST['allerretour'])){
-
+								}else{ //trajet récurrent coché, trajet aller retour non coché
+									if(count($similarRegistrationsA)==0){
+										$registrationA->save();
+									}else{
+										Yii::app()->user->setFlash('error', "Vous aviez déjà des réservations pour ces jour-ci !");
+										$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
 									}
-
 								}
-							}else{
-								die("date incorrecte");
+							}else{	//trajet récurrent non coché
+								if(isset($_POST['allerretour'])){ //trajet récurrent non coché, trajet aller retour coché
+									$similarRegistrationsA=Registration::model()->findAll('startDate<=:date AND endDate>=:date AND user_fk=:user AND ride_fk=:ride',
+										array(':date'=>date('Y-m-d 00:00:00',strtotime($_POST['dateB'])),
+											':user'=>$user->id,
+											':ride'=>$this->loadModel($id)->id
+										));
+									$similarRegistrationsR=Registration::model()->findAll('startDate<=:date AND endDate>=:date AND user_fk=:user AND ride_fk=:ride',
+										array(':date'=>date('Y-m-d 00:00:00',strtotime($_POST['dateB'])),
+											':user'=>$user->id,
+											':ride'=>$this->loadModel($id)->bindedride
+										));
+									$registrationA=new Registration;
+									$registrationA->user_fk=$user->id;
+									$registrationA->ride_fk=$this->loadModel($id)->id;
+									$registrationA->startDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
+									$registrationA->endDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
+									$registrationA->accepted=0;
+
+									$registrationR=new Registration;
+									$registrationR->user_fk=$user->id;
+									$registrationR->ride_fk=$this->loadModel($id)->bindedride;
+									$registrationR->startDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
+									$registrationR->endDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
+									$registrationR->accepted=0;
+									if(count($similarRegistrationsA)==0 && count($similarRegistrationsR)==0){
+										$registrationA->save();
+										$registrationR->save();
+									}else{
+										if(count($similarRegistrationsA)==0){
+											$registrationA->save();
+											Yii::app()->user->setFlash('error', "Vous aviez déjà une réservation pour ce jour-ci dans le trajet retour !<br/>Nous avons donc réservé en plus le trajet aller.");
+											$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
+										}else if(count($similarRegistrationsR)==0){
+											$registrationR->save();
+											Yii::app()->user->setFlash('error', "Vous aviez déjà une réservation pour ce jour-ci dans le trajet aller !<br/>Nous avons donc réservé en plus le trajet retour.");
+											$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
+										}else{
+											Yii::app()->user->setFlash('error', "Vous aviez déjà des réservation pour ce jour-ci dans les trajets aller et retour !");
+											$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
+										}
+									}
+								}else{
+									$similarRegistrations=Registration::model()->findAll('startDate<=:date AND endDate>=:date AND user_fk=:user AND ride_fk=:ride',
+										array(':date'=>date('Y-m-d 00:00:00',strtotime($_POST['dateB'])),
+											':user'=>$user->id,
+											':ride'=>$this->loadModel($id)->id
+										));
+									if(count($similarRegistrations)==0){
+										$registration=new Registration;
+										$registration->user_fk=$user->id;
+										$registration->ride_fk=$this->loadModel($id)->id;
+										$registration->startDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
+										$registration->endDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
+										$registration->accepted=0;
+										$registration->save();
+									}else{
+										Yii::app()->user->setFlash('error', "Vous avez déjà une réservation pour ce jour-ci !");
+										$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
+									}
+								}
+
 							}
 						
 						}else if(isset($_POST['allerretourOFF'])){ //le trajet ne possède PAS d'aller-retour
-						//	SI la date est correcte
-						//		SI l'utilisateur a coché la réccurence
-						//			créer un enregistrement pour l'utilisateur dans registrations avec une startDate égale à $_POST['date'] et une
-						//				endDate égale à l'endDate du ride
-						//			rediriger l'utilisateur sur la page d'accueil
-						//		SINON
-						//			créer un enregistrement pour l'utilisateur dans registrations avec une startDate et une endDate égale à $_POST['date']
-						//			rediriger l'utilisateur sur la page d'accueil
-						//		FIN SI		
+						//	SI l'utilisateur a coché la réccurence
+						//		créer un enregistrement pour l'utilisateur dans registrations avec une startDate égale à $_POST['date'] et une
+						//			endDate égale à l'endDate du ride
+						//		rediriger l'utilisateur sur la page d'accueil
 						//	SINON
-						//		Rediriger l'utilisateur sur la page du trajet et afficher l'erreur comme quoi la date est incorrecte
-						//	FIN SI
-							if($_POST['dateB']!=""){
-								if(isset($_POST['recurrence'])){
-
+						//		créer un enregistrement pour l'utilisateur dans registrations avec une startDate et une endDate égale à $_POST['date']
+						//		rediriger l'utilisateur sur la page d'accueil
+						//	FIN SI		
+							if(isset($_POST['recurrence'])){ //date correcte, trajet récurrent coché, pas d'aller retour possible
+								$similarRegistrations=Registration::model()->findAll('startDate<=:dateFinReserv AND endDate>=:dateDebutReserv AND user_fk=:user AND ride_fk=:ride',
+									array(':dateDebutReserv'=>date('Y-m-d 00:00:00',strtotime($_POST['dateB'])),
+										'dateFinReserv'=>$this->loadModel($id)->endDate,
+										':user'=>$user->id,
+										':ride'=>$this->loadModel($id)->id
+									));
+								if(count($similarRegistrations)==0){
+									$registration=new Registration;
+									$registration->user_fk=$user->id;
+									$registration->ride_fk=$this->loadModel($id)->id;
+									$registration->startDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
+									$registration->endDate=$this->loadModel($id)->endDate;
+									$registration->accepted=0;
+									$registration->save();
 								}else{
-
+									Yii::app()->user->setFlash('error', "Vous avez déjà une réservation parmis un des jours sélectionnés !");
+									$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
 								}
-							}else{
-								die("date incorrecte");
+							}else{	//date correcte, trajet récurrent non coché, pas d'aller retour possible
+								$similarRegistrations=Registration::model()->findAll('startDate<=:date AND endDate>=:date AND user_fk=:user AND ride_fk=:ride',
+									array(':date'=>date('Y-m-d 00:00:00',strtotime($_POST['dateB'])),
+										':user'=>$user->id,
+										':ride'=>$this->loadModel($id)->id
+									));
+								if(count($similarRegistrations)==0){
+									$registration=new Registration;
+									$registration->user_fk=$user->id;
+									$registration->ride_fk=$this->loadModel($id)->id;
+									$registration->startDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
+									$registration->endDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
+									$registration->accepted=0;
+									$registration->save();
+								}else{
+									Yii::app()->user->setFlash('error', "Vous avez déjà une réservation pour ce jour-ci !");
+									$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
+								}
 							}
 						}
 					}else if(isset($_POST['recurrenceOFF'])){ //le trajet n'est JAMAIS récurrent
-						//	SI la date est correcte
+						if(isset($_POST['allerretourON'])){ //le trajet possède un aller-retour
+						//	SI l'utilisateur a coché l'aller-retour
+						//		créer un enregistrement pour l'utilisateur dans registrations avec une startDate et une endDate égale à $_POST['date']
+						//			avec un ride_fk égal à $ride->bindedride
+						//		créer un enregistrement pour l'utilisateur dans registrations avec une startDate et une endDate égale à $_POST['date']
+						//	SINON
 						//		créer un enregistrement pour l'utilisateur dans registrations avec une startDate et une endDate égale à $_POST['date']
 						//		rediriger l'utilisateur sur la page d'accueil
-						//	SINON
-						//		Rediriger l'utilisateur sur la page du trajet et afficher l'erreur comme quoi la date est incorrecte
 						//	FIN SI
-						if($_POST['dateB']!=""){
+							if(isset($_POST['allerretour'])){
+								$similarRegistrationsA=Registration::model()->findAll('startDate<=:date AND endDate>=:date AND user_fk=:user AND ride_fk=:ride',
+									array(':date'=>date('Y-m-d 00:00:00',strtotime($_POST['dateB'])),
+										':user'=>$user->id,
+										':ride'=>$this->loadModel($id)->id
+									));
+								$similarRegistrationsR=Registration::model()->findAll('startDate<=:date AND endDate>=:date AND user_fk=:user AND ride_fk=:ride',
+									array(':date'=>date('Y-m-d 00:00:00',strtotime($_POST['dateB'])),
+										':user'=>$user->id,
+										':ride'=>$this->loadModel($id)->bindedride
+									));
+								$registrationA=new Registration;
+								$registrationA->user_fk=$user->id;
+								$registrationA->ride_fk=$this->loadModel($id)->id;
+								$registrationA->startDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
+								$registrationA->endDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
+								$registrationA->accepted=0;
+
+								$registrationR=new Registration;
+								$registrationR->user_fk=$user->id;
+								$registrationR->ride_fk=$this->loadModel($id)->bindedride;
+								$registrationR->startDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
+								$registrationR->endDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
+								$registrationR->accepted=0;
+								if(count($similarRegistrations)==0 && count($similarRegistrationsAR)==0){
+									$registrationA->save();
+									$registrationR->save();
+								}else{
+									if(count($similarRegistrationsA)==0){
+										$registrationA->save();
+										Yii::app()->user->setFlash('error', "Vous aviez déjà une réservation pour ce jour-ci dans le trajet retour !<br/>Nous avons donc réservé en plus le trajet aller.");
+										$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
+									}else if(count($similarRegistrationsR)==0){
+										$registrationR->save();
+										Yii::app()->user->setFlash('error', "Vous aviez déjà une réservation pour ce jour-ci dans le trajet aller !<br/>Nous avons donc réservé en plus le trajet retour.");
+										$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
+									}else{
+										Yii::app()->user->setFlash('error', "Vous aviez déjà des réservation pour ce jour-ci dans les trajets aller et retour !");
+										$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
+									}
+								}
+							}else{
+								$similarRegistrations=Registration::model()->findAll('startDate<=:date AND endDate>=:date AND user_fk=:user AND ride_fk=:ride',
+									array(':date'=>date('Y-m-d 00:00:00',strtotime($_POST['dateB'])),
+										':user'=>$user->id,
+										':ride'=>$this->loadModel($id)->id
+									));
+								if(count($similarRegistrations)==0){
+									$registration=new Registration;
+									$registration->user_fk=$user->id;
+									$registration->ride_fk=$this->loadModel($id)->id;
+									$registration->startDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
+									$registration->endDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
+									$registration->accepted=0;
+									$registration->save();
+								}else{
+									Yii::app()->user->setFlash('error', "Vous avez déjà une réservation pour ce jour-ci !");
+									$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
+								}
+							}
+						}else if(isset($_POST['allerretourOFF'])){ //le trajet ne possède PAS d'aller-retour
+						//	créer un enregistrement pour l'utilisateur dans registrations avec une startDate et une endDate égale à $_POST['date']
+						//	rediriger l'utilisateur sur la page d'accueil
 							$similarRegistrations=Registration::model()->findAll('startDate<=:date AND endDate>=:date AND user_fk=:user AND ride_fk=:ride',
 								array(':date'=>date('Y-m-d 00:00:00',strtotime($_POST['dateB'])),
 									':user'=>$user->id,
@@ -142,13 +335,15 @@ class RidesController extends Controller
 								$registration->accepted=0;
 								$registration->save();
 							}else{
-								die("déjà une registration !");
+								Yii::app()->user->setFlash('error', "Vous avez déjà une réservation pour ce jour-ci !");
+								$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
 							}
-						}else{
-							var_dump($_POST);
-							die("date incorrecte");
 						}
 					}
+					var_dump($_POST);
+					$this->redirect(Yii::app()->user->returnUrl);
+				}else if(isset($_POST['dateB']) && $_POST['dateB']==""){
+					Yii::app()->user->setFlash('error', "Date incorrecte !");
 					$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
 				}
 
