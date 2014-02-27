@@ -158,4 +158,24 @@ class User extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+	public function reputation(){
+		$votes = Vote::model()->findAll('targetuser_fk=:userid', array(':userid'=>$this->id));
+		if(count($votes)!=0){
+			$total=0;
+			foreach ($votes as $vote) {
+				$total+=$vote->vote;
+			}
+			return array($total*20/count($votes), count($votes));
+		}else{
+			return array(0, 0);
+		}
+	}
+
+	public function nom(){
+		return $this->cpnvId;
+	}
+	public function prenom(){
+		return $this->cpnvId;
+	}
 }

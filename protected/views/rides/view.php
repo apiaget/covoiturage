@@ -83,90 +83,53 @@
 </div>
 
 <?php
-	if($user->id!=$ride->driver_fk){ //pas conducteu
+	if($user->id!=$ride->driver_fk){ //passager ou utilisateur
 ?>
-	<form method="post">
-		<table>
-		<tr><td><label for="date">Date</label></td><td><input type="text" name="date" id="date" disabled/><input type="text" name="dateB" id="dateB" hidden/></td></tr>
-		<?php 
+		<form method="post">
+			<table>
+			<tr><td><label for="date">Date</label></td><td><input type="text" name="date" id="date" disabled/><input type="text" name="dateB" id="dateB" hidden/></td></tr>
+			<?php 
+			if($ride->startDate!=$ride->endDate) //aller retour 
+			{
+				echo "<tr><td><label for='recurrence'>Récurrence*</label></td><td><input type='checkbox' name='recurrence' id='recurrence' /><input type='checkbox' name='recurrenceON' id='recurrenceON' checked hidden/></td></tr>";
+			}else{
+				echo "<tr><td><input type='checkbox' name='recurrenceOFF' id='recurrenceOFF' checked hidden/></td></tr>";
+			}
+			?>
+			<?php 
+			if($ride->bindedride!="") //aller retour 
+			{
+				echo "<tr><td><label for='allerretour'>Aller-Retour</label></td><td><input type='checkbox' name='allerretour' id='allerretour' /><input type='checkbox' name='allerretourON' id='allerretourON' checked hidden/></td></tr>";
+			}else{
+				echo "<tr><td><input type='checkbox' name='allerretourOFF' id='allerretourOFF' checked hidden/></td></tr>";
+			}
+			?>
+			<tr><td rowspan="2"><input type="submit" value="S'inscrire"></td></tr>
+		</table>
+<?php
+	    foreach(Yii::app()->user->getFlashes() as $key => $message) { //affiche les messages d'erreur
+	        echo '<div class="flash-' . $key . '">' . $message . "</div>\n";
+	    }
+?>
+		</form>
+<?php 
 		if($ride->startDate!=$ride->endDate) //aller retour 
 		{
-			echo "<tr><td><label for='recurrence'>Récurrence*</label></td><td><input type='checkbox' name='recurrence' id='recurrence' /><input type='checkbox' name='recurrenceON' id='recurrenceON' checked hidden/></td></tr>";
-		}else{
-			echo "<tr><td><input type='checkbox' name='recurrenceOFF' id='recurrenceOFF' checked hidden/></td></tr>";
+			echo "<small>*La récurrence s'effectue à partir de la date sélectionnée jusqu'à la fin des trajets proposés</small>";
 		}
-		?>
-		<?php 
-		if($ride->bindedride!="") //aller retour 
-		{
-			echo "<tr><td><label for='allerretour'>Aller-Retour</label></td><td><input type='checkbox' name='allerretour' id='allerretour' /><input type='checkbox' name='allerretourON' id='allerretourON' checked hidden/></td></tr>";
-		}else{
-			echo "<tr><td><input type='checkbox' name='allerretourOFF' id='allerretourOFF' checked hidden/></td></tr>";
-		}
-		?>
-		<tr><td rowspan="2"><input type="submit" value="S'inscrire"></td></tr>
-	</table>
-	<?php
-    foreach(Yii::app()->user->getFlashes() as $key => $message) {
-        echo '<div class="flash-' . $key . '">' . $message . "</div>\n";
-    }
-?>
-	</form>
-	<?php 
-	if($ride->startDate!=$ride->endDate) //aller retour 
-	{
-		echo "<small>*La récurrence s'effectue à partir de la date sélectionnée jusqu'à la fin des trajets proposés</small>";
 	}
-	?>
+?>
+
+<?php
+	if($user->id==$ride->driver_fk){ //c'est le conducteur
+?>
+		<form method="post">
+			<input type="submit" name="supprimer" id="supprimer" value="Supprimer le trajet"/>
+			<input type="submit" name="editer" id="editer" value="Editer le trajet"/>
+		</form>
 <?php
 	}
 ?>
-		
-
-<?php var_dump($registrations);
-
-?>
-
-<script type="text/javascript">
-	
-	var tds=document.getElementsByTagName('td');
-	var l=0
-	for(var i=0, iMax=tds.length ; i < iMax; i++)
-	{
-
-		if(tds[i].parentNode.parentNode.parentNode.id == 'days' && tds[i].className!="supp" && document.getElementById('date') != null){
-			if(l==0) {//s'assure que la date n'est pas vide
-				document.getElementById('date').value=tds[i].parentNode.parentNode.childNodes[0].childNodes[1].textContent;
-				document.getElementById('dateB').value=tds[i].parentNode.parentNode.childNodes[0].childNodes[1].textContent;
-			} 
-			tds[i].onclick = function(){
-				resetColorDayTable(); //reseter toutes les couleurs
-				var k = 0;
-				that=this;
-				while( (that = that.previousSibling) != null ) {k++;} //compte 
-				this.parentNode.parentNode.childNodes[0].childNodes[k].className="chosen";//mettre la couleur au jour choisi
-				this.parentNode.parentNode.childNodes[1].childNodes[k].className="chosen";
-				date=this.parentNode.parentNode.childNodes[0].childNodes[k].textContent;//récupérer valeur ligne du haut
-				document.getElementById('date').value=date;
-				document.getElementById('dateB').value=date;
-				return false;
-			};
-		}
-	}
-
-	function resetColorDayTable()
-	{
-		var table = document.getElementById('days');
-		for(var i = 0; i<2; i++)
-		{
-			for(var j = 0, jMax = table.childNodes[0].childNodes[0].childNodes.length; j<jMax;j++)
-			{
-				table.childNodes[0].childNodes[i].childNodes[j].className="";
-			}
-		}
-	}
-
-</script>
 <?
 //	voit paramètre du ride ----OK
 //	Si driver
@@ -186,9 +149,41 @@
 //		bouton "s'inscrire" ----OK
 //		voit commentaires avec possibilité de répondre
 //	fin Si
-//
-//
-//
-//
-//
 ?>
+
+
+<script type="text/javascript">
+	var tds=document.getElementsByTagName('td');
+	var l=0
+	for(var i=0, iMax=tds.length ; i < iMax; i++){
+		if(tds[i].parentNode.parentNode.parentNode.id == 'days' && tds[i].className!="supp" && document.getElementById('date') != null){
+			if(l==0) {//s'assure que la date n'est pas vide
+				document.getElementById('date').value=tds[i].parentNode.parentNode.childNodes[0].childNodes[1].textContent;
+				document.getElementById('dateB').value=tds[i].parentNode.parentNode.childNodes[0].childNodes[1].textContent;
+			} 
+			tds[i].onclick = function(){
+				resetColorDayTable(); //reseter toutes les couleurs
+				var k = 0;
+				that=this;
+				while( (that = that.previousSibling) != null ) {k++;} //compte 
+				this.parentNode.parentNode.childNodes[0].childNodes[k].className="chosen";//mettre la couleur au jour choisi
+				this.parentNode.parentNode.childNodes[1].childNodes[k].className="chosen";
+				date=this.parentNode.parentNode.childNodes[0].childNodes[k].textContent;//récupérer valeur ligne du haut
+				document.getElementById('date').value=date;
+				document.getElementById('dateB').value=date;
+				return false;
+			};
+		}
+	}
+	function resetColorDayTable(){
+		var table = document.getElementById('days');
+		for(var i = 0; i<2; i++)
+		{
+			for(var j = 0, jMax = table.childNodes[0].childNodes[0].childNodes.length; j<jMax;j++)
+			{
+				table.childNodes[0].childNodes[i].childNodes[j].className="";
+			}
+		}
+	}
+
+</script>

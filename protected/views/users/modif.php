@@ -17,8 +17,19 @@ echo CHtml::link("<strong>Données personnelles</strong>", array('users/view', '
 		margin-left:170px;
 		width:600px;
 	}
+	.ratings{
+		background: url('../images/star_grey.png') repeat-x 0 0;
+		width:70px;
+		height:14px;
+	}
+	.rating{
+		background: url('../images/star_red.png') repeat-x 0 0;
+		height:14px;
+	}
 </style>
-
+<div class="user">
+	<?php echo "<h3>".$user->prenom()." ".$user->nom()."</h3><div class='ratings'><div class='rating' style='width:".$user->reputation()[0]."%'></div></div> (".$user->reputation()[1]." votes)"; ?>
+</div>
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
@@ -30,7 +41,7 @@ echo CHtml::link("<strong>Données personnelles</strong>", array('users/view', '
 	<table class='usertable'>
 		<tr>
 			<td><?php echo $form->labelEx($user,'email', array('label' => 'Email personnel')); ?></td>
-			<td><?php echo $form->textField($user,'email',array('size'=>35,'maxlength'=>60)); ?></td>
+			<td><?php echo $form->textField($user,'email',array('size'=>35,'maxlength'=>60)); echo "<br/>Réputation : " . $user->reputation()[0];?></td>
 		</tr>
 	
 		<tr>
