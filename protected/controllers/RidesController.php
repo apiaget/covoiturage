@@ -51,7 +51,7 @@ class RidesController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$cpnvId="j.le.noob";
+		$cpnvId="Joël";
 		$user=User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$cpnvId));
 
 		if(isset($_POST['supprimer'])){

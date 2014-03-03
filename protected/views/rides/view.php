@@ -36,6 +36,11 @@
 	<tr>
 		<td>Description</td><td><?php echo $ride->description; ?></td>
 	</tr>
+	<?php
+		if($ride->bindedride==null){
+			echo "woaw";
+		}
+	?>
 </table>
 <div name="seats" id="seats">	<!--Affichage de la liste des jours-->
 	<?php
@@ -129,6 +134,7 @@
 		</form>
 <?php
 	}
+	var_dump($ride);
 ?>
 <?
 //	voit paramètre du ride ----OK
