@@ -9,6 +9,7 @@ echo CHtml::link("Créer un nouveau trajet", array('rides/create'));
 <hr/>
 
 <?php
+$r[0]=0;
 foreach($rides as $ride)
 {
     $r[$ride->id]=0;
@@ -28,8 +29,8 @@ while($i<20 && array_sum($r)<count($rides))
 
                 echo "<td>".$ride->driver->cpnvId."</td>";
                 echo "<td>"."0/".$ride->seats."</td>";
-                echo "<td>".$ride->departuretown->name." à ".substr($ride->departure, 11, 5)."</td>";
-                echo "<td>".$ride->arrivaltown->name." vers ".substr($ride->arrival, 11, 5)."</td>";
+                echo "<td>".$ride->departuretown->name." à ".substr($ride->departure, 0, 5)."</td>";
+                echo "<td>".$ride->arrivaltown->name." vers ".substr($ride->arrival, 0, 5)."</td>";
             
                 switch ($ride->day) {
                         case '1':

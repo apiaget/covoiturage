@@ -28,10 +28,10 @@
 		<td>Conducteur</td><td><?php echo $ride->driver->cpnvId; ?></td>
 	</tr>
 	<tr>
-		<td>Départ</td><td><?php echo $ride->departuretown->name." à ".substr($ride->departure, 11, 5); ?></td>
+		<td>Départ</td><td><?php echo $ride->departuretown->name." à ".substr($ride->departure, 0, 5); ?></td>
 	</tr>
 	<tr>
-		<td>Arrivée prévue</td><td><?php echo $ride->arrivaltown->name." vers ".substr($ride->arrival, 11, 5); ?></td>
+		<td>Arrivée prévue</td><td><?php echo $ride->arrivaltown->name." vers ".substr($ride->arrival, 0, 5); ?></td>
 	</tr>
 	<tr>
 		<td>Description</td><td><?php echo $ride->description; ?></td>
