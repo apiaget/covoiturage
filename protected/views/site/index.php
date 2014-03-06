@@ -21,51 +21,53 @@ $date=$datetime = date('Y-m-d 00:00:00', time());
 while($i<20 && array_sum($r)<count($rides))
 {
     foreach ($rides as $ride) {
-        if($ride->startDate<=$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0 && $ride->showDuringHolidays($date)){
-            $daydate = date("d-m-Y",strtotime($date));
-            echo "<tr onclick=";
-            echo "\"document.location='/covoiturage/covoiturage/rides/".$ride->id."?date=".$daydate."';";
-            echo "\" onmouseover='tablein(this);' onmouseout='tableout(this);'>";
 
-                echo "<td>".$ride->driver->cpnvId."</td>";
-                echo "<td>"."0/".$ride->seats."</td>";
-                echo "<td>".$ride->departuretown->name." à ".substr($ride->departure, 0, 5)."</td>";
-                echo "<td>".$ride->arrivaltown->name." vers ".substr($ride->arrival, 0, 5)."</td>";
-            
-                switch ($ride->day) {
-                        case '1':
-                            $day = "Lundi";
-                            break;
-                        case '2':
-                            $day = "Mardi";
-                            break;
-                        case '3':
-                            $day = "Mercredi";
-                            break;
-                        case '4':
-                            $day = "Jeudi";
-                            break;
-                        case '5':
-                            $day = "Vendredi";
-                            break;
-                        case '6':
-                            $day = "Samedi";
-                            break;
-                        case '7':
-                            $day = "Dimanche";
-                            break;
-                        default:
-                            $day = "?";
-                            break;
-                    }
-                echo "<td>".$day." ".$daydate."</td>";
-            echo "</tr>";
-            $i++;
-        }
-        if($ride->endDate<$date)
-        {
-            $r[$ride->id]=1;
-        }
+            if($ride->visibility==1 && $ride->startDate<=$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0 && $ride->showDuringHolidays($date)){
+                $daydate = date("d-m-Y",strtotime($date));
+                echo "<tr onclick=";
+                echo "\"document.location='/covoiturage/covoiturage/rides/".$ride->id."?date=".$daydate."';";
+                echo "\" onmouseover='tablein(this);' onmouseout='tableout(this);'>";
+
+                    echo "<td>".$ride->driver->cpnvId."</td>";
+                    echo "<td>"."0/".$ride->seats."</td>";
+                    echo "<td>".$ride->departuretown->name." à ".substr($ride->departure, 0, 5)."</td>";
+                    echo "<td>".$ride->arrivaltown->name." vers ".substr($ride->arrival, 0, 5)."</td>";
+                
+                    switch ($ride->day) {
+                            case '1':
+                                $day = "Lundi";
+                                break;
+                            case '2':
+                                $day = "Mardi";
+                                break;
+                            case '3':
+                                $day = "Mercredi";
+                                break;
+                            case '4':
+                                $day = "Jeudi";
+                                break;
+                            case '5':
+                                $day = "Vendredi";
+                                break;
+                            case '6':
+                                $day = "Samedi";
+                                break;
+                            case '7':
+                                $day = "Dimanche";
+                                break;
+                            default:
+                                $day = "?";
+                                break;
+                        }
+                    echo "<td>".$day." ".$daydate."</td>";
+                echo "</tr>";
+                $i++;
+            }
+            if($ride->endDate<$date)
+            {
+                $r[$ride->id]=1;
+            }
+
     }
     $date=date('Y-m-d 00:00:00', strtotime($date.' +1 day'));
 }

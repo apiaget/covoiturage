@@ -54,8 +54,20 @@ class RidesController extends Controller
 		$cpnvId="Joël";
 		$user=User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$cpnvId));
 
+		//ne pas afficher les rides effacés
+		$ride=$this->loadModel($id);
+		if($ride->visibility==0)
+		{
+			$this->redirect(Yii::app()->user->returnUrl);
+		}
+
 		if(isset($_POST['supprimer'])){
-			$this->loadModel($id)->delete();
+			//change la visibilité du ride
+			$ride=$this->loadModel($id);
+			$ride->visibility=0;
+			$ride->save();
+
+			/*$this->loadModel($id)->delete();*/
 			$this->redirect(Yii::app()->user->returnUrl);
 		}
 
