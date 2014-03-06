@@ -22,10 +22,37 @@
 .chosen{
 	background-color: #E5F1F4;
 }
+
+#notif{
+		font-weight: bold;
+		font-size: 0.9em;
+	}
+	.usertable{
+		margin-left:170px;
+		width:600px;
+	}
+	.ratings{
+		background: url('../images/star_grey.png') repeat-x 0 0;
+		width:70px;
+		height:14px;
+		display: inline-block;
+	}
+	.rating{
+		background: url('../images/star_red.png') repeat-x 0 0;
+		height:14px;
+	}
 </style>
+
+
+
+
 <table>
 	<tr>
-		<td>Conducteur</td><td><?php echo $ride->driver->cpnvId; ?></td>
+		<td>Conducteur</td><td><?php echo $ride->driver->cpnvId; ?>
+			<span class="user">
+				<?php $array=$user->reputation(); echo "</h3><span class='ratings'><span class='rating' style='width:".$array[0]."%'></span></span> (".$array[1]." votes)";?>
+			</span>
+		</td>
 	</tr>
 	<tr>
 		<td>Départ</td><td><?php echo $ride->departuretown->name." à ".substr($ride->departure, 0, 5); ?></td>
