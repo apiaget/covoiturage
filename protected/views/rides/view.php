@@ -121,7 +121,7 @@
 			<table>
 			<tr><td><label for="date">Date</label></td><td><input type="text" name="date" id="date" disabled/><input type="text" name="dateB" id="dateB" hidden/></td></tr>
 			<?php 
-			if($ride->startDate!=$ride->endDate) //aller retour 
+			if($ride->startDate!=$ride->endDate) //récurrence 
 			{
 				echo "<tr><td><label for='recurrence'>Récurrence*</label></td><td><input type='checkbox' name='recurrence' id='recurrence' /><input type='checkbox' name='recurrenceON' id='recurrenceON' checked hidden/></td></tr>";
 			}else{
@@ -131,7 +131,10 @@
 			<?php 
 			if($ride->bindedride!="") //aller retour 
 			{
-				echo "<tr><td><label for='allerretour'>Aller-Retour</label></td><td><input type='checkbox' name='allerretour' id='allerretour' /><input type='checkbox' name='allerretourON' id='allerretourON' checked hidden/></td></tr>";
+				$bindedriveid = $ride->bindedride;
+				$bindedrive = Ride::model()->find("id=:bindedriveid", array(":bindedriveid"=> $bindedriveid));
+			
+				echo "<tr><td><label for='allerretour'>Inscription au retour de ".substr($bindedrive->departure,0,5)."</label></td><td><input type='checkbox' name='allerretour' id='allerretour' /><input type='checkbox' name='allerretourON' id='allerretourON' checked hidden/></td></tr>";
 			}else{
 				echo "<tr><td><input type='checkbox' name='allerretourOFF' id='allerretourOFF' checked hidden/></td></tr>";
 			}
@@ -153,7 +156,7 @@
 ?>
 
 <?php
-	if($user->id==$ride->driver_fk){ //c'est le conducteur
+	if($user->id==$ride->driver_fk){ //si c'est le conducteur
 ?>
 		<form method="post">
 			<input type="submit" name="supprimer" id="supprimer" value="Supprimer le trajet"/>
