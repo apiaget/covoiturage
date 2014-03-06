@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 --
 -- Base de données: `covoiturage`
 --
-DELETE DATABASE `covoiturage`;
+DROP DATABASE `covoiturage`;
 CREATE DATABASE IF NOT EXISTS `covoiturage` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
 USE `covoiturage`;
 
