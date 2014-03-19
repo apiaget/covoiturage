@@ -29,7 +29,10 @@ class SiteController extends Controller
 	{
 		$datetime = date('Y-m-d 00:00:00', time());
 		$rides = Ride::model()->findAll('endDate>:today', array(':today'=>$datetime));
-		$this->render('index', array('rides' => $rides));
+		//récupération de toutes les registration pour l'utilisateur courant
+		$registrations = Registration::model()->findAll('user_fk=:user',array(':user'=>User::currentUser()->id));
+		//$ridesregistred = Ride::model()->findAll('
+		$this->render('index', array('rides' => $rides, 'registrations'=>$registrations));
 	}
 
 	/**
