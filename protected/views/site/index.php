@@ -235,14 +235,24 @@ else{
 /*
 //afficher 20 trajets en comptant les récurrences
 
-i=0 //dès qu'une ligne est affichée, augmente de 1
-j=date //commence à aujourd'hui, à chaque while, augmente d'un jour
-while i<=20
+i=0 //dès qu'une occurence de trajet est affichée, augmente de 1
+j=date //commence à aujourd'hui, à chaque tour, augmente d'un jour
+$r[0]=0 //tableau ayant comme index l'id du ride et comme valeur 0 s'il n'a pas affiché toutes ses occurences et 1 si il les a toutes affichées
+        //sert à ne pas boucler à l'infini si on a moins de 20 occurences à afficher
+
+pour tous les rides en tant que ride
+    $r[$ride->id]=0;
+end pour tout les
+
+
+while i<=20 && la somme de $r < le nombre de ride
     pour tout les rides en tant que ride    //on parcours tous les rides transmis par le controlleur
-        si ride->startdate<=j && ride.joursemaine=j.joursemaine //afin de n'afficher que les rides voulus
+        $ride->visibility==1 && $ride->startDate<=$date && $ride->endDate>=$date            && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0 && $ride->showDuringHolidays($date)
+        si le ride n'est pas supprimé && la date de début du ride<=j && la date de fin du ride>=j
+           && ride.joursemaine=j.joursemaine && //afin de n'afficher que les rides voulus
             affiche le ride
         end si
-    end pour tout
+    end pour tout les
     i++
     j=j+1 jour
 endwhile

@@ -67,7 +67,7 @@ class RidesController extends Controller
 			$ride->visibility=0;
 			$ride->save();
 
-			/*$this->loadModel($id)->delete();*/
+			//redirection sur la page d'accueil
 			$this->redirect(Yii::app()->user->returnUrl);
 		}
 
