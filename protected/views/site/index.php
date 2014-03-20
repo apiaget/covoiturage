@@ -3,8 +3,32 @@
 
 $this->pageTitle=Yii::app()->name;
 
-//affichage des rides auquel l'utilisateur courant est inscrit
+//formulaire de recherche : faire à la main
+$form=$this->beginWidget('CActiveForm', array(
+	'id'=>'user-form',
+	'enableAjaxValidation'=>true,
+));
+//la fonction actionSearch se trouve dans le controller town
+echo $form->hiddenField($towns,'name',array()); 
 
+$this->widget('zii.widgets.jui.CJuiAutoComplete', array(
+    'model'=>$towns,
+    'attribute'=>'name',
+    'source'=>$this->createUrl('towns/search'),
+    // additional javascript options for the autocomplete plugin
+    'options'=>array(
+        'showAnim'=>'fold',
+        'select'=>"js:function(event, ui) {
+                                          $('#Town_name').val(ui.item.id);
+                                        }"
+    ),
+    'cssFile'=>false,
+));
+ ?>
+<?php $this->endWidget(); ?>
+ 
+<?php
+//affichage des rides auquel l'utilisateur courant est inscrit
 foreach($registrations as $registration)
 {
     $v[$registration->id]=0;

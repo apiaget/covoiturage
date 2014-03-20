@@ -32,8 +32,11 @@ class SiteController extends Controller
 		//récupération de toutes les registration pour l'utilisateur courant
 		$registrations = Registration::model()->findAll('user_fk=:user',array(':user'=>User::currentUser()->id));
 		//$ridesregistred = Ride::model()->findAll('
-		$this->render('index', array('rides' => $rides, 'registrations'=>$registrations));
+		$towns = Town::model();//->findAll('endDate>:today', array(':today'=>$datetime));
+		$this->render('index', array('rides' => $rides, 'registrations'=>$registrations, 'towns' => $towns));
 	}
+	
+
 
 	/**
 	 * This is the action to handle external exceptions.
