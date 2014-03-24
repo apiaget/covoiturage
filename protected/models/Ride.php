@@ -45,14 +45,47 @@ class Ride extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('driver_fk, departuretown_fk, arrivaltown_fk', 'required'),
+			array('driver_fk, departuretown_fk, arrivaltown_fk, seats', 'required'),
 			array('driver_fk, departuretown_fk, arrivaltown_fk, bindedride, seats, day', 'numerical', 'integerOnly'=>true),
 			array('description, departure, arrival, startDate, endDate', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, driver_fk, departuretown_fk, arrivaltown_fk, bindedride, description, departure, arrival, seats, startDate, endDate, day', 'safe', 'on'=>'search'),
+		
+			array('departure, arrival', 'required', 'message'=>'Les heures ne sont pas valides'),
+			array('startDate, endDate', 'required', 'message'=>'Vous devez choisir une date'),
+			array('endDate', 'endDateValidation'),
+			array('startDate', 'startDateValidation'),
+			array('arrival', 'timeformat'),
+			array('departure', 'timeformat')
 		);
 	}
+
+	public function endDateValidation($attribute)
+	{
+	     if($this->endDate<$this->startDate)
+	     {
+	     	 $this->addError($attribute, 'La date de fin du trajet n\'est pas valide');
+	     }
+	}
+	public function startDateValidation($attribute)
+	{
+		$date = date("d.m.Y");
+		if($this->startDate<$date)
+		{
+			 $this->addError($attribute, 'La date du trajet ne doit pas être située dans le passé');
+		}
+	}
+	public function timeformat($attribute)
+	{
+	    $pattern = '/^(([0-1]){1,}([0-9]{1,})|(2[0-3]))(:)([0-5]{1}[0-9]{1})$/';
+ 
+	    if(!preg_match($pattern, $this->$attribute))
+	    {
+	      $this->addError($attribute, 'Le format des heures doit être le suivant : hh:mm');
+	     }
+	}
+
 
 	/**
 	 * @return array relational rules.

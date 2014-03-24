@@ -372,20 +372,29 @@ class RidesController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new Ride;
-
+		$ride=new Ride;
+		$rideRetour=new Ride;
+		$user=User::model()->currentUser();
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
 		if(isset($_POST['Ride']))
 		{
-			$model->attributes=$_POST['Ride'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+			
+			var_dump($_POST);$ride->attributes=$_POST['Ride'];
+			$ride->driver_fk=User::currentUser()->id;
+			$ride->save();
+
+			
+			
+			//if($ride->save())
+				//$this->redirect(array('view','id'=>$ride->id));
 		}
 
 		$this->render('create',array(
-			'model'=>$model,
+			'ride'=>$ride,
+			'rideretour'=>$rideRetour,
+			'user'=>$user,
 		));
 	}
 
