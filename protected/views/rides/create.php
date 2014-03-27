@@ -8,6 +8,14 @@ $this->breadcrumbs=array(
 );
 ?>
 
+<?php if(isset($_POST['retour'])&&($_POST['retour']=='oui'))
+{
+	echo '<script>afficher();</script>';
+
+}
+?>
+
+
 <!-- Fonction permettant de cacher les champs destinés au retour --> 
 <script type="text/javascript">
 //document.getElementById("champ_cache").style.display = "none";
@@ -15,9 +23,10 @@ $this->breadcrumbs=array(
 function afficher()
 {
 	var elements =document.getElementsByClassName("champ_cache");
-	for(var i=0;i<elements.length;i++)    {    	elements[i].style.display = "block";	}
+	for(var i=0;i<elements.length;i++)    {    	elements[i].style.display = "table-row";	}
 	
 }
+
  
 function cacher()
 {
@@ -33,12 +42,20 @@ function cacher()
 
 <div class="form">
 <?php $form=$this->beginWidget('CActiveForm', array(
+
+	 
+	'htmlOptions' => array(
+    	'accept-charset' => 'UTF-8'
+	),
+
 	'id'=>'ride-form',
 	// Please note: When you enable ajax validation, make sure the corresponding
 	// controller action is handling ajax validation correctly.
 	// There is a call to performAjaxValidation() commented in generated controller code.
 	// See class documentation of CActiveForm for details on this.
 	'enableAjaxValidation'=>false,
+
+
 )); ?>
 	<?php echo $form->errorSummary($ride); ?>
 				<table>
@@ -50,7 +67,8 @@ function cacher()
 						</td>
 					</tr>
 					<tr>
-						<td><?php echo $form->labelEx($ride,'departuretown_fk', array('label' => 'Lieu de départ')); ?></td>
+						<td><?php echo $form->labelEx($ride,'departuretown_fk', array('label' => 'Lieu de départ')); ?>
+						</td>
 						<td>
 							
 							<?php echo $form->dropDownList($ride,'departuretown_fk', CHtml::listData(Town::model()->findAll(),'id', 'name')); ?>
@@ -59,7 +77,7 @@ function cacher()
 					</tr>
 					<tr>
 						<td>
-							<?php echo $form->labelEx($ride,'arrivaltown_fk', array('label' => 'Lieu d\'arrivé')); ?></td>
+							<?php echo $form->labelEx($ride,'arrivaltown_fk', array('label' => 'Lieu d\'arrivé')); ?>
 						</td>
 						<td>
 							<?php echo $form->dropDownList($ride,'arrivaltown_fk', CHtml::listData(Town::model()->findAll(),'id', 'name')); ?>
@@ -157,22 +175,39 @@ function cacher()
 					<tr>
 						<td>
 							Voulez-vous créer le trajet retour ?<br/>
-							Oui <input type="radio" name="teakts" value="oui" id="oui" onClick="afficher();" /> <br />
-							Non <input type="radio" name="teakts" value="non" id="non" checked="checked" onClick="cacher();"/> <br />
-							<p class="champ_cache" style="display: none;">
-							    A cacher
-							    
-							</p>
+							Oui <input type="radio" name="retour" value="oui" id="oui" onClick="afficher();" /> <br />
+							Non <input type="radio" name="retour" value="non" id="non" checked="checked" onClick="cacher();"/> <br />
 						</td>
-						<td></td>
+						
+					</tr>
+
+					<tr class="champ_cache" style="display: none;">
+						<td>
+							<?php echo $form->labelEx($rideretour,'departure', array('label' => 'Heure de départ (hh:mm)')); ?>
+						</td>
+						<td>
+							<?php echo $form->timeField($rideretour,'departure',array('class'=>'input input_r input_pryk','placeholder'=>'08:00', 'name' => "Ride_retour[departure]")); ?>
+							<?php echo $form->error($rideretour,'departure'); ?>
+						</td>
 					</tr>
 					<tr class="champ_cache" style="display: none;">
 						<td>
-							<?php echo $form->labelEx($ride,'description', array('label' => 'Description')); ?>
+							<?php echo $form->labelEx($rideretour,'arrival', array('label' => 'Heure d\'arrivée (hh:mm)')); ?>
+							
 						</td>
 						<td>
-							<?php echo $form->textArea($ride,'description',array('rows'=>6, 'cols'=>50)); ?>
-							<?php echo $form->error($ride,'description'); ?>
+							<?php echo $form->timeField($rideretour,'arrival',array('class'=>'input input_r input_pryk','placeholder'=>'08:00','name' => "Ride_retour[arrival]" )); ?> 
+							<?php echo $form->error($rideretour,'arrival'); ?>
+						</td>
+					</tr>
+
+					<tr class="champ_cache" style="display: none;">
+						<td>
+							<?php echo $form->labelEx($rideretour,'description', array('label' => 'Description')); ?>
+						</td>
+						<td>
+							<?php echo $form->textArea($rideretour,'description',array('rows'=>6, 'cols'=>50, 'name' => "Ride_retour[description]")); ?>
+							<?php echo $form->error($rideretour,'description'); ?>
 						</td>
 					</tr>
 					<tr>
@@ -181,9 +216,8 @@ function cacher()
 						</td>
 					</tr>
 			</table>
-		</form>
-	</div>
+		
 <?php $this->endWidget(); ?>
-
+</div>
 
 

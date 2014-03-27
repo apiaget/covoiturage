@@ -380,10 +380,39 @@ class RidesController extends Controller
 
 		if(isset($_POST['Ride']))
 		{
-			
-			var_dump($_POST);$ride->attributes=$_POST['Ride'];
+			//var_dump($_POST);
+			$ride->attributes=$_POST['Ride'];
+			$rideRetour->attributes=$_POST['Ride_retour'];
 			$ride->driver_fk=User::currentUser()->id;
-			$ride->save();
+			
+			$jour=date('w', strtotime($ride->startDate));
+			$ride->day=$jour;
+
+			//si retour
+			if($_POST['retour']=='oui')
+			{
+				$rideRetour->driver_fk=User::currentUser()->id;
+				$rideRetour->arrivaltown_fk=$ride->arrivaltown_fk;
+				$rideRetour->departuretown_fk=$ride->departuretown_fk;
+				$rideRetour->seats=$ride->seats;
+				$rideRetour->startDate=$ride->startDate;
+				$rideRetour->endDate=$ride->endDate;
+				$rideRetour->day=$ride->day;
+				
+				$ride->save();
+
+				//Récupère l'id du ride allé et le rajoute dans le bindedride du ride retour
+				$rideRetour->bindedride=$ride->id;
+				$rideRetour->save();
+				//Récupère l'id du ride retour et le rajoute dans le bindedride du ride allé
+				$ride->bindedride=$rideRetour->id;
+				$ride->update();
+			}
+			else
+			{
+				$ride->save();
+			}
+			
 
 			
 			

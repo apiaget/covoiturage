@@ -29,6 +29,7 @@
  */
 class Ride extends CActiveRecord
 {
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -63,10 +64,13 @@ class Ride extends CActiveRecord
 
 	public function endDateValidation($attribute)
 	{
-	     if($this->endDate<$this->startDate)
+	     if(strtotime($this->endDate)<strtotime($this->startDate))
 	     {
 	     	 $this->addError($attribute, 'La date de fin du trajet n\'est pas valide');
+	     	 echo time($this->endDate);
+	     	 echo time($this->startDate);
 	     }
+	     
 	}
 	public function startDateValidation($attribute)
 	{
