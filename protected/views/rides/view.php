@@ -24,30 +24,27 @@
 }
 
 #notif{
-	font-weight: bold;
-	font-size: 0.9em;
-}
-.usertable{
-	margin-left:170px;
-	width:600px;
-}
-.ratings{
-	background: url('../images/star_grey.png') repeat-x 0 0;
-	width:70px;
-	height:14px;
-	display: inline-block;
-}
-.rating{
-	background: url('../images/star_red.png') repeat-x 0 0;
-	height:14px;
-}
-table td.highlighted {
-  background-color:#E5F1F4;
-}
+		font-weight: bold;
+		font-size: 0.9em;
+	}
+	.usertable{
+		margin-left:170px;
+		width:600px;
+	}
+	.ratings{
+		background: url('../images/star_grey.png') repeat-x 0 0;
+		width:70px;
+		height:14px;
+		display: inline-block;
+	}
+	.rating{
+		background: url('../images/star_red.png') repeat-x 0 0;
+		height:14px;
+	}
 </style>
 
 
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+
 
 <table>
 	<tr>
@@ -192,7 +189,7 @@ table td.highlighted {
 
 
 <script type="text/javascript">
-	/*var tds=document.getElementsByTagName('td');
+	var tds=document.getElementsByTagName('td');
 	var l=0
 	for(var i=0, iMax=tds.length ; i < iMax; i++){
 		if(tds[i].parentNode.parentNode.parentNode.id == 'days' && tds[i].className!="supp" && document.getElementById('date') != null){
@@ -223,81 +220,6 @@ table td.highlighted {
 				table.childNodes[0].childNodes[i].childNodes[j].className="";
 			}
 		}
-	}*/
-	$(function () {
-	  	var isMouseDown = false,
-	    isHighlighted;
-	   	var mX=0;
-	  	$("#days td")
-	    	.mousedown(function (e) {
-	      	$("#days td").removeAttr('class');
-	      	isMouseDown = true;
-	      	$(this).toggleClass("highlighted", isHighlighted);
-			var index = $(this).parent().children().index($(this));
-			console.log($('#cool').children().eq(index).html());
-	      	if($(this).parent().attr('id')!="cool")
-        	{
-        		var $this = $(this);
-				var $tr = $this.parent();
-				var index = $tr.children().index($this);
-				var col = $tr.prev().children().eq(index);
-				$(col).className="highlighted";
-				$(col).toggleClass("highlighted", isHighlighted);
-        	}
-        	else
-        	{
-        		var $this = $(this);
-				var $tr = $this.parent();
-				var index = $tr.children().index($this);
-				var col = $tr.next().children().eq(index);
-				$(col).className="highlighted";
-				$(col).toggleClass("highlighted", isHighlighted);
-        	}
-        	isHighlighted = $(this).hasClass("highlighted");
-	       	mX=e.pageX;
-	      	return false; // prevent text selection
-	    })
-	    .mouseover(function (e) {
-	      	if (isMouseDown) {
-	           if(this.className!="highlighted" && e.pageX > mX){
-	           		var index = $(this).parent().children().index($(this));
-					console.log("à droite " + $('#cool').children().eq(index).html());
-	               	//console.log("à droite "+this.innerHTML);
-	          	}
-	          	if(this.className!="highlighted" && e.pageX < mX){
-	          		var index = $(this).parent().children().index($(this));
-					console.log("à gauche " + $('#cool').children().eq(index).html());
-	          	}
-	        	$(this).toggleClass("highlighted", isHighlighted);
-	        	//console.log($(this).parent().attr('id'));
-	        	if($(this).parent().attr('id')!="cool")
-	        	{
-	        		var $this = $(this);
-					var $tr = $this.parent();
-					var index = $tr.children().index($this);
-					var col = $tr.prev().children().eq(index);
-					$(col).className="highlighted";
-					$(col).toggleClass("highlighted", isHighlighted);
-	        	}
-	        	else
-	        	{
-	        		var $this = $(this);
-					var $tr = $this.parent();
-					var index = $tr.children().index($this);
-					var col = $tr.next().children().eq(index);
-					$(col).className="highlighted";
-					$(col).toggleClass("highlighted", isHighlighted);
-	        	}
-	         	mX = e.pageX;
-	      	}
-	    })
-	    .bind("selectstart", function () {
-	      	return false;
-	    })
+	}
 
-	  	$(document)
-	    	.mouseup(function () {
-	      	isMouseDown = false;
-	    });
-	});
 </script>
