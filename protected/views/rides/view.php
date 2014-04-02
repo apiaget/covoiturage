@@ -232,8 +232,9 @@ table td.highlighted {
 	    	.mousedown(function (e) {
 	      	$("#days td").removeAttr('class');
 	      	isMouseDown = true;
-	      	//$(this).toggleClass("highlighted");
 	      	$(this).toggleClass("highlighted", isHighlighted);
+			var index = $(this).parent().children().index($(this));
+			console.log($('#cool').children().eq(index).html());
 	      	if($(this).parent().attr('id')!="cool")
         	{
         		var $this = $(this);
@@ -248,7 +249,7 @@ table td.highlighted {
         		var $this = $(this);
 				var $tr = $this.parent();
 				var index = $tr.children().index($this);
-				var col = $tr.prev().children().eq(index);
+				var col = $tr.next().children().eq(index);
 				$(col).className="highlighted";
 				$(col).toggleClass("highlighted", isHighlighted);
         	}
@@ -259,10 +260,13 @@ table td.highlighted {
 	    .mouseover(function (e) {
 	      	if (isMouseDown) {
 	           if(this.className!="highlighted" && e.pageX > mX){
-	               	console.log("à droite "+this.innerHTML);
+	           		var index = $(this).parent().children().index($(this));
+					console.log("à droite " + $('#cool').children().eq(index).html());
+	               	//console.log("à droite "+this.innerHTML);
 	          	}
 	          	if(this.className!="highlighted" && e.pageX < mX){
-	               	console.log("à gauche "+this.innerHTML);
+	          		var index = $(this).parent().children().index($(this));
+					console.log("à gauche " + $('#cool').children().eq(index).html());
 	          	}
 	        	$(this).toggleClass("highlighted", isHighlighted);
 	        	//console.log($(this).parent().attr('id'));
@@ -272,13 +276,17 @@ table td.highlighted {
 					var $tr = $this.parent();
 					var index = $tr.children().index($this);
 					var col = $tr.prev().children().eq(index);
-					//console.log(col);
 					$(col).className="highlighted";
 					$(col).toggleClass("highlighted", isHighlighted);
 	        	}
 	        	else
 	        	{
-
+	        		var $this = $(this);
+					var $tr = $this.parent();
+					var index = $tr.children().index($this);
+					var col = $tr.next().children().eq(index);
+					$(col).className="highlighted";
+					$(col).toggleClass("highlighted", isHighlighted);
 	        	}
 	         	mX = e.pageX;
 	      	}
