@@ -27,6 +27,9 @@ function afficher()
 	
 }
 
+
+
+
  
 function cacher()
 {
@@ -219,5 +222,17 @@ function cacher()
 		
 <?php $this->endWidget(); ?>
 </div>
+<script type="text/javascript">
 
+var errors = document.getElementsByClassName('errorMessage');
+console.log(errors[0].parentNode);
+for(var i=0; i<errors.length;i++)
+{
+	if(errors[i].parentNode.parentNode.className=="champ_cache")
+	{
+		afficher();
+		document.getElementById('oui').checked='checked';
+	}
+}
+</script>
 

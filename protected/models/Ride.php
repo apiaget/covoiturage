@@ -67,8 +67,10 @@ class Ride extends CActiveRecord
 	     if(strtotime($this->endDate)<strtotime($this->startDate))
 	     {
 	     	 $this->addError($attribute, 'La date de fin du trajet n\'est pas valide');
-	     	 echo time($this->endDate);
-	     	 echo time($this->startDate);
+	     }
+	     if(date('N',strtotime($this->endDate))!=date('N',strtotime($this->startDate)))
+	     {
+	     	 $this->addError($attribute, 'Les jours de la semaine des deux dates ne correspondent pas');
 	     }
 	     
 	}
