@@ -391,8 +391,7 @@ class RidesController extends Controller
 			//si retour
 			if($_POST['retour']=='oui')
 			{
-				$ride->startDate=date("Y-m-d",strtotime($ride->startDate));
-				$ride->endDate=date("Y-m-d",strtotime($ride->endDate));
+				
 				$rideRetour->driver_fk=User::currentUser()->id;
 				$rideRetour->arrivaltown_fk=$ride->arrivaltown_fk;
 				$rideRetour->departuretown_fk=$ride->departuretown_fk;
@@ -400,17 +399,23 @@ class RidesController extends Controller
 				$rideRetour->startDate=$ride->startDate;
 				$rideRetour->endDate=$ride->endDate;
 				$rideRetour->day=$ride->day;
-				if($rideRetour->validate()&&$ride->validate())
+
+				$rideValid=$ride->validate();
+				$rideRetourValid=$rideRetour->validate();
+				
+				if($rideValid&&$rideRetourValid)
 				{
-				$ride->save();
-				//Récupère l'id du ride allé et le rajoute dans le bindedride du ride retour
-				$rideRetour->bindedride=$ride->id;
-				$rideRetour->save();
-				//Récupère l'id du ride retour et le rajoute dans le bindedride du ride allé
-				$ride->bindedride=$rideRetour->id;
-				$ride->update();
-				//redirection accueil
-				$this->redirect(Yii::app()->user->returnUrl);
+					$ride->startDate=date("Y-m-d",strtotime($ride->startDate));
+					$ride->endDate=date("Y-m-d",strtotime($ride->endDate));
+					$ride->save();
+					//Récupère l'id du ride allé et le rajoute dans le bindedride du ride retour
+					$rideRetour->bindedride=$ride->id;
+					$rideRetour->save();
+					//Récupère l'id du ride retour et le rajoute dans le bindedride du ride allé
+					$ride->bindedride=$rideRetour->id;
+					$ride->update();
+					//redirection accueil
+					$this->redirect(Yii::app()->user->returnUrl);
 				}
 			}
 			else
