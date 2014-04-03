@@ -58,10 +58,17 @@ class Ride extends CActiveRecord
 			array('endDate', 'endDateValidation'),
 			array('startDate', 'startDateValidation'),
 			array('arrival', 'timeformat'),
-			array('departure', 'timeformat')
+			array('departure', 'timeformat'),
+			array('arrival', 'timeValidation')
 		);
 	}
-
+	public function timeValidation($attribute)
+	{
+		if(strtotime($this->arrival)<strtotime($this->departure))
+		{
+			 $this->addError($attribute, 'L\'heure de la fin du trajet doit être plus petite que l\'heure de départ');
+		}
+	}
 	public function endDateValidation($attribute)
 	{
 	     if(strtotime($this->endDate)<strtotime($this->startDate))
