@@ -53,7 +53,7 @@ table td.highlighted {
 	<tr>
 		<td>Conducteur</td><td><?php echo $ride->driver->cpnvId; ?>
 			<span class="user">
-				<?php $array=$user->reputation(); echo "</h3><span class='ratings'><span class='rating' style='width:".$array[0]."%'></span></span> (".$array[1]." votes)";?>
+				<?php $array=$user->reputation(); echo "<span class='ratings'><span class='rating' style='width:".$array[0]."%'></span></span> (".$array[1]." votes)";?>
 			</span>
 		</td>
 	</tr>
@@ -66,11 +66,6 @@ table td.highlighted {
 	<tr>
 		<td>Description</td><td><?php echo $ride->description; ?></td>
 	</tr>
-	<?php
-		if($ride->bindedride==null){
-			echo "woaw";
-		}
-	?>
 </table>
 <div name="seats" id="seats">	<!--Affichage de la liste des jours-->
 	<?php
@@ -80,7 +75,7 @@ table td.highlighted {
 		}
 		$date=date('Y-m-d 00:00:00', strtotime(date('Y-m-d 00:00:00', time()).' +'.$diff.' day'));
 		$dateA=$dateB=$date;
-		echo "<table id='days'><tr id='cool'><th width='70px'>Date</th>"; //Ligne du haut
+		echo "<table id='days'><tr id='trajets'><th width='70px'>Date</th>"; //Ligne du haut
 		while ($dateA<=$ride->endDate) {
 			if($ride->showDuringHolidays($dateA) && $dateA>=$ride->startDate){
 				if(isset($_GET['date']) && $_GET['date']==date('d-m-Y', strtotime($dateA))){
@@ -122,6 +117,7 @@ table td.highlighted {
 ?>
 		<form method="post">
 			<table>
+			<tr><td><label for="dateDebut">Date</label><input type="text" name="dateDebut" id="dateDebut" disabled/></td><td><label for="dateFin">Date</label><input type="text" name="dateFin" id="dateFin" disabled/></td></tr>
 			<tr><td><label for="date">Date</label></td><td><input type="text" name="date" id="date" disabled/><input type="text" name="dateB" id="dateB" hidden/></td></tr>
 			<?php 
 			if($ride->startDate!=$ride->endDate) //récurrence 
@@ -234,8 +230,10 @@ table td.highlighted {
 	      	isMouseDown = true;
 	      	$(this).toggleClass("highlighted", isHighlighted);
 			var index = $(this).parent().children().index($(this));
-			console.log($('#cool').children().eq(index).html());
-	      	if($(this).parent().attr('id')!="cool")
+			console.log($('#trajets').children().eq(index).html());
+			$('#dateDebut').val($('#trajets').children().eq(index).html());
+			$('#dateFin').val($('#trajets').children().eq(index).html());
+	      	if($(this).parent().attr('id')!="trajets")
         	{
         		var $this = $(this);
 				var $tr = $this.parent();
@@ -261,16 +259,18 @@ table td.highlighted {
 	      	if (isMouseDown) {
 	           if(this.className!="highlighted" && e.pageX > mX){
 	           		var index = $(this).parent().children().index($(this));
-					console.log("à droite " + $('#cool').children().eq(index).html());
+					console.log("à droite " + $('#trajets').children().eq(index).html());
+					$('#dateFin').val($('#trajets').children().eq(index).html());
 	               	//console.log("à droite "+this.innerHTML);
 	          	}
 	          	if(this.className!="highlighted" && e.pageX < mX){
 	          		var index = $(this).parent().children().index($(this));
-					console.log("à gauche " + $('#cool').children().eq(index).html());
+					console.log("à gauche " + $('#trajets').children().eq(index).html());
+					$('#dateDebut').val($('#trajets').children().eq(index).html());
 	          	}
 	        	$(this).toggleClass("highlighted", isHighlighted);
 	        	//console.log($(this).parent().attr('id'));
-	        	if($(this).parent().attr('id')!="cool")
+	        	if($(this).parent().attr('id')!="trajets")
 	        	{
 	        		var $this = $(this);
 					var $tr = $this.parent();
