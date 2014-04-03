@@ -178,7 +178,7 @@ class User extends CActiveRecord
 	public function prenom(){
 		return $this->cpnvId;
 	}
-	
+
 	public static function currentUser(){
 		$cpnvId="Joël";
 		$user=User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$cpnvId));

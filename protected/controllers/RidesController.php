@@ -372,20 +372,70 @@ class RidesController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new Ride;
-
+		$ride=new Ride;
+		$rideRetour=new Ride;
+		$user=User::model()->currentUser();
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
 		if(isset($_POST['Ride']))
 		{
-			$model->attributes=$_POST['Ride'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+			//var_dump($_POST);
+			$ride->attributes=$_POST['Ride'];
+			$rideRetour->attributes=$_POST['Ride_retour'];
+			$ride->driver_fk=User::currentUser()->id;
+			
+			$jour=date('N', strtotime($ride->startDate));
+			$ride->day=$jour;
+
+			//si retour
+			if($_POST['retour']=='oui')
+			{
+				$ride->startDate=date("Y-m-d",strtotime($ride->startDate));
+				$ride->endDate=date("Y-m-d",strtotime($ride->endDate));
+				$rideRetour->driver_fk=User::currentUser()->id;
+				$rideRetour->arrivaltown_fk=$ride->arrivaltown_fk;
+				$rideRetour->departuretown_fk=$ride->departuretown_fk;
+				$rideRetour->seats=$ride->seats;
+				$rideRetour->startDate=$ride->startDate;
+				$rideRetour->endDate=$ride->endDate;
+				$rideRetour->day=$ride->day;
+				if($rideRetour->validate()&&$ride->validate())
+				{
+				$ride->save();
+				//Récupère l'id du ride allé et le rajoute dans le bindedride du ride retour
+				$rideRetour->bindedride=$ride->id;
+				$rideRetour->save();
+				//Récupère l'id du ride retour et le rajoute dans le bindedride du ride allé
+				$ride->bindedride=$rideRetour->id;
+				$ride->update();
+				//redirection accueil
+				$this->redirect(Yii::app()->user->returnUrl);
+				}
+			}
+			else
+			{
+				if($ride->validate())
+				{
+					$ride->startDate=date("Y-m-d",strtotime($ride->startDate));
+					$ride->endDate=date("Y-m-d",strtotime($ride->endDate));
+					$ride->save();
+					//redirection accueil
+					$this->redirect(Yii::app()->user->returnUrl);
+				}
+			}
+			
+
+			
+			
+			//if($ride->save())
+				//$this->redirect(array('view','id'=>$ride->id));
 		}
 
 		$this->render('create',array(
-			'model'=>$model,
+			'ride'=>$ride,
+			'rideretour'=>$rideRetour,
+			'user'=>$user,
 		));
 	}
 
