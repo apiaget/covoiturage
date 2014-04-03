@@ -59,15 +59,18 @@ class TownsController extends Controller
 	//recherche de trajets
 	public function actionSearch($term)
 	{
-    $sql = 'SELECT name FROM towns';
+    $sql = 'SELECT DISTINCT name FROM towns';
     $keywords = explode(',',$term);
     $sql = $sql.' WHERE name LIKE \'%'.trim($keywords[0]).'%\'';    // Must be at least 1
-   
     $sql = $sql.' LIMIT 10';
-    $schema=Yii::app()->db->schema;
-    $builder=$schema->commandBuilder;
-    $command = $builder->createSqlCommand($sql);
-    echo json_encode( $command->queryAll());
+					
+	$command =Yii::app()->db->createCommand($sql);
+
+
+        $result =$command->queryColumn();
+
+        echo CJSON::encode($result);
+	Yii::app()->end();
 	}
 	
 	/**
