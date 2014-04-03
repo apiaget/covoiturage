@@ -183,6 +183,5 @@ class User extends CActiveRecord
 		$cpnvId="Joël";
 		$user=User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$cpnvId));
 		return $user;
-		
 	}
 }
