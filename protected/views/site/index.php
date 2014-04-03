@@ -3,8 +3,43 @@
 
 $this->pageTitle=Yii::app()->name;
 
-//affichage des rides auquel l'utilisateur courant est inscrit
+//formulaire de recherche : faire à la main
+$form=$this->beginWidget('CActiveForm', array(
+	'id'=>'user-form',
+	'enableAjaxValidation'=>false,
+));
 
+
+$this->widget('zii.widgets.jui.CJuiAutoComplete', array(
+    'model'=>$towns,
+    'attribute'=>'name',
+    'source'=>$this->createUrl('towns/search'),
+	'htmlOptions'=>array('placeholder'=>'Rechercher une ville'),
+    // additional javascript options for the autocomplete plugin
+    'options'=>array(
+        'showAnim'=>'fold',
+		'select' => 'js:function(event, ui){
+			remove($(\'#Town_name\').val());
+		}',
+
+    ),
+    'cssFile'=>'jquery-ui.css',
+));
+
+//la fonction actionSearch se trouve dans le controller town
+//echo $form->hiddenField($towns,'name',array()); 
+
+
+ ?>
+
+ <br>
+  <br>
+   <br>
+    <br>
+<?php $this->endWidget(); ?>
+ 
+<?php
+//affichage des rides auquel l'utilisateur courant est inscrit
 foreach($registrations as $registration)
 {
     $v[$registration->id]=0;
@@ -268,4 +303,11 @@ function tableout(that){
     that.style.backgroundColor="white";
     that.style.cursor="auto";
 }
+</script>
+<script>
+	//suppression des lignes inutiles
+	function remove(douda){
+		$('td').show();
+		$('table').find('tr:not(:contains('+ douda +'))').children('td').hide();
+	}
 </script>
