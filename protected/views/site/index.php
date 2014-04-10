@@ -71,7 +71,7 @@ else{
 				/*var_dump($regRide->day);
 				echo $regRide->day==date('N',strtotime($date));
 					die(date('N',strtotime($date)));*/
-				if($registration->startDate<=$date && $registration->endDate>=$date && $regRide->day==date('N',strtotime($date)) && $v[$registration->id]==0 && $ride->showDuringHolidays($date)){
+				if($ride->visibility==1 && $registration->startDate<=$date && $registration->endDate>=$date && $regRide->day==date('N',strtotime($date)) && $v[$registration->id]==0 && $ride->showDuringHolidays($date)){
 					//prendre le ride qui correspond et l'afficher
 					$daydate = date("d-m-Y",strtotime($date));
 					echo "<tr onclick=";
@@ -131,7 +131,7 @@ else{
 			/*var_dump($regRide->day);
 			echo $regRide->day==date('N',strtotime($date));
 				die(date('N',strtotime($date)));*/
-			if($ride->startDate<=$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0 && $ride->driver_fk==$driver->id && $ride->showDuringHolidays($date)){
+			if($ride->visibility==1 && $ride->startDate<=$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0 && $ride->driver_fk==$driver->id && $ride->showDuringHolidays($date)){
 				//prendre le ride qui correspond et l'afficher
 				$daydate = date("d-m-Y",strtotime($date));
 				echo "<tr onclick=";
@@ -303,8 +303,7 @@ function tableout(that){
     that.style.backgroundColor="white";
     that.style.cursor="auto";
 }
-</script>
-<script>
+
 	//suppression des lignes inutiles
 	function remove(douda){
 		$('td').show();

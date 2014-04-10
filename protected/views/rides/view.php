@@ -18,6 +18,10 @@
 }
 #days{
 	margin-bottom: 0;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
 }
 .chosen{
 	background-color: #E5F1F4;
@@ -163,7 +167,7 @@ table td.highlighted {
 		</form>
 <?php
 	}
-	var_dump($ride);
+
 ?>
 <?
 //	voit paramètre du ride ----OK
@@ -221,83 +225,86 @@ table td.highlighted {
 		}
 	}*/
 	$(function () {
-	  	var isMouseDown = false,
-	    isHighlighted;
-	   	var mX=0;
-	  	$("#days td")
-	    	.mousedown(function (e) {
-	      	$("#days td").removeAttr('class');
-	      	isMouseDown = true;
-	      	$(this).toggleClass("highlighted", isHighlighted);
+		var isMouseDown = false,
+		isHighlighted;
+		var mX=0;
+		$("#days td")
+			.mousedown(function (e) {
+			$("#days td").removeAttr('class');
+			isMouseDown = true;
+			$(this).toggleClass("highlighted", isHighlighted);
 			var index = $(this).parent().children().index($(this));
 			console.log($('#trajets').children().eq(index).html());
 			$('#dateDebut').val($('#trajets').children().eq(index).html());
 			$('#dateFin').val($('#trajets').children().eq(index).html());
-	      	if($(this).parent().attr('id')!="trajets")
-        	{
-        		var $this = $(this);
+			if($(this).parent().attr('id')!="trajets")
+			{
+				var $this = $(this);
 				var $tr = $this.parent();
 				var index = $tr.children().index($this);
 				var col = $tr.prev().children().eq(index);
 				$(col).className="highlighted";
 				$(col).toggleClass("highlighted", isHighlighted);
-        	}
-        	else
-        	{
-        		var $this = $(this);
+			}
+			else
+			{
+				var $this = $(this);
 				var $tr = $this.parent();
 				var index = $tr.children().index($this);
 				var col = $tr.next().children().eq(index);
 				$(col).className="highlighted";
 				$(col).toggleClass("highlighted", isHighlighted);
-        	}
-        	isHighlighted = $(this).hasClass("highlighted");
-	       	mX=e.pageX;
-	      	return false; // prevent text selection
-	    })
-	    .mouseover(function (e) {
-	      	if (isMouseDown) {
-	           if(this.className!="highlighted" && e.pageX > mX){
-	           		var index = $(this).parent().children().index($(this));
+			}
+			isHighlighted = $(this).hasClass("highlighted");
+			mX=e.pageX;
+
+		})
+		.mouseover(function (e) {
+			if (isMouseDown) {
+				if(this.className!="highlighted" && e.pageX > mX){
+					var index = $(this).parent().children().index($(this));
 					console.log("à droite " + $('#trajets').children().eq(index).html());
 					$('#dateFin').val($('#trajets').children().eq(index).html());
-	               	//console.log("à droite "+this.innerHTML);
-	          	}
-	          	if(this.className!="highlighted" && e.pageX < mX){
-	          		var index = $(this).parent().children().index($(this));
+				}
+				if(this.className!="highlighted" && e.pageX < mX){
+					var index = $(this).parent().children().index($(this));
 					console.log("à gauche " + $('#trajets').children().eq(index).html());
 					$('#dateDebut').val($('#trajets').children().eq(index).html());
-	          	}
-	        	$(this).toggleClass("highlighted", isHighlighted);
-	        	//console.log($(this).parent().attr('id'));
-	        	if($(this).parent().attr('id')!="trajets")
-	        	{
-	        		var $this = $(this);
+				}
+				$(this).toggleClass("highlighted", isHighlighted);
+
+				//console.log($(this).parent().attr('id'));
+
+				if($(this).parent().attr('id')!="trajets")
+				{
+					var $this = $(this);
 					var $tr = $this.parent();
 					var index = $tr.children().index($this);
 					var col = $tr.prev().children().eq(index);
 					$(col).className="highlighted";
 					$(col).toggleClass("highlighted", isHighlighted);
-	        	}
-	        	else
-	        	{
-	        		var $this = $(this);
+				}
+				else
+				{
+					var $this = $(this);
 					var $tr = $this.parent();
 					var index = $tr.children().index($this);
 					var col = $tr.next().children().eq(index);
 					$(col).className="highlighted";
 					$(col).toggleClass("highlighted", isHighlighted);
-	        	}
-	         	mX = e.pageX;
-	      	}
-	    })
-	    .bind("selectstart", function () {
-	      	return false;
-	    })
+				}
 
-	  	$(document)
-	    	.mouseup(function () {
-	      	isMouseDown = false;
-	    });
+				console.log($('#trajets'))
+				mX = e.pageX;
+			}
+		})
+		.bind("selectstart", function () {
+		  	return false;
+		})
+
+		$(document)
+			.mouseup(function () {
+			isMouseDown = false;
+		});
 	});
 </script>
