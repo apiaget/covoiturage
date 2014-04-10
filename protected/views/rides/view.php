@@ -165,11 +165,49 @@ table td.highlighted {
 			<input type="submit" name="supprimer" id="supprimer" value="Supprimer le trajet"/>
 			<input type="submit" name="editer" id="editer" value="Editer le trajet"/>
 		</form>
+
 <?php
 	}
 
-?>
-<?
+	echo '<br/>';
+	echo '<table><tr><td>Utilisateur</td><td>Numéro de téléphone</td><td>Email</td><td>Validation</td></tr>';
+	foreach($registrations as $registration)
+	{
+		
+		$nom=$registration->userFk->nom();
+		$prenom = $registration->userFk->prenom();
+		
+		if($registration->userFk->hideTelephone==1)
+			{
+				$numero =$registration->userFk->telephone;
+			}
+			else
+			{
+				$numero ="-";
+			}
+		if($registration->userFk->hideEmail==1)
+			{
+				$email =$registration->userFk->email;
+			}
+			else
+			{
+				$email ="-";
+			}
+			if($registration->accepted==1)
+			{
+				$validation ="Validé";
+			}
+			else
+			{
+				$validation ="En attente";
+			}
+		
+		echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$numero.'</td><td>'.$email.'</td><td>'.$validation.'</td></tr>';
+	}
+	//var_dump($ride);
+
+	echo '</table>';
+	
 //	voit paramètre du ride ----OK
 //	Si driver
 //		voit personnes inscrites, validée ou non avec leur réputation et leur téléphone
