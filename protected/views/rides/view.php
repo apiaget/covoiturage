@@ -155,6 +155,41 @@ table td.highlighted {
 		{
 			echo "<small>*La récurrence s'effectue à partir de la date sélectionnée jusqu'à la fin des trajets proposés</small>";
 		}
+
+		echo '<br/>';
+	echo '<table><tr><th>Utilisateur</th><th>Date(s)</th><th>Validation</th></tr>';
+	foreach($registrations as $registration)
+	{
+		
+		$nom=$registration->userFk->nom();
+		$prenom = $registration->userFk->prenom();
+
+		$dateDebut = date("d-m-Y",strtotime($registration->startDate));
+		$dateFin = date("d-m-Y",strtotime($registration->endDate));
+		$date = "";
+		
+		if($registration->accepted==1)
+		{
+			$validation ="Validé";
+		}
+		else
+		{
+			$validation ="En attente";
+		}
+
+		if($dateDebut==$dateFin){
+			$date=$dateDebut;
+		}
+		else
+		{
+			$date = $dateDebut." - ".$dateFin;
+		}
+		
+		echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$date.'</td><td>'.$validation.'</td></tr>';
+	}
+	//var_dump($ride);
+
+	echo '</table>';
 	}
 ?>
 
@@ -167,47 +202,60 @@ table td.highlighted {
 		</form>
 
 <?php
-	}
+	
 
 	echo '<br/>';
-	echo '<table><tr><td>Utilisateur</td><td>Numéro de téléphone</td><td>Email</td><td>Validation</td></tr>';
+	echo '<table><tr><th>Utilisateur</th><th>Numéro de téléphone</th><th>Email</th><th>Date(s)</th><th>Validation</th></tr>';
 	foreach($registrations as $registration)
 	{
 		
 		$nom=$registration->userFk->nom();
 		$prenom = $registration->userFk->prenom();
+
+		$dateDebut = date("d-m-Y",strtotime($registration->startDate));
+		$dateFin = date("d-m-Y",strtotime($registration->endDate));
+		$date = "";
+		if($registration->userFk->hideTelephone==0)
+		{
+			$numero =$registration->userFk->telephone;
+		}
+		else
+		{
+			$numero ="Non visible";
+		}
+
+		if($registration->userFk->hideEmail==0)
+		{
+			$email =$registration->userFk->email;
+		}
+		else
+		{
+			$email ="Non visible";
+		}
+
+		if($registration->accepted==1)
+		{
+			$validation ="Validé";
+		}
+		else
+		{
+			$validation ="En attente";
+		}
+
+		if($dateDebut==$dateFin){
+			$date=$dateDebut;
+		}
+		else
+		{
+			$date = $dateDebut." - ".$dateFin;
+		}
 		
-		if($registration->userFk->hideTelephone==1)
-			{
-				$numero =$registration->userFk->telephone;
-			}
-			else
-			{
-				$numero ="-";
-			}
-		if($registration->userFk->hideEmail==1)
-			{
-				$email =$registration->userFk->email;
-			}
-			else
-			{
-				$email ="-";
-			}
-			if($registration->accepted==1)
-			{
-				$validation ="Validé";
-			}
-			else
-			{
-				$validation ="En attente";
-			}
-		
-		echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$numero.'</td><td>'.$email.'</td><td>'.$validation.'</td></tr>';
+		echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$numero.'</td><td>'.$email.'</td><td>'.$date.'</td><td>'.$validation.'</td></tr>';
 	}
 	//var_dump($ride);
 
 	echo '</table>';
-	
+	}
 //	voit paramètre du ride ----OK
 //	Si driver
 //		voit personnes inscrites, validée ou non avec leur réputation et leur téléphone
@@ -321,6 +369,7 @@ table td.highlighted {
 					var col = $tr.prev().children().eq(index);
 					$(col).className="highlighted";
 					$(col).toggleClass("highlighted", isHighlighted);
+					
 				}
 				else
 				{
@@ -331,8 +380,8 @@ table td.highlighted {
 					$(col).className="highlighted";
 					$(col).toggleClass("highlighted", isHighlighted);
 				}
-
-				console.log($('#trajets'))
+				console.log($('#trajets').children(".highlighted").first());
+				//console.log($('#trajets'))
 				mX = e.pageX;
 			}
 		})
