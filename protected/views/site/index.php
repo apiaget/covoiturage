@@ -40,20 +40,30 @@ $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
  
 <?php
 //affichage des rides auquel l'utilisateur courant est inscrit
-foreach($registrations as $registration)
-{
-    $v[$registration->id]=0;
+if(count($registrations)!=0){
+	foreach($registrations as $registration)
+	{
+		$v[$registration->id]=0;
+	}
+	$v[0]=1;
+}else{
+	$v[0]=-1;
 }
-foreach($rides as $ride)
-{
-    $r[$ride->id]=0;
+if(count($ridesCurrent)!=0){
+	foreach($ridesCurrent as $rideCurrent)
+	{
+		$r[$rideCurrent->id]=0;
+	}
+	$r[0]=1;
+}else{
+	$r[0]=-1;
 }
+var_dump($ridesCurrent);
 
 //si aucune registration n'est disponible, afficher un message, sinon, afficher les registrations
-if(count($registrations)==0){
+if($v[0]==-1 && $r[0]==-1){
 	echo "Vous ne participez à aucun trajet.";
-}
-else{
+}else{
 	echo "<table>";
 	echo "<tr><th>Conducteur</th><th>Places</th><th>Départ</th><th>Arrivée</th><th>Jour</th></tr>";
 	$i=0;
@@ -68,10 +78,8 @@ else{
 				//SI $registration correspond au jour
 				//if($ride->startDate<=$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0 && $ride->showDuringHolidays($date)){
 				$regRide = Ride::model()->find('id=:id', array(':id'=>$registration->ride_fk));
-				/*var_dump($regRide->day);
-				echo $regRide->day==date('N',strtotime($date));
-					die(date('N',strtotime($date)));*/
-				if($registration->startDate<=$date && $registration->endDate>=$date && $regRide->day==date('N',strtotime($date)) && $v[$registration->id]==0 && $ride->showDuringHolidays($date)){
+
+				if($ride->visibility==1 && $registration->startDate<=$date && $registration->endDate>=$date && $regRide->day==date('N',strtotime($date)) && $v[$registration->id]==0 && $ride->showDuringHolidays($date)){
 					//prendre le ride qui correspond et l'afficher
 					$daydate = date("d-m-Y",strtotime($date));
 					echo "<tr onclick=";
@@ -122,28 +130,25 @@ else{
 		
 		
 		//affichage des rides pour lesquels l'utilisateur courant est conducteur
-		foreach($rides as $ride){
+		foreach($ridesCurrent as $rideCurrent){
 			//Ride::model()->find('id=:id', array(':id'=>$registration->ride_fk));
 			//SI $registration correspond au jour
 			//if($ride->startDate<=$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0 && $ride->showDuringHolidays($date)){
 			$driver = User::model()->currentUser();
 
-			/*var_dump($regRide->day);
-			echo $regRide->day==date('N',strtotime($date));
-				die(date('N',strtotime($date)));*/
-			if($ride->startDate<=$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0 && $ride->driver_fk==$driver->id && $ride->showDuringHolidays($date)){
+			if($rideCurrent->visibility==1 && $rideCurrent->startDate<=$date && $rideCurrent->endDate>=$date && $rideCurrent->day==date('N',strtotime($date)) && $r[$rideCurrent->id]==0 && $rideCurrent->driver_fk==$driver->id && $rideCurrent->showDuringHolidays($date)){
 				//prendre le ride qui correspond et l'afficher
 				$daydate = date("d-m-Y",strtotime($date));
 				echo "<tr onclick=";
-				echo "\"document.location='/covoiturage/covoiturage/rides/".$ride->id."?date=".$daydate."';";
+				echo "\"document.location='/covoiturage/covoiturage/rides/".$rideCurrent->id."?date=".$daydate."';";
 				echo "\" onmouseover='tablein(this);' onmouseout='tableout(this);'>";
 
-					echo "<td><img src='/covoiturage/covoiturage/images/driver.png' width='8%'/>".$ride->driver->cpnvId."</td>";
-					echo "<td>"."0/".$ride->seats."</td>";
-					echo "<td>".$ride->departuretown->name." à ".substr($ride->departure, 0, 5)."</td>";
-					echo "<td>".$ride->arrivaltown->name." vers ".substr($ride->arrival, 0, 5)."</td>";
+					echo "<td><img src='/covoiturage/covoiturage/images/driver.png' width='8%'/>".$rideCurrent->driver->cpnvId."</td>";
+					echo "<td>"."0/".$rideCurrent->seats."</td>";
+					echo "<td>".$rideCurrent->departuretown->name." à ".substr($rideCurrent->departure, 0, 5)."</td>";
+					echo "<td>".$rideCurrent->arrivaltown->name." vers ".substr($rideCurrent->arrival, 0, 5)."</td>";
 				
-					switch ($ride->day) {
+					switch ($rideCurrent->day) {
 							case '1':
 								$day = "Lundi";
 								break;
@@ -174,8 +179,8 @@ else{
 				$i++;
 				
 			}
-			if($ride->endDate==$date){
-					$r[$ride->id]=1;
+			if($rideCurrent->endDate==$date){
+					$r[$rideCurrent->id]=1;
 				}
 				
 		}
@@ -303,7 +308,6 @@ function tableout(that){
     that.style.backgroundColor="white";
     that.style.cursor="auto";
 }
-
 //suppression des lignes inutiles
 function remove(keep){
 	$('td').show();

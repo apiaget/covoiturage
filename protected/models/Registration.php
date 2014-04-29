@@ -51,8 +51,8 @@ class Registration extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'userFk' => array(self::BELONGS_TO, 'Users', 'user_fk'),
-			'rideFk' => array(self::BELONGS_TO, 'Rides', 'ride_fk'),
+			'userFk' => array(self::BELONGS_TO, 'User', 'user_fk'),
+			'rideFk' => array(self::BELONGS_TO, 'Ride', 'ride_fk'),
 			'votes' => array(self::HAS_MANY, 'Votes', 'passenger_fk'),
 		);
 	}

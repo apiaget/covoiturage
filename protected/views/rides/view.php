@@ -18,6 +18,10 @@
 }
 #days{
 	margin-bottom: 0;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
 }
 .chosen{
 	background-color: #E5F1F4;
@@ -151,6 +155,41 @@ table td.highlighted {
 		{
 			echo "<small>*La récurrence s'effectue à partir de la date sélectionnée jusqu'à la fin des trajets proposés</small>";
 		}
+
+		echo '<br/>';
+	echo '<table><tr><th>Utilisateur</th><th>Date(s)</th><th>Validation</th></tr>';
+	foreach($registrations as $registration)
+	{
+		
+		$nom=$registration->userFk->nom();
+		$prenom = $registration->userFk->prenom();
+
+		$dateDebut = date("d-m-Y",strtotime($registration->startDate));
+		$dateFin = date("d-m-Y",strtotime($registration->endDate));
+		$date = "";
+		
+		if($registration->accepted==1)
+		{
+			$validation ="Validé";
+		}
+		else
+		{
+			$validation ="En attente";
+		}
+
+		if($dateDebut==$dateFin){
+			$date=$dateDebut;
+		}
+		else
+		{
+			$date = $dateDebut." - ".$dateFin;
+		}
+		
+		echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$date.'</td><td>'.$validation.'</td></tr>';
+	}
+	//var_dump($ride);
+
+	echo '</table>';
 	}
 ?>
 
@@ -161,11 +200,62 @@ table td.highlighted {
 			<input type="submit" name="supprimer" id="supprimer" value="Supprimer le trajet"/>
 			<input type="submit" name="editer" id="editer" value="Editer le trajet"/>
 		</form>
+
 <?php
+	
+
+	echo '<br/>';
+	echo '<table><tr><th>Utilisateur</th><th>Numéro de téléphone</th><th>Email</th><th>Date(s)</th><th>Validation</th></tr>';
+	foreach($registrations as $registration)
+	{
+		
+		$nom=$registration->userFk->nom();
+		$prenom = $registration->userFk->prenom();
+
+		$dateDebut = date("d-m-Y",strtotime($registration->startDate));
+		$dateFin = date("d-m-Y",strtotime($registration->endDate));
+		$date = "";
+		if($registration->userFk->hideTelephone==0)
+		{
+			$numero =$registration->userFk->telephone;
+		}
+		else
+		{
+			$numero ="Non visible";
+		}
+
+		if($registration->userFk->hideEmail==0)
+		{
+			$email =$registration->userFk->email;
+		}
+		else
+		{
+			$email ="Non visible";
+		}
+
+		if($registration->accepted==1)
+		{
+			$validation ="Validé";
+		}
+		else
+		{
+			$validation ="En attente";
+		}
+
+		if($dateDebut==$dateFin){
+			$date=$dateDebut;
+		}
+		else
+		{
+			$date = $dateDebut." - ".$dateFin;
+		}
+		
+		echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$numero.'</td><td>'.$email.'</td><td>'.$date.'</td><td>'.$validation.'</td></tr>';
 	}
-	var_dump($ride);
-?>
-<?
+	//var_dump($ride);
+
+	echo '</table>';
+	}
 //	voit paramètre du ride ----OK
 //	Si driver
 //		voit personnes inscrites, validée ou non avec leur réputation et leur téléphone
@@ -221,83 +311,87 @@ table td.highlighted {
 		}
 	}*/
 	$(function () {
-	  	var isMouseDown = false,
-	    isHighlighted;
-	   	var mX=0;
-	  	$("#days td")
-	    	.mousedown(function (e) {
-	      	$("#days td").removeAttr('class');
-	      	isMouseDown = true;
-	      	$(this).toggleClass("highlighted", isHighlighted);
+		var isMouseDown = false,
+		isHighlighted;
+		var mX=0;
+		$("#days td")
+			.mousedown(function (e) {
+			$("#days td").removeAttr('class');
+			isMouseDown = true;
+			$(this).toggleClass("highlighted", isHighlighted);
 			var index = $(this).parent().children().index($(this));
 			console.log($('#trajets').children().eq(index).html());
 			$('#dateDebut').val($('#trajets').children().eq(index).html());
 			$('#dateFin').val($('#trajets').children().eq(index).html());
-	      	if($(this).parent().attr('id')!="trajets")
-        	{
-        		var $this = $(this);
+			if($(this).parent().attr('id')!="trajets")
+			{
+				var $this = $(this);
 				var $tr = $this.parent();
 				var index = $tr.children().index($this);
 				var col = $tr.prev().children().eq(index);
 				$(col).className="highlighted";
 				$(col).toggleClass("highlighted", isHighlighted);
-        	}
-        	else
-        	{
-        		var $this = $(this);
+			}
+			else
+			{
+				var $this = $(this);
 				var $tr = $this.parent();
 				var index = $tr.children().index($this);
 				var col = $tr.next().children().eq(index);
 				$(col).className="highlighted";
 				$(col).toggleClass("highlighted", isHighlighted);
-        	}
-        	isHighlighted = $(this).hasClass("highlighted");
-	       	mX=e.pageX;
-	      	return false; // prevent text selection
-	    })
-	    .mouseover(function (e) {
-	      	if (isMouseDown) {
-	           if(this.className!="highlighted" && e.pageX > mX){
-	           		var index = $(this).parent().children().index($(this));
+			}
+			isHighlighted = $(this).hasClass("highlighted");
+			mX=e.pageX;
+
+		})
+		.mouseover(function (e) {
+			if (isMouseDown) {
+				if(this.className!="highlighted" && e.pageX > mX){
+					var index = $(this).parent().children().index($(this));
 					console.log("à droite " + $('#trajets').children().eq(index).html());
 					$('#dateFin').val($('#trajets').children().eq(index).html());
-	               	//console.log("à droite "+this.innerHTML);
-	          	}
-	          	if(this.className!="highlighted" && e.pageX < mX){
-	          		var index = $(this).parent().children().index($(this));
+				}
+				if(this.className!="highlighted" && e.pageX < mX){
+					var index = $(this).parent().children().index($(this));
 					console.log("à gauche " + $('#trajets').children().eq(index).html());
 					$('#dateDebut').val($('#trajets').children().eq(index).html());
-	          	}
-	        	$(this).toggleClass("highlighted", isHighlighted);
-	        	//console.log($(this).parent().attr('id'));
-	        	if($(this).parent().attr('id')!="trajets")
-	        	{
-	        		var $this = $(this);
+				}
+				$(this).toggleClass("highlighted", isHighlighted);
+
+				//console.log($(this).parent().attr('id'));
+
+				if($(this).parent().attr('id')!="trajets")
+				{
+					var $this = $(this);
 					var $tr = $this.parent();
 					var index = $tr.children().index($this);
 					var col = $tr.prev().children().eq(index);
 					$(col).className="highlighted";
 					$(col).toggleClass("highlighted", isHighlighted);
-	        	}
-	        	else
-	        	{
-	        		var $this = $(this);
+					
+				}
+				else
+				{
+					var $this = $(this);
 					var $tr = $this.parent();
 					var index = $tr.children().index($this);
 					var col = $tr.next().children().eq(index);
 					$(col).className="highlighted";
 					$(col).toggleClass("highlighted", isHighlighted);
-	        	}
-	         	mX = e.pageX;
-	      	}
-	    })
-	    .bind("selectstart", function () {
-	      	return false;
-	    })
+				}
+				console.log($('#trajets').children(".highlighted").first());
+				//console.log($('#trajets'))
+				mX = e.pageX;
+			}
+		})
+		.bind("selectstart", function () {
+		  	return false;
+		})
 
-	  	$(document)
-	    	.mouseup(function () {
-	      	isMouseDown = false;
-	    });
+		$(document)
+			.mouseup(function () {
+			isMouseDown = false;
+		});
 	});
 </script>
