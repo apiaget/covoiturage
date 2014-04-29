@@ -3,7 +3,7 @@
 
 $this->pageTitle=Yii::app()->name;
 
-//formulaire de recherche : faire à la main
+//recherche par ville
 $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'user-form',
 	'enableAjaxValidation'=>false,
@@ -308,10 +308,8 @@ function tableout(that){
     that.style.backgroundColor="white";
     that.style.cursor="auto";
 }
-
-	//suppression des lignes inutiles
-	function remove(douda){
-		$('td').show();
-		$('table').find('tr:not(:contains('+ douda +'))').children('td').hide();
-	}
+function remove(keep){
+	$('td').show();
+	$('table').find('tr:not(:contains('+ keep +'))').children('td').hide();
+}
 </script>
