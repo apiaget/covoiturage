@@ -84,7 +84,7 @@ class Ride extends CActiveRecord
 	public function startDateValidation($attribute)
 	{
 		$date = date("d.m.Y");
-		if($this->startDate<$date)
+		if(strtotime($this->startDate)<strtotime($date))
 		{
 			 $this->addError($attribute, 'La date du trajet ne doit pas être située dans le passé');
 		}
