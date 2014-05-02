@@ -19,7 +19,7 @@ $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
     'options'=>array(
         'showAnim'=>'fold',
 		'select' => 'js:function(event, ui){
-			remove($(\'#Town_name\').val());
+			remove(ui.item.value);
 		}',
 
     ),
@@ -58,7 +58,7 @@ if(count($ridesCurrent)!=0){
 }else{
 	$r[0]=-1;
 }
-var_dump($ridesCurrent);
+//var_dump($ridesCurrent);
 
 //si aucune registration n'est disponible, afficher un message, sinon, afficher les registrations
 if($v[0]==-1 && $r[0]==-1){

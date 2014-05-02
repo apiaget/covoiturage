@@ -8,12 +8,7 @@ $this->breadcrumbs=array(
 );
 ?>
 
-<?php if(isset($_POST['retour'])&&($_POST['retour']=='oui'))
-{
-	echo '<script>afficher();</script>';
 
-}
-?>
 
 
 <!-- Fonction permettant de cacher les champs destinés au retour --> 
@@ -40,6 +35,7 @@ function cacher()
 	}
 }
 </script>
+
 
 <h1>Création d'un trajet</h1>
 
@@ -74,7 +70,7 @@ function cacher()
 						</td>
 						<td>
 							
-							<?php echo $form->dropDownList($ride,'departuretown_fk', CHtml::listData(Town::model()->findAll(),'id', 'name')); ?>
+							<?php echo $form->dropDownList($ride,'departuretown_fk', CHtml::listData(Town::model()->findAll(array('order'=>'name')),'id', 'name')); ?>
 							<?php echo $form->error($ride,'departuretown_fk'); ?>
 						</td>
 					</tr>
@@ -83,7 +79,7 @@ function cacher()
 							<?php echo $form->labelEx($ride,'arrivaltown_fk', array('label' => 'Lieu d\'arrivé')); ?>
 						</td>
 						<td>
-							<?php echo $form->dropDownList($ride,'arrivaltown_fk', CHtml::listData(Town::model()->findAll(),'id', 'name')); ?>
+							<?php echo $form->dropDownList($ride,'arrivaltown_fk', CHtml::listData(Town::model()->findAll(array('order'=>'name')),'id', 'name')); ?>
 							<?php echo $form->error($ride,'arrivaltown_fk'); ?>
 						</td>
 					</tr>
@@ -225,7 +221,7 @@ function cacher()
 <script type="text/javascript">
 
 var errors = document.getElementsByClassName('errorMessage');
-console.log(errors[0].parentNode);
+//console.log(errors[0].parentNode);
 for(var i=0; i<errors.length;i++)
 {
 	if(errors[i].parentNode.parentNode.className=="champ_cache")
@@ -233,6 +229,12 @@ for(var i=0; i<errors.length;i++)
 		afficher();
 		document.getElementById('oui').checked='checked';
 	}
+}
+if($("#Ride_retour_departure").val()!="")
+{
+	console.log("coucou");
+	afficher();
+	document.getElementById('oui').checked='checked';
 }
 </script>
 
