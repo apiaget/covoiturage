@@ -83,7 +83,7 @@ table td.highlighted {
 		while ($dateA<=$ride->endDate) {
 			if($ride->showDuringHolidays($dateA) && $dateA>=$ride->startDate){
 				if(isset($_GET['date']) && $_GET['date']==date('d-m-Y', strtotime($dateA))){
-					echo "<td class='highlighted' width='68px'>".date('d.m.Y', strtotime($dateA))."</td>";
+					echo "<td class='chosen' width='68px'>".date('d.m.Y', strtotime($dateA))."</td>";
 				}else{
 					echo "<td width='68px'>".date('d.m.Y', strtotime($dateA))."</td>";
 				}
@@ -94,7 +94,7 @@ table td.highlighted {
 		while ($dateB<=$ride->endDate) {
 			if($ride->showDuringHolidays($dateB) && $dateB>=$ride->startDate){
 				if(isset($_GET['date']) && $_GET['date']==date('d-m-Y', strtotime($dateB))){
-					echo "<td class='highlighted'>";
+					echo "<td class='chosen'>";
 					$i=0;
 					foreach ($registrations as $registration) {
 						if($dateB>=$registration->startDate&&$dateB<=$registration->endDate&&$registration->accepted){$i++;	}
@@ -120,38 +120,18 @@ table td.highlighted {
 	if($user->id!=$ride->driver_fk){ //passager ou utilisateur
 ?>
 		<form method="post">
-			<?php
-
-
-			if(isset($ride->bindedride))
-			{
-				echo '<input type="checkbox" name="allerretour" id="allerretour" />';
-			}
-
-			if(isset($_GET['date'])){
-				echo '<input type="text" name="dateDebut" id="dateDebut" value="'.date('d.m.Y', strtotime($_GET['date'])).'"/>';
-				echo '<input type="text" name="dateFin" id="dateFin" value="'.date('d.m.Y', strtotime($_GET['date'])).'"/>';
-			}else{
-				echo '<input type="text" name="dateDebut" id="dateDebut" />';
-				echo '<input type="text" name="dateFin" id="dateFin" />';
-			}
-
-			?>
-
-			<input type="submit" value="S'inscrire">
-
-			<!--<table>
-			<tr><td><label for="dateDebut">Date</label><input type="text" name="dateDebut" id="dateDebut" /></td><td><label for="dateFin">Date</label><input type="text" name="dateFin" id="dateFin" disabled/></td></tr>
-			<tr><td><label for="date">Date</label></td><td><input type="text" name="date" id="date" /><input type="text" name="dateB" id="dateB" hidden/></td></tr>
-			<?php/* 
+			<table>
+			<tr><td><label for="dateDebut">Date</label><input type="text" name="dateDebut" id="dateDebut" disabled/></td><td><label for="dateFin">Date</label><input type="text" name="dateFin" id="dateFin" disabled/></td></tr>
+			<tr><td><label for="date">Date</label></td><td><input type="text" name="date" id="date" disabled/><input type="text" name="dateB" id="dateB" hidden/></td></tr>
+			<?php 
 			if($ride->startDate!=$ride->endDate) //récurrence 
 			{
 				echo "<tr><td><label for='recurrence'>Récurrence*</label></td><td><input type='checkbox' name='recurrence' id='recurrence' /><input type='checkbox' name='recurrenceON' id='recurrenceON' checked hidden/></td></tr>";
 			}else{
 				echo "<tr><td><input type='checkbox' name='recurrenceOFF' id='recurrenceOFF' checked hidden/></td></tr>";
-			}*/
+			}
 			?>
-			<?php /*
+			<?php 
 			if($ride->bindedride!="") //aller retour 
 			{
 				$bindedriveid = $ride->bindedride;
@@ -160,16 +140,14 @@ table td.highlighted {
 				echo "<tr><td><label for='allerretour'>Inscription au retour de ".substr($bindedrive->departure,0,5)."</label></td><td><input type='checkbox' name='allerretour' id='allerretour' /><input type='checkbox' name='allerretourON' id='allerretourON' checked hidden/></td></tr>";
 			}else{
 				echo "<tr><td><input type='checkbox' name='allerretourOFF' id='allerretourOFF' checked hidden/></td></tr>";
-			}*/
+			}
 			?>
 			<tr><td rowspan="2"><input type="submit" value="S'inscrire"></td></tr>
-		</table>-->
+		</table>
 <?php
-
 	    foreach(Yii::app()->user->getFlashes() as $key => $message) { //affiche les messages d'erreur
 	        echo '<div class="flash-' . $key . '">' . $message . "</div>\n";
 	    }
-	    var_dump($ride);
 ?>
 		</form>
 <?php 
@@ -340,8 +318,11 @@ table td.highlighted {
 			.mousedown(function (e) {
 				$("#days td").removeAttr('class');
 				isMouseDown = true;
+				//$(this).toggleClass("highlighted", isHighlighted);
 				var index = $(this).parent().children().index($(this));
-
+				//console.log($('#trajets').children().eq(index).html());
+				/*$('#dateDebut').val($('#trajets').children().eq(index).html());
+				$('#dateFin').val($('#trajets').children().eq(index).html());*/
 				$('#dateDebut').val("");
 				$('#dateFin').val("");
 				if($(this).parent().attr('id')=="trajets" && $(this).index()<($(this).parent().children().size()-1))
@@ -349,6 +330,12 @@ table td.highlighted {
 					$('#dateDebut').val($('#trajets').children().eq(index).html());
 					$('#dateFin').val($('#trajets').children().eq(index).html());
 					$(this).toggleClass("highlighted", isHighlighted);
+					//console.log("index : "+$(this).index()+" taille totale"+ ($(this).parent().children().size()-1));
+					/*var $this = $(this);
+					var $tr = $this.parent();
+					var index = $tr.children().index($this);
+					var col = $tr.prev().children().eq(index);*/
+					//$(col).className="highlighted";
 
 					var col = $(this).parent().next().children().eq($(this).index());
 					$(col).toggleClass("highlighted", isHighlighted);
@@ -358,25 +345,57 @@ table td.highlighted {
 					$('#dateDebut').val($('#trajets').children().eq(index).html());
 					$('#dateFin').val($('#trajets').children().eq(index).html());
 					$(this).toggleClass("highlighted", isHighlighted);
+					/*var $this = $(this);
+					var $tr = $this.parent();
+					var index = $tr.children().index($this);
+					var col = $tr.next().children().eq(index);*/
+					//$(col).className="highlighted";
 
 					var col = $(this).parent().prev().children().eq($(this).index());
 					$(col).toggleClass("highlighted", isHighlighted);
 				}
 				isHighlighted = $(this).hasClass("highlighted");
+				mX=e.pageX;
 		})
 		.mouseover(function (e) {
 			if (isMouseDown) {
+				console.log("index actuel" + $(this).index() + " index dernier selec " + $(this).parent().children(".highlighted").last().index());
 				if(this.className!="highlighted" && $(this).index() > $(this).parent().children(".highlighted").last().index() && $(this).index()<($(this).parent().children().size()-1)){
 					var index = $(this).parent().children().index($(this));
+					//console.log("à droite " + $('#trajets').children().eq(index).html());
 					$('#dateFin').val($('#trajets').children().eq(index).html());
+					//$(this).toggleClass("highlighted", isHighlighted);
 				}
 				if(this.className!="highlighted" &&  $(this).index() < $(this).parent().children(".highlighted").first().index() && $(this).index()<($(this).parent().children().size()-1)){
 					var index = $(this).parent().children().index($(this));
+					//console.log("à gauche " + $('#trajets').children().eq(index).html());
 					$('#dateDebut').val($('#trajets').children().eq(index).html());
+					//$(this).toggleClass("highlighted", isHighlighted);
 				}
+/*
+				if(this.className!="highlighted" && e.pageX > mX && $(this).index()<($(this).parent().children().size()-1)){
+					var index = $(this).parent().children().index($(this));
+					//console.log("à droite " + $('#trajets').children().eq(index).html());
+					$('#dateFin').val($('#trajets').children().eq(index).html());
+					//$(this).toggleClass("highlighted", isHighlighted);
+				}
+				if(this.className!="highlighted" && e.pageX < mX && $(this).index()<($(this).parent().children().size()-1)){
+					var index = $(this).parent().children().index($(this));
+					//console.log("à gauche " + $('#trajets').children().eq(index).html());
+					$('#dateDebut').val($('#trajets').children().eq(index).html());
+					//$(this).toggleClass("highlighted", isHighlighted);
+				}
+*/
+				//$(this).toggleClass("highlighted", isHighlighted);
+
+				//console.log($(this).parent().attr('id'));
 
 				if($(this).parent().attr('id')=="trajets" && $(this).index()<($(this).parent().children().size()-1))
 				{
+					/*var $this = $(this);
+					var $tr = $this.parent();
+					var index = $tr.children().index($this);
+					var col = $tr.prev().children().eq(index);*/
 					$(this).toggleClass("highlighted", isHighlighted);
 					var col = $(this).parent().next().children().eq($(this).index());
 					$(col).toggleClass("highlighted", isHighlighted);
@@ -384,10 +403,16 @@ table td.highlighted {
 				}
 				else if($(this).index()<($(this).parent().children().size()-1))
 				{
+					/*var $this = $(this);
+					var $tr = $this.parent();
+					var index = $tr.children().index($this);
+					var col = $tr.next().children().eq(index);*/
+					//$(col).className="highlighted";
 					$(this).toggleClass("highlighted", isHighlighted);
 					var col = $(this).parent().prev().children().eq($(this).index());
 					$(col).toggleClass("highlighted", isHighlighted);
 				}
+				//console.log($('#trajets').children(".highlighted").first().index() + " " + $('#trajets').children(".highlighted").last().index());
 				var firsthighlighted = $('#trajets').children(".highlighted").first().index();
 				var lasthighlighted = $('#trajets').children(".highlighted").last().index();
 				for (var i = 0; i<(lasthighlighted-firsthighlighted); i++)
@@ -395,6 +420,7 @@ table td.highlighted {
 					$('#days').children().children("tr").eq(0).children().eq(firsthighlighted+i).addClass('highlighted');
 					$('#days').children().children("tr").eq(1).children().eq(firsthighlighted+i).addClass('highlighted');
 				}
+				mX = e.pageX;
 			}
 		})
 		.bind("selectstart", function () {

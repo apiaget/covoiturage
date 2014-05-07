@@ -37,10 +37,29 @@ class Registration extends CActiveRecord
 			array('user_fk, ride_fk', 'required'),
 			array('user_fk, ride_fk, accepted', 'numerical', 'integerOnly'=>true),
 			array('startDate, endDate', 'safe'),
+			array('startDate', 'doublon'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, user_fk, ride_fk, startDate, endDate, accepted', 'safe', 'on'=>'search'),
 		);
+	}
+
+	public function doublon($attribute,$params)
+	{
+		//this = la registration testée
+		/* on veut s'arranger pour augmenter les registrations et les trucs du genre
+		 * c'est ici qu'en enregistrera la registration
+		 *
+		 */
+		$this->addError($attribute, 'message');
+		/*foreach($this->userFk->registrations as $reg){
+
+
+			//on fait les saves ici
+	    	if(!$reg->ok){
+	    	  $this->addError($attribute, 'message');
+	  		}
+	  	}*/
 	}
 
 	/**

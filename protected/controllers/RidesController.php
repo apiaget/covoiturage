@@ -70,7 +70,55 @@ class RidesController extends Controller
 			//redirection sur la page d'accueil
 			$this->redirect(Yii::app()->user->returnUrl);
 		}
+		
+		if(isset($_POST['dateDebut'])&&isset($_POST['dateFin'])) //&&$_POST['dateDebut']!="" && $_POST['dateDebut'] != ""
+		{
+			//$exemple = Registration::model()->find(1);
+			//var_dump($exemple);
+			$reg = new Registration;
+			$reg->user_fk=User::model()->currentUser()->id;
+			$reg->ride_fk=$this->loadModel($id)->id;
+			$reg->startDate=date("Y-m-d 00:00:00",strtotime($_POST['dateDebut']));
+			$reg->endDate=date("Y-m-d 00:00:00",strtotime($_POST['dateFin']));
+			$reg->accepted=0;
+			//var_dump($reg);
+			//die('salut');
+			//on rempli les paramètres de la registration
+			
+/*
+			if(isset($_POST['allerretour']))
+			{
+				$regRetour = new Registration;
+				$regRetour->user_fk=User::model()->currentUser()->id;
+				$regRetour->ride_fk=$this->loadModel($id)->bindedride;
+				$regRetour->startDate=date("Y-m-d 00:00:00",strtotime($_POST['dateDebut']));
+				$regRetour->endDate=date("Y-m-d 00:00:00",strtotime($_POST['dateFin']));
+				$regRetour->accepted=0;
 
+				//si les registrations ne valide pas, on fait quelque chose
+				if(!$reg->validate()){
+
+				}
+				if(!$regRetour->validate()){
+
+				}
+
+				//on rempli les paramètre de la registration
+			}*/
+			$result = $reg->validate();
+			var_dump($reg->getErrors()); //chope les erreurs retournées par le modèle de $reg (Registration)
+			die();
+			/*
+			if(!$reg->validate()){
+
+			}*/
+
+		}
+		/*else if(isset($_POST['dateB']) && $_POST['dateB']==""){
+			Yii::app()->user->setFlash('error', "Date incorrecte !");
+			$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
+		}*/
+			/*
 			//trajet récurrent, aller-retour possible
 			//trajet récurrent, aller-retour pas possible
 			//trajet non récurrent, aller-retour possible
@@ -359,6 +407,7 @@ class RidesController extends Controller
 				Yii::app()->user->setFlash('error', "Date incorrecte !");
 				$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
 			}
+			*/
 
 		$today = date('Y-m-d 00:00:00', time());
 		$registrations=Registration::model()->findAll('ride_fk=:ride_fk AND endDate>=:today', array(':ride_fk'=>$id, ':today'=>$today));
