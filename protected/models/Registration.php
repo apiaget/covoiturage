@@ -51,7 +51,7 @@ class Registration extends CActiveRecord
 		 * c'est ici qu'en enregistrera la registration
 		 *
 		 */
-		$this->addError($attribute, 'message');
+		//$this->addError($attribute, 'message');
 		/*foreach($this->userFk->registrations as $reg){
 
 
@@ -60,6 +60,26 @@ class Registration extends CActiveRecord
 	    	  $this->addError($attribute, 'message');
 	  		}
 	  	}*/
+	  	
+	  	$registrations = Registration::model()->findAll('ride_fk = :ride AND user_fk = :user', array(':ride'=>$this->ride_fk, ':user' => User::currentUser()->id));
+	  	
+	  	//si l'utilisateur n'a pas encore fait de registration pour ce ride
+	  	if(count($registrations)==0)
+	  	{
+	  		if($this->placeDispoRide())
+	  		{
+	  			$this->save(false);
+	  		}
+	  	}
+	  	else //si l'utilisateur a déjà au moins une registration sur ce ride
+	  	{
+	  		
+	  	}
+
+	  	//si l'utilisateur n'a pas encore fait de registration pour ce ride
+	  		//juste vérifier si y'a assez de sièges libres
+
+	  	//sinon
 	}
 
 	/**
@@ -130,5 +150,48 @@ class Registration extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+
+
+	/*
+	*	PlaceDisponible? entre deux dates et pour un ride
+	*	Test si y'a des places disponibles sur le ride auquel la registration s'applique
+	*	return true si y'a de la place, false sinon
+	*
+	*/
+	public function placeDispoRide()
+	{
+		$registrations = Registration::model()->findAll('ride_fk = :ride AND (
+				(:dateDebut <= startDate AND :dateFin >= endDate)
+				OR (:dateDebut <= endDate AND :dateDebut >= startDate)
+				OR (:dateFin >= startDate AND :dateFin <= endDate)
+				OR (:dateDebut >= startDate AND :dateFin <= endDate))',
+		array(':ride'=>$this->ride_fk, ':dateDebut' => $this->startDate, ':dateFin' => $this->endDate));
+
+		$ride = Ride::model()->findByPk($this->ride_fk);
+
+		$dateRemplissageTableau = $date=date('Y-m-d 00:00:00', strtotime($this->startDate));
+		$seatsTaken = array();
+		$i=0;
+		do{ //prépare le tableau où sera indiqué le nombre de places utilisées par date
+			$seatsTaken[$i]=0;
+			$i++;
+			$dateRemplissageTableau = date('Y-m-d 00:00:00', strtotime($dateRemplissageTableau. ' + 7 days'));
+		}while(strtotime($dateRemplissageTableau)<=strtotime($this->endDate));
+
+		$i=0;
+		do{ //remplis le tableau
+			foreach ($registrations as $registration) {
+				if($registration->startDate <= $date && $registration->endDate >= $date && $registration->accepted==1)
+				{
+					$seatsTaken[$i]=$seatsTaken[$i]+1;
+				}
+			}
+			$i++;
+			$date = date('Y-m-d 00:00:00', strtotime($date. ' + 7 days'));
+		}while(strtotime($date)<=strtotime($this->endDate));
+
+		//si le tableau contient le nombre de place pour le ride, ça veut dire qu'il n'y a plus de places
+		return !(in_array($ride->seats,$seatsTaken));
 	}
 }

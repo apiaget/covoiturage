@@ -85,7 +85,7 @@ class RidesController extends Controller
 			//die('salut');
 			//on rempli les paramètres de la registration
 			
-/*
+
 			if(isset($_POST['allerretour']))
 			{
 				$regRetour = new Registration;
@@ -104,7 +104,7 @@ class RidesController extends Controller
 				}
 
 				//on rempli les paramètre de la registration
-			}*/
+			}
 			$result = $reg->validate();
 			var_dump($reg->getErrors()); //chope les erreurs retournées par le modèle de $reg (Registration)
 			die();

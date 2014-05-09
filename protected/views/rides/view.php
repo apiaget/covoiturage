@@ -169,7 +169,7 @@ table td.highlighted {
 	    foreach(Yii::app()->user->getFlashes() as $key => $message) { //affiche les messages d'erreur
 	        echo '<div class="flash-' . $key . '">' . $message . "</div>\n";
 	    }
-	    var_dump($ride);
+	    //var_dump($ride);
 ?>
 		</form>
 <?php 
