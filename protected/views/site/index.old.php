@@ -32,10 +32,10 @@ $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
 
  ?>
 
-<br>
-<br>
-<br>
-<br>
+ <br>
+  <br>
+   <br>
+    <br>
 <?php $this->endWidget(); ?>
  
 <?php
@@ -58,78 +58,77 @@ if(count($ridesCurrent)!=0){
 }else{
 	$r[0]=-1;
 }
+//var_dump($ridesCurrent);
 
 //si aucune registration n'est disponible, afficher un message, sinon, afficher les registrations
 if($v[0]==-1 && $r[0]==-1){
 	echo "Vous ne participez à aucun trajet.";
-}
-else
-{
+}else{
 	echo "<table>";
 	echo "<tr><th>Conducteur</th><th>Places</th><th>Départ</th><th>Arrivée</th><th>Jour</th></tr>";
 	$i=0;
 
 	$date=$datetime = date('Y-m-d 00:00:00', time());
 
-	while($i<20 && array_sum($v)<=count($registrations) && array_sum($r)<=count($ridesCurrent))
-	{
-		//tel jour
-		foreach($registrations as $registration){
-			//Ride::model()->find('id=:id', array(':id'=>$registration->ride_fk));
-			//SI $registration correspond au jour
-			//if($ride->startDate<=$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0 && $ride->showDuringHolidays($date)){
-			$regRide = Ride::model()->find('id=:id', array(':id'=>$registration->ride_fk));
+		while($i<20 && array_sum($v)<count($registrations) && array_sum($r)<count($rides))
+		{
+			//tel jour
+			foreach($registrations as $registration){
+				//Ride::model()->find('id=:id', array(':id'=>$registration->ride_fk));
+				//SI $registration correspond au jour
+				//if($ride->startDate<=$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0 && $ride->showDuringHolidays($date)){
+				$regRide = Ride::model()->find('id=:id', array(':id'=>$registration->ride_fk));
 
-			if($regRide->visibility==1 && $registration->startDate<=$date && $registration->endDate>=$date && $regRide->day==date('N',strtotime($date)) && $v[$registration->id]==0 && $regRide->showDuringHolidays($date)){
-				//prendre le ride qui correspond et l'afficher
-				$daydate = date("d-m-Y",strtotime($date));
-				echo "<tr onclick=";
-				echo "\"document.location='/covoiturage/covoiturage/rides/".$regRide->id."?date=".$daydate."';";
-				echo "\" onmouseover='tablein(this);' onmouseout='tableout(this);'>";
+				if($ride->visibility==1 && $registration->startDate<=$date && $registration->endDate>=$date && $regRide->day==date('N',strtotime($date)) && $v[$registration->id]==0 && $ride->showDuringHolidays($date)){
+					//prendre le ride qui correspond et l'afficher
+					$daydate = date("d-m-Y",strtotime($date));
+					echo "<tr onclick=";
+					echo "\"document.location='/covoiturage/covoiturage/rides/".$regRide->id."?date=".$daydate."';";
+					echo "\" onmouseover='tablein(this);' onmouseout='tableout(this);'>";
 
-					echo "<td>".$regRide->driver->cpnvId."</td>";
-					echo "<td>"."0/".$regRide->seats."</td>";
-					echo "<td>".$regRide->departuretown->name." à ".substr($regRide->departure, 0, 5)."</td>";
-					echo "<td>".$regRide->arrivaltown->name." vers ".substr($regRide->arrival, 0, 5)."</td>";
-				
-					switch ($regRide->day) {
-							case '1':
-								$day = "Lundi";
-								break;
-							case '2':
-								$day = "Mardi";
-								break;
-							case '3':
-								$day = "Mercredi";
-								break;
-							case '4':
-								$day = "Jeudi";
-								break;
-							case '5':
-								$day = "Vendredi";
-								break;
-							case '6':
-								$day = "Samedi";
-								break;
-							case '7':
-								$day = "Dimanche";
-								break;
-							default:
-								$day = "?";
-								break;
-						}
-					echo "<td>".$day." ".$daydate."</td>";
-				echo "</tr>";
-				$i++;
-				
-			}
-			if($registration->endDate==$date){
-					$v[$registration->id]=1;
+						echo "<td>".$regRide->driver->cpnvId."</td>";
+						echo "<td>"."0/".$regRide->seats."</td>";
+						echo "<td>".$regRide->departuretown->name." à ".substr($regRide->departure, 0, 5)."</td>";
+						echo "<td>".$regRide->arrivaltown->name." vers ".substr($regRide->arrival, 0, 5)."</td>";
+					
+						switch ($regRide->day) {
+								case '1':
+									$day = "Lundi";
+									break;
+								case '2':
+									$day = "Mardi";
+									break;
+								case '3':
+									$day = "Mercredi";
+									break;
+								case '4':
+									$day = "Jeudi";
+									break;
+								case '5':
+									$day = "Vendredi";
+									break;
+								case '6':
+									$day = "Samedi";
+									break;
+								case '7':
+									$day = "Dimanche";
+									break;
+								default:
+									$day = "?";
+									break;
+							}
+						echo "<td>".$day." ".$daydate."</td>";
+					echo "</tr>";
+					$i++;
+					
 				}
-				
-		}
-	
-	
+				if($registration->endDate==$date){
+						$v[$registration->id]=1;
+					}
+					
+			}
+		
+		
 		//affichage des rides pour lesquels l'utilisateur courant est conducteur
 		foreach($ridesCurrent as $rideCurrent){
 			//Ride::model()->find('id=:id', array(':id'=>$registration->ride_fk));
@@ -144,7 +143,7 @@ else
 				echo "\"document.location='/covoiturage/covoiturage/rides/".$rideCurrent->id."?date=".$daydate."';";
 				echo "\" onmouseover='tablein(this);' onmouseout='tableout(this);'>";
 
-					echo "<td><img src='/covoiturage/covoiturage/images/driver.png' width='8%'/> ".$rideCurrent->driver->cpnvId."</td>";
+					echo "<td><img src='/covoiturage/covoiturage/images/driver.png' width='8%'/>".$rideCurrent->driver->cpnvId."</td>";
 					echo "<td>"."0/".$rideCurrent->seats."</td>";
 					echo "<td>".$rideCurrent->departuretown->name." à ".substr($rideCurrent->departure, 0, 5)."</td>";
 					echo "<td>".$rideCurrent->arrivaltown->name." vers ".substr($rideCurrent->arrival, 0, 5)."</td>";
@@ -182,10 +181,10 @@ else
 			}
 			if($rideCurrent->endDate==$date){
 					$r[$rideCurrent->id]=1;
-			}
+				}
 				
 		}
-	
+		
 		$date=date('Y-m-d 00:00:00', strtotime($date.' +1 day'));
 	}
 }

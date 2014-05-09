@@ -142,39 +142,13 @@ table td.highlighted {
 				echo "<tr><td><input type='checkbox' name='allerretourOFF' id='allerretourOFF' checked hidden/></td></tr>";
 			}
 			?>
-			
-			<!-- Si l'utilisateur inscrit -->
-			<?php
-			
-				//Si id du user est id du ride conçerné, 
-				$inscrit = false;
-				foreach($registrations as $registration){
-					if($registration->userFk->id == User::model()->currentUser()->id)
-					{
-						$inscrit = true;
-						break;
-					}
-				}
-				//sinon
-				var_dump($inscrit);
-			echo "<script>  console.log('coucou'); </script>";
-			if($inscrit == false)
-			{
-				echo '<tr><td rowspan="2"><input type="submit" value="S\'inscrire"></td></tr>'; //bouton s'inscrire
-				
-			}
-			else
-			{
-			
-				echo '<tr><td rowspan="2"><input type="submit" value="Se desinscrire" name="desinscrire"></td></tr>'; //bouton se desinscrire
-			}
-			?>
-			</table>
-			<?php
-					foreach(Yii::app()->user->getFlashes() as $key => $message) { //affiche les messages d'erreur
-						echo '<div class="flash-' . $key . '">' . $message . "</div>\n";
-					}
-			?>
+			<tr><td rowspan="2"><input type="submit" value="S'inscrire"></td></tr>
+		</table>
+<?php
+	    foreach(Yii::app()->user->getFlashes() as $key => $message) { //affiche les messages d'erreur
+	        echo '<div class="flash-' . $key . '">' . $message . "</div>\n";
+	    }
+?>
 		</form>
 <?php 
 		if($ride->startDate!=$ride->endDate) //aller retour 
@@ -230,15 +204,14 @@ table td.highlighted {
 <?php
 	
 
-
 	echo '<br/>';
-	echo '<table><tr><th>Utilisateur</th><th>Numéro de téléphone</th><th>Email</th><th>Date(s)</th><th>Validation</th><th></th></tr>';
+	echo '<table><tr><th>Utilisateur</th><th>Numéro de téléphone</th><th>Email</th><th>Date(s)</th><th>Validation</th></tr>';
 	foreach($registrations as $registration)
 	{
-		$driverid=$user->id;
+		
 		$nom=$registration->userFk->nom();
-		$id=$registration->userFk->id;
 		$prenom = $registration->userFk->prenom();
+
 		$dateDebut = date("d-m-Y",strtotime($registration->startDate));
 		$dateFin = date("d-m-Y",strtotime($registration->endDate));
 		$date = "";
@@ -260,6 +233,15 @@ table td.highlighted {
 			$email ="Non visible";
 		}
 
+		if($registration->accepted==1)
+		{
+			$validation ="Validé";
+		}
+		else
+		{
+			$validation ="En attente";
+		}
+
 		if($dateDebut==$dateFin){
 			$date=$dateDebut;
 		}
@@ -267,24 +249,8 @@ table td.highlighted {
 		{
 			$date = $dateDebut." - ".$dateFin;
 		}
-
-		if($registration->accepted==1)
-		{
-			$validation ="Validé";
-			
-			
-			
 		
-			echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$numero.'</td><td>'.$email.'</td><td>'.$date.'</td><td>'.$validation.'</td><td></td></tr>';
-		}
-		else
-		{
-			echo '<form method="post">';
-				$validation ="En attente";
-				echo'<input type="hidden" name="idReg" value="'.$registration->id.'" />'; //A REVOIR
-				echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$numero.'</td><td>'.$email.'</td><td>'.$date.'</td><td>'.$validation.'</td><td><input type="submit" name="valider" value="valider"/></td></tr>';
-			echo'</form>';
-		}
+		echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$numero.'</td><td>'.$email.'</td><td>'.$date.'</td><td>'.$validation.'</td></tr>';
 	}
 	//var_dump($ride);
 

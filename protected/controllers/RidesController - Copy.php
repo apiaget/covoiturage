@@ -53,12 +53,7 @@ class RidesController extends Controller
 	{
 		$cpnvId="Joël";
 		$user=User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$cpnvId));
-		$today = date('Y-m-d 00:00:00', time());
-		
-		$registrations=Registration::model()->findAll('ride_fk=:ride_fk AND endDate>=:today', array(':ride_fk'=>$id, ':today'=>$today));
 
-		
-		
 		//ne pas afficher les rides effacés
 		$ride=$this->loadModel($id);
 		if($ride->visibility==0)
@@ -75,32 +70,7 @@ class RidesController extends Controller
 			//redirection sur la page d'accueil
 			$this->redirect(Yii::app()->user->returnUrl);
 		}
-			if(isset($_POST['desinscrire'])){
-				
-				foreach($registrations as $registration){
-						if($registration->userFk->id == User::model()->currentUser()->id)
-						{
 
-							$registration->delete();
-							$registration->save();
-							$this->redirect(Yii::app()->user->returnUrl);
-						}
-					}
-			}
-
-			if(isset($_POST['valider'])){
-				$reg=$_POST['idReg'];
-					var_dump($reg);
-					foreach($registrations as $registration){
-						if($registration->id == $reg)
-						{
-							$registration->accepted=1;
-							$registration->save();
-							break;
-						}
-					}
-		}
-			/*
 			//trajet récurrent, aller-retour possible
 			//trajet récurrent, aller-retour pas possible
 			//trajet non récurrent, aller-retour possible
@@ -388,10 +358,11 @@ class RidesController extends Controller
 			}else if(isset($_POST['dateB']) && $_POST['dateB']==""){
 				Yii::app()->user->setFlash('error', "Date incorrecte !");
 				$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
-			}*/
+			}
 
-		
-		
+		$today = date('Y-m-d 00:00:00', time());
+		$registrations=Registration::model()->findAll('ride_fk=:ride_fk AND endDate>=:today', array(':ride_fk'=>$id, ':today'=>$today));
+
 		$this->render('view',array('ride'=>$this->loadModel($id),'user'=>$user,'registrations'=>$registrations));
 	}
 
