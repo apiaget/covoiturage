@@ -70,10 +70,14 @@ class Registration extends CActiveRecord
 	  		{
 	  			$this->save(false);
 	  		}
+	  		else
+	  		{
+	  			$this->addError($attribute, 'Il n\'y a plus de place dans la voiture pour les dates sélectionnées.');
+	  		}
 	  	}
 	  	else //si l'utilisateur a déjà au moins une registration sur ce ride
 	  	{
-	  		
+	  			$this->addError($attribute, 'Vous avez déjà un enregistrement sur ce trajet');	  		
 	  	}
 
 	  	//si l'utilisateur n'a pas encore fait de registration pour ce ride

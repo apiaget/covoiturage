@@ -73,16 +73,12 @@ class RidesController extends Controller
 		
 		if(isset($_POST['dateDebut'])&&isset($_POST['dateFin'])) //&&$_POST['dateDebut']!="" && $_POST['dateDebut'] != ""
 		{
-			//$exemple = Registration::model()->find(1);
-			//var_dump($exemple);
 			$reg = new Registration;
 			$reg->user_fk=User::model()->currentUser()->id;
 			$reg->ride_fk=$this->loadModel($id)->id;
 			$reg->startDate=date("Y-m-d 00:00:00",strtotime($_POST['dateDebut']));
 			$reg->endDate=date("Y-m-d 00:00:00",strtotime($_POST['dateFin']));
 			$reg->accepted=0;
-			//var_dump($reg);
-			//die('salut');
 			//on rempli les paramètres de la registration
 			
 
@@ -104,12 +100,20 @@ class RidesController extends Controller
 				}
 
 				//on rempli les paramètre de la registration
+			}else
+			{
+				$result = $reg->validate();
+				//var_dump($reg->getErrors()['startDate'][0]); //chope les erreurs retournées par le modèle de $reg (Registration)
+	  			//$this->addError($attribute, $reg->getErrors());
+	  			//$this->customErrors[] = array($reg->getErrors());
+	  			//die;
+	  			Yii::app()->user->setFlash('startDate', $reg->getErrors()['startDate'][0]);
+				
+				//die();
 			}
-			$result = $reg->validate();
-			var_dump($reg->getErrors()); //chope les erreurs retournées par le modèle de $reg (Registration)
-			die();
-			/*
-			if(!$reg->validate()){
+
+			
+			/*if(!$reg->validate()){
 
 			}*/
 

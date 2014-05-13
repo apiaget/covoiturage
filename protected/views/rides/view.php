@@ -129,11 +129,11 @@ table td.highlighted {
 			}
 
 			if(isset($_GET['date'])){
-				echo '<input type="text" name="dateDebut" id="dateDebut" value="'.date('d.m.Y', strtotime($_GET['date'])).'"/>';
-				echo '<input type="text" name="dateFin" id="dateFin" value="'.date('d.m.Y', strtotime($_GET['date'])).'"/>';
+				echo '<input type="text" name="dateDebut" id="dateDebut" hidden value="'.date('d.m.Y', strtotime($_GET['date'])).'"/>';
+				echo '<input type="text" name="dateFin" id="dateFin" hidden value="'.date('d.m.Y', strtotime($_GET['date'])).'"/>';
 			}else{
-				echo '<input type="text" name="dateDebut" id="dateDebut" />';
-				echo '<input type="text" name="dateFin" id="dateFin" />';
+				echo '<input type="text" name="dateDebut" id="dateDebut" hidden />';
+				echo '<input type="text" name="dateFin" id="dateFin" hidden />';
 			}
 
 			?>
@@ -164,20 +164,22 @@ table td.highlighted {
 			?>
 			<tr><td rowspan="2"><input type="submit" value="S'inscrire"></td></tr>
 		</table>-->
+		<div class="form">
 <?php
 
 	    foreach(Yii::app()->user->getFlashes() as $key => $message) { //affiche les messages d'erreur
-	        echo '<div class="flash-' . $key . '">' . $message . "</div>\n";
+	        echo '<div class="errorMessage '.$key.'">' . $message . "</div>\n";
 	    }
 	    //var_dump($ride);
 ?>
+		</div>
 		</form>
 <?php 
-		if($ride->startDate!=$ride->endDate) //aller retour 
+		/*if($ride->startDate!=$ride->endDate) //aller retour 
 		{
 			echo "<small>*La récurrence s'effectue à partir de la date sélectionnée jusqu'à la fin des trajets proposés</small>";
 		}
-
+*/
 		echo '<br/>';
 	echo '<table><tr><th>Utilisateur</th><th>Date(s)</th><th>Validation</th></tr>';
 	foreach($registrations as $registration)
