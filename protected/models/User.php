@@ -184,4 +184,20 @@ class User extends CActiveRecord
 		$user=User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$cpnvId));
 		return $user;
 	}
+	
+	public function sendEmail($subject, $text){
+
+		$mail = new YiiMailer();
+		
+		$mail->IsSMTP();
+		$mail->clearLayout();//if layout is already set in config
+		$mail->setFrom('info@covoiturage.ch', 'covoiturage.ch');
+		$mail->setTo($this->email);
+		$mail->setSubject($subject);
+		$mail->setBody($text);
+		$mail->Host='mail.cpnv.ch';
+		$mail->send();
+	}
+	
+	
 }

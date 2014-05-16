@@ -1,4 +1,9 @@
 <?php
+	$cpnvId="Joël";
+	$user = User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$cpnvId));
+	$user->sendEmail('blabla','bloblo');
+	
+
 /* @var $this SiteController */
 
 $this->pageTitle=Yii::app()->name;
