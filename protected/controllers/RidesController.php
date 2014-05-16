@@ -103,13 +103,12 @@ class RidesController extends Controller
 			}else
 			{
 				$result = $reg->validate();
-				//var_dump($reg->getErrors()['startDate'][0]); //chope les erreurs retournées par le modèle de $reg (Registration)
-	  			//$this->addError($attribute, $reg->getErrors());
-	  			//$this->customErrors[] = array($reg->getErrors());
-	  			//die;
-	  			Yii::app()->user->setFlash('startDate', $reg->getErrors()['startDate'][0]);
-				
-				//die();
+
+				$errors = $reg->getErrors(); //chope les erreurs retournées par le modèle de $reg (Registration)
+				if(count($errors)!=0)
+				{
+					Yii::app()->user->setFlash('startDate', $errors['startDate'][0]);
+				}
 			}
 
 			
