@@ -77,7 +77,7 @@ class Registration extends CActiveRecord
 		}
 		else //si l'utilisateur a déjà au moins une registration sur ce ride
 		{
-			$i=0;
+			$noSave=0;
 			//Modifier pour que l'utilisateur puisse agrandir ses registrations ou avoir plusieurs plages de réservations
 			foreach ($registrations as $registration) {
 				if(strtotime($this->endDate. ' + 7 days')>=strtotime($registration->startDate) && strtotime($this->startDate)<strtotime($registration->startDate))
@@ -90,9 +90,9 @@ class Registration extends CActiveRecord
 					{
 						$this->addError($attribute, 'Il n\'y a plus de place dans la voiture pour les dates sélectionnées.');
 					}
-					$i++;
+					$noSave++;
 				}
-				if(strtotime($this->startDate. ' - 7 days')<=strtotime($registration->endDate) && strtotime($this->endDate)>strtotime($registration->endDate))
+				else if(strtotime($this->startDate. ' - 7 days')<=strtotime($registration->endDate) && strtotime($this->endDate)>strtotime($registration->endDate))
 				{
 					if($this->placeDispoRide())
 					{
@@ -102,14 +102,18 @@ class Registration extends CActiveRecord
 					{
 						$this->addError($attribute, 'Il n\'y a plus de place dans la voiture pour les dates sélectionnées.');
 					}
-					$i++;
+					$noSave++;
+				}else{
+					$this->addError($attribute, 'Vous avez déjà une réservation englobant ces dates.');
+					$noSave++;
 				}
 			}
-
+			//reprendre les registrations avec la nouvelle registration créée
+			$registrations = Registration::model()->findAll('ride_fk = :ride AND user_fk = :user ORDER BY startDate ASC', array(':ride'=>$this->ride_fk, ':user' => User::currentUser()->id));
 			//Fusion des différentes registrations pour une personne
 			for($i=0;$i<count($registrations)-1;$i++)
 			{
-				if(strtotime($registrations[$i]->endDate)>strtotime($registrations[$i+1]->startDate))
+				if(strtotime($registrations[$i]->endDate)>=strtotime($registrations[$i+1]->startDate)&&$noSave==0)
 				{
 					if($registrations[$i]->accepted==1||$registrations[$i+1]->accepted==1)
 					{
@@ -120,11 +124,11 @@ class Registration extends CActiveRecord
 					}
 					$registrations[$i]->endDate=$registrations[$i+1]->endDate;
 					$registrations[$i]->save(false);
-					$registrations[$i+1]->delete();
+					$registrations[$i+1]->delete(false);
 				}
 			}
 
-			if($i==0)
+			if($noSave==0)
 			{
 				$this->save(false);
 			}	

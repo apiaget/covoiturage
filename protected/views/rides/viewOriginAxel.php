@@ -83,7 +83,7 @@ table td.highlighted {
 		while ($dateA<=$ride->endDate) {
 			if($ride->showDuringHolidays($dateA) && $dateA>=$ride->startDate){
 				if(isset($_GET['date']) && $_GET['date']==date('d-m-Y', strtotime($dateA))){
-					echo "<td class='highlighted' width='68px'>".date('d.m.Y', strtotime($dateA))."</td>";
+					echo "<td class='chosen' width='68px'>".date('d.m.Y', strtotime($dateA))."</td>";
 				}else{
 					echo "<td width='68px'>".date('d.m.Y', strtotime($dateA))."</td>";
 				}
@@ -94,7 +94,7 @@ table td.highlighted {
 		while ($dateB<=$ride->endDate) {
 			if($ride->showDuringHolidays($dateB) && $dateB>=$ride->startDate){
 				if(isset($_GET['date']) && $_GET['date']==date('d-m-Y', strtotime($dateB))){
-					echo "<td class='highlighted'>";
+					echo "<td class='chosen'>";
 					$i=0;
 					foreach ($registrations as $registration) {
 						if($dateB>=$registration->startDate&&$dateB<=$registration->endDate&&$registration->accepted){$i++;	}
@@ -120,72 +120,47 @@ table td.highlighted {
 	if($user->id!=$ride->driver_fk){ //passager ou utilisateur
 ?>
 		<form method="post">
-			<?php
-			if(isset($ride->bindedride))
+			<table>
+			<tr><td><label for="dateDebut">Date</label><input type="text" name="dateDebut" id="dateDebut" disabled/></td><td><label for="dateFin">Date</label><input type="text" name="dateFin" id="dateFin" disabled/></td></tr>
+			<tr><td><label for="date">Date</label></td><td><input type="text" name="date" id="date" disabled/><input type="text" name="dateB" id="dateB" hidden/></td></tr>
+			<?php 
+			if($ride->startDate!=$ride->endDate) //récurrence 
 			{
-				echo '<input type="checkbox" name="allerretour" id="allerretour" />';
-			}
-
-			if(isset($_GET['date'])){
-				echo '<input type="text" name="dateDebut" id="dateDebut" hidden value="'.date('d.m.Y', strtotime($_GET['date'])).'"/>';
-				echo '<input type="text" name="dateFin" id="dateFin" hidden value="'.date('d.m.Y', strtotime($_GET['date'])).'"/>';
+				echo "<tr><td><label for='recurrence'>Récurrence*</label></td><td><input type='checkbox' name='recurrence' id='recurrence' /><input type='checkbox' name='recurrenceON' id='recurrenceON' checked hidden/></td></tr>";
 			}else{
-				echo '<input type="text" name="dateDebut" id="dateDebut" hidden />';
-				echo '<input type="text" name="dateFin" id="dateFin" hidden />';
+				echo "<tr><td><input type='checkbox' name='recurrenceOFF' id='recurrenceOFF' checked hidden/></td></tr>";
 			}
-
 			?>
-
-			<!--<input type="submit" value="S'inscrire">-->
-
-		<div class="form">
-<?php
-
-	    foreach(Yii::app()->user->getFlashes() as $key => $message) { //affiche les messages d'erreur
-	        echo '<div class="errorMessage '.$key.'">' . $message . "</div>\n";
-	    }
-	    //var_dump($ride);
-?>
-		</div>
-
-			
-			<!-- Si l'utilisateur inscrit -->
-			<?php
-			
-				//Si id du user est id du ride conçerné, 
-				$inscrit = false;
-				foreach($registrations as $registration){
-					if($registration->userFk->id == User::model()->currentUser()->id)
-					{
-						$inscrit = true;
-						break;
-					}
-				}
-				//sinon
-			echo "<script>  console.log('coucou'); </script>";
-			echo '<tr><td rowspan="2"><input type="submit" value="S\'inscrire" name="inscrire"></td></tr>'; //bouton s'inscrire
-			if($inscrit == true)
+			<?php 
+			if($ride->bindedride!="") //aller retour 
 			{
-				echo '<tr><td rowspan="2"><input type="submit" value="Se desinscrire" name="desinscrire"></td></tr>'; //bouton se desinscrire
+				$bindedriveid = $ride->bindedride;
+				$bindedrive = Ride::model()->find("id=:bindedriveid", array(":bindedriveid"=> $bindedriveid));
+			
+				echo "<tr><td><label for='allerretour'>Inscription au retour de ".substr($bindedrive->departure,0,5)."</label></td><td><input type='checkbox' name='allerretour' id='allerretour' /><input type='checkbox' name='allerretourON' id='allerretourON' checked hidden/></td></tr>";
+			}else{
+				echo "<tr><td><input type='checkbox' name='allerretourOFF' id='allerretourOFF' checked hidden/></td></tr>";
 			}
 			?>
-			</table>
-			<?php
-				foreach(Yii::app()->user->getFlashes() as $key => $message) { //affiche les messages d'erreur
-					echo '<div class="flash-' . $key . '">' . $message . "</div>\n";
-				}
-			?>
+			<tr><td rowspan="2"><input type="submit" value="S'inscrire"></td></tr>
+		</table>
+<?php
+	    foreach(Yii::app()->user->getFlashes() as $key => $message) { //affiche les messages d'erreur
+	        echo '<div class="flash-' . $key . '">' . $message . "</div>\n";
+	    }
+?>
 		</form>
 <?php 
-		/*if($ride->startDate!=$ride->endDate) //aller retour 
+		if($ride->startDate!=$ride->endDate) //aller retour 
 		{
 			echo "<small>*La récurrence s'effectue à partir de la date sélectionnée jusqu'à la fin des trajets proposés</small>";
 		}
-*/
+
 		echo '<br/>';
 	echo '<table><tr><th>Utilisateur</th><th>Date(s)</th><th>Validation</th></tr>';
 	foreach($registrations as $registration)
 	{
+		
 		$nom=$registration->userFk->nom();
 		$prenom = $registration->userFk->prenom();
 
@@ -212,6 +187,8 @@ table td.highlighted {
 		
 		echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$date.'</td><td>'.$validation.'</td></tr>';
 	}
+	//var_dump($ride);
+
 	echo '</table>';
 	}
 ?>
@@ -226,14 +203,15 @@ table td.highlighted {
 
 <?php
 	
+
 	echo '<br/>';
-	echo '<table><tr><th>Utilisateur</th><th>Numéro de téléphone</th><th>Email</th><th>Date(s)</th><th>Validation</th><th></th></tr>';
+	echo '<table><tr><th>Utilisateur</th><th>Numéro de téléphone</th><th>Email</th><th>Date(s)</th><th>Validation</th></tr>';
 	foreach($registrations as $registration)
 	{
-		$driverid=$user->id;
+		
 		$nom=$registration->userFk->nom();
-		$id=$registration->userFk->id;
 		$prenom = $registration->userFk->prenom();
+
 		$dateDebut = date("d-m-Y",strtotime($registration->startDate));
 		$dateFin = date("d-m-Y",strtotime($registration->endDate));
 		$date = "";
@@ -255,6 +233,15 @@ table td.highlighted {
 			$email ="Non visible";
 		}
 
+		if($registration->accepted==1)
+		{
+			$validation ="Validé";
+		}
+		else
+		{
+			$validation ="En attente";
+		}
+
 		if($dateDebut==$dateFin){
 			$date=$dateDebut;
 		}
@@ -262,21 +249,11 @@ table td.highlighted {
 		{
 			$date = $dateDebut." - ".$dateFin;
 		}
-
-		if($registration->accepted==1)
-		{
-			$validation ="Validé";
-			echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$numero.'</td><td>'.$email.'</td><td>'.$date.'</td><td>'.$validation.'</td><td></td></tr>';
-		}
-		else
-		{
-			echo '<form method="post">';
-				$validation ="En attente";
-				echo'<input type="hidden" name="idReg" value="'.$registration->id.'" />'; //A REVOIR
-				echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$numero.'</td><td>'.$email.'</td><td>'.$date.'</td><td>'.$validation.'</td><td><input type="submit" name="valider" value="valider"/></td></tr>';
-			echo'</form>';
-		}
+		
+		echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$numero.'</td><td>'.$email.'</td><td>'.$date.'</td><td>'.$validation.'</td></tr>';
 	}
+	//var_dump($ride);
+
 	echo '</table>';
 	}
 //	voit paramètre du ride ----OK
@@ -301,69 +278,111 @@ table td.highlighted {
 
 
 <script type="text/javascript">
+	/*var tds=document.getElementsByTagName('td');
+	var l=0
+	for(var i=0, iMax=tds.length ; i < iMax; i++){
+		if(tds[i].parentNode.parentNode.parentNode.id == 'days' && tds[i].className!="supp" && document.getElementById('date') != null){
+			if(l==0) {//s'assure que la date n'est pas vide
+				document.getElementById('date').value=tds[i].parentNode.parentNode.childNodes[0].childNodes[1].textContent;
+				document.getElementById('dateB').value=tds[i].parentNode.parentNode.childNodes[0].childNodes[1].textContent;
+			} 
+			tds[i].onclick = function(){
+				resetColorDayTable(); //reseter toutes les couleurs
+				var k = 0;
+				that=this;
+				while( (that = that.previousSibling) != null ) {k++;} //compte 
+				this.parentNode.parentNode.childNodes[0].childNodes[k].className="chosen";//mettre la couleur au jour choisi
+				this.parentNode.parentNode.childNodes[1].childNodes[k].className="chosen";
+				date=this.parentNode.parentNode.childNodes[0].childNodes[k].textContent;//récupérer valeur ligne du haut
+				document.getElementById('date').value=date;
+				document.getElementById('dateB').value=date;
+				return false;
+			};
+		}
+	}
+	function resetColorDayTable(){
+		var table = document.getElementById('days');
+		for(var i = 0; i<2; i++)
+		{
+			for(var j = 0, jMax = table.childNodes[0].childNodes[0].childNodes.length; j<jMax;j++)
+			{
+				table.childNodes[0].childNodes[i].childNodes[j].className="";
+			}
+		}
+	}*/
 	$(function () {
 		var isMouseDown = false,
 		isHighlighted;
 		var mX=0;
 		$("#days td")
 			.mousedown(function (e) {
-				$("#days td").removeAttr('class');
-				isMouseDown = true;
-				var index = $(this).parent().children().index($(this));
+			$("#days td").removeAttr('class');
+			isMouseDown = true;
+			$(this).toggleClass("highlighted", isHighlighted);
+			var index = $(this).parent().children().index($(this));
+			console.log($('#trajets').children().eq(index).html());
+			$('#dateDebut').val($('#trajets').children().eq(index).html());
+			$('#dateFin').val($('#trajets').children().eq(index).html());
+			if($(this).parent().attr('id')!="trajets")
+			{
+				var $this = $(this);
+				var $tr = $this.parent();
+				var index = $tr.children().index($this);
+				var col = $tr.prev().children().eq(index);
+				$(col).className="highlighted";
+				$(col).toggleClass("highlighted", isHighlighted);
+			}
+			else
+			{
+				var $this = $(this);
+				var $tr = $this.parent();
+				var index = $tr.children().index($this);
+				var col = $tr.next().children().eq(index);
+				$(col).className="highlighted";
+				$(col).toggleClass("highlighted", isHighlighted);
+			}
+			isHighlighted = $(this).hasClass("highlighted");
+			mX=e.pageX;
 
-				$('#dateDebut').val("");
-				$('#dateFin').val("");
-				if($(this).parent().attr('id')=="trajets" && $(this).index()<($(this).parent().children().size()-1))
-				{
-					$('#dateDebut').val($('#trajets').children().eq(index).html());
-					$('#dateFin').val($('#trajets').children().eq(index).html());
-					$(this).toggleClass("highlighted", isHighlighted);
-
-					var col = $(this).parent().next().children().eq($(this).index());
-					$(col).toggleClass("highlighted", isHighlighted);
-				}
-				else if ($(this).index()<($(this).parent().children().size()-1))
-				{
-					$('#dateDebut').val($('#trajets').children().eq(index).html());
-					$('#dateFin').val($('#trajets').children().eq(index).html());
-					$(this).toggleClass("highlighted", isHighlighted);
-
-					var col = $(this).parent().prev().children().eq($(this).index());
-					$(col).toggleClass("highlighted", isHighlighted);
-				}
-				isHighlighted = $(this).hasClass("highlighted");
 		})
 		.mouseover(function (e) {
 			if (isMouseDown) {
-				if(this.className!="highlighted" && $(this).index() > $(this).parent().children(".highlighted").last().index() && $(this).index()<($(this).parent().children().size()-1)){
+				if(this.className!="highlighted" && e.pageX > mX){
 					var index = $(this).parent().children().index($(this));
+					console.log("à droite " + $('#trajets').children().eq(index).html());
 					$('#dateFin').val($('#trajets').children().eq(index).html());
 				}
-				if(this.className!="highlighted" &&  $(this).index() < $(this).parent().children(".highlighted").first().index() && $(this).index()<($(this).parent().children().size()-1)){
+				if(this.className!="highlighted" && e.pageX < mX){
 					var index = $(this).parent().children().index($(this));
+					console.log("à gauche " + $('#trajets').children().eq(index).html());
 					$('#dateDebut').val($('#trajets').children().eq(index).html());
 				}
+				$(this).toggleClass("highlighted", isHighlighted);
 
-				if($(this).parent().attr('id')=="trajets" && $(this).index()<($(this).parent().children().size()-1))
+				//console.log($(this).parent().attr('id'));
+
+				if($(this).parent().attr('id')!="trajets")
 				{
-					$(this).toggleClass("highlighted", isHighlighted);
-					var col = $(this).parent().next().children().eq($(this).index());
+					var $this = $(this);
+					var $tr = $this.parent();
+					var index = $tr.children().index($this);
+					var col = $tr.prev().children().eq(index);
+					$(col).className="highlighted";
 					$(col).toggleClass("highlighted", isHighlighted);
 					
 				}
-				else if($(this).index()<($(this).parent().children().size()-1))
+				else
 				{
-					$(this).toggleClass("highlighted", isHighlighted);
-					var col = $(this).parent().prev().children().eq($(this).index());
+					var $this = $(this);
+					var $tr = $this.parent();
+					var index = $tr.children().index($this);
+					var col = $tr.next().children().eq(index);
+					$(col).className="highlighted";
 					$(col).toggleClass("highlighted", isHighlighted);
 				}
-				var firsthighlighted = $('#trajets').children(".highlighted").first().index();
-				var lasthighlighted = $('#trajets').children(".highlighted").last().index();
-				for (var i = 0; i<(lasthighlighted-firsthighlighted); i++)
-				{
-					$('#days').children().children("tr").eq(0).children().eq(firsthighlighted+i).addClass('highlighted');
-					$('#days').children().children("tr").eq(1).children().eq(firsthighlighted+i).addClass('highlighted');
-				}
+				console.log($('#trajets').children(".highlighted").first());
+				//console.log($('#trajets'))
+				mX = e.pageX;
 			}
 		})
 		.bind("selectstart", function () {

@@ -49,18 +49,11 @@ class RidesController extends Controller
 	 * Displays a particular model.
 	 * @param integer $id the ID of the model to be displayed
 	 */
-
-
 	public function actionView($id)
 	{
 		$cpnvId="Joël";
 		$user=User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$cpnvId));
-		$today = date('Y-m-d 00:00:00', time());
-		
-		$registrations=Registration::model()->findAll('ride_fk=:ride_fk AND endDate>=:today', array(':ride_fk'=>$id, ':today'=>$today));
 
-		
-		
 		//ne pas afficher les rides effacés
 		$ride=$this->loadModel($id);
 		if($ride->visibility==0)
@@ -68,160 +61,16 @@ class RidesController extends Controller
 			$this->redirect(Yii::app()->user->returnUrl);
 		}
 
-		if(isset($_POST['modification'])){
-
-			foreach($registrations as $registration)
-			{
-				if($registration->rideFk->id == $ride->id && $registration->userFk->notifModification==1)
-				{
-					$start=date("d-m-Y",strtotime($registration->rideFk->startDate));
-					$end=date("d-m-Y",strtotime($registration->rideFk->endDate));
-					$villeDepart=$registration->rideFk->departuretown->name;
-					$villeArrivee=$registration->rideFk->arrivaltown->name;
-					$startHour=date("H:i",strtotime($registration->rideFk->departure));
-					$endHour=date("H:i",strtotime($registration->rideFk->arrival));
-					$sujet="CPNV Covoiturage - Un de vos trajets a été modifié";
-					$text="Le trajet du ".$start." ".$startHour." au ".$end." ".$endHour." ayant comme parcours  ".$villeDepart." - ".$villeArrivee." a été modifié. ";
-					$registration->userFk->sendEmail($sujet, $text);
-				}
-			}
-		}
-
-
 		if(isset($_POST['supprimer'])){
 			//change la visibilité du ride
 			$ride=$this->loadModel($id);
 			$ride->visibility=0;
 			$ride->save(false);
-
-			foreach($registrations as $registration)
-			{
-				if($registration->rideFk->id == $ride->id && $registration->userFk->notifDeleteRide==1)
-				{
-					$start=date("d-m-Y",strtotime($registration->rideFk->startDate));
-					$end=date("d-m-Y",strtotime($registration->rideFk->endDate));
-					$villeDepart=$registration->rideFk->departuretown->name;
-					$villeArrivee=$registration->rideFk->arrivaltown->name;
-					$startHour=date("H:i",strtotime($registration->rideFk->departure));
-					$endHour=date("H:i",strtotime($registration->rideFk->arrival));
-					$sujet="CPNV Covoiturage - Un de vos trajets a été supprimé";
-					$text="Le trajet du ".$start." ".$startHour." au ".$end." ".$endHour." ayant comme parcours  ".$villeDepart." - ".$villeArrivee." a été supprimé. ";
-					$registration->userFk->sendEmail($sujet, $text);
-				}
-			}
+			
 			//redirection sur la page d'accueil
 			$this->redirect(Yii::app()->user->returnUrl);
 		}
-		
-		if(isset($_POST['inscrire'])&&isset($_POST['dateDebut'])&&isset($_POST['dateFin'])) //&&$_POST['dateDebut']!="" && $_POST['dateDebut'] != ""
-		{
-			$reg = new Registration;
-			$reg->user_fk=User::model()->currentUser()->id;
-			$reg->ride_fk=$this->loadModel($id)->id;
-			$reg->startDate=date("Y-m-d 00:00:00",strtotime($_POST['dateDebut']));
-			$reg->endDate=date("Y-m-d 00:00:00",strtotime($_POST['dateFin']));
-			$reg->accepted=0;
-			//on rempli les paramètres de la registration
-			
 
-			if(isset($_POST['allerretour']))
-			{
-				$regRetour = new Registration;
-				$regRetour->user_fk=User::model()->currentUser()->id;
-				$regRetour->ride_fk=$this->loadModel($id)->bindedride;
-				$regRetour->startDate=date("Y-m-d 00:00:00",strtotime($_POST['dateDebut']));
-				$regRetour->endDate=date("Y-m-d 00:00:00",strtotime($_POST['dateFin']));
-				$regRetour->accepted=0;
-
-				//si les registrations ne valide pas, on fait quelque chose
-				if(!$reg->validate()){
-
-				}
-				if(!$regRetour->validate()){
-
-				}
-
-				//on rempli les paramètre de la registration
-			}else
-			{
-				$result = $reg->validate();
-
-				$errors = $reg->getErrors(); //chope les erreurs retournées par le modèle de $reg (Registration)
-				if(count($errors)!=0)
-				{
-					Yii::app()->user->setFlash('startDate', $errors['startDate'][0]);
-				}
-			}
-			$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
-			/*if(!$reg->validate()){
-
-			}*/
-
-		}
-		/*else if(isset($_POST['dateB']) && $_POST['dateB']==""){
-			Yii::app()->user->setFlash('error', "Date incorrecte !");
-			$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
-		}*/
-			if(isset($_POST['desinscrire'])){
-				
-				foreach($registrations as $registration){
-						if($registration->userFk->id == User::model()->currentUser()->id)
-						{
-							$registration->delete();
-							//$registration->save();
-
-							//Notification
-							if($registration->rideFk->driver->notifUnsuscribe==1)
-							{
-								$prenom=$registration->userFk->prenom();
-								$nom=$registration->userFk->nom();
-								$start=date("d-m-Y",strtotime($registration->rideFk->startDate));
-								$end=date("d-m-Y",strtotime($registration->rideFk->endDate));
-								$villeDepart=$registration->rideFk->departuretown->name;
-								$villeArrivee=$registration->rideFk->arrivaltown->name;
-								$startHour=date("H:i",strtotime($registration->rideFk->departure));
-								$endHour=date("H:i",strtotime($registration->rideFk->arrival));
-								$sujet="CPNV Covoiturage - Un utilisateur s'est désinscrit à un de vos trajets";
-								$text="L'utilisateur ".$nom." ".$prenom." s'est désinscrit de votre ride du ".$start." à ".$startHour." au ".$end." à ".$endHour." ayant comme trajet ".$villeDepart." - ".$villeArrivee.".";
-								$registration->rideFk->driver->sendEmail($sujet, $text);
-							}
-							//
-
-							
-						}
-				
-					}
-					$this->redirect(Yii::app()->user->returnUrl);
-			}
-
-			if(isset($_POST['valider'])){
-				$reg=$_POST['idReg'];
-				foreach($registrations as $registration){
-					if($registration->id == $reg)
-					{
-						$registration->accepted=1;
-						$registration->save(false);
-						//Notification
-						if($registration->userFk->notifValidation==1)
-						{
-							$start=date("d-m-Y",strtotime($registration->rideFk->startDate));
-							$end=date("d-m-Y",strtotime($registration->rideFk->endDate));
-							$villeDepart=$registration->rideFk->departuretown->name;
-							$villeArrivee=$registration->rideFk->arrivaltown->name;
-							$startHour=date("H:i",strtotime($registration->rideFk->departure));
-							$endHour=date("H:i",strtotime($registration->rideFk->arrival));
-							$text="Votre inscription au ride du 
-							".$start." à ".$startHour." au ".$end." à ".$endHour." ayant comme trajet ".$villeDepart." - ".$villeArrivee."
-							 a été validée";
-							$sujet="CPNV Covoiturage - Validation de votre inscription";
-							$registration->userFk->sendEmail($sujet, $text);
-							
-						}
-					}
-					
-				}
-			}
-			/*
 			//trajet récurrent, aller-retour possible
 			//trajet récurrent, aller-retour pas possible
 			//trajet non récurrent, aller-retour possible
@@ -510,14 +359,10 @@ class RidesController extends Controller
 				Yii::app()->user->setFlash('error', "Date incorrecte !");
 				$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
 			}
-			
 
 		$today = date('Y-m-d 00:00:00', time());
 		$registrations=Registration::model()->findAll('ride_fk=:ride_fk AND endDate>=:today', array(':ride_fk'=>$id, ':today'=>$today));
-			*/
 
-		
-		
 		$this->render('view',array('ride'=>$this->loadModel($id),'user'=>$user,'registrations'=>$registrations));
 	}
 
