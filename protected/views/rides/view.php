@@ -162,7 +162,6 @@ table td.highlighted {
 					}
 				}
 				//sinon
-			echo "<script>  console.log('coucou'); </script>";
 			echo '<tr><td rowspan="2"><input type="submit" value="S\'inscrire" name="inscrire"></td></tr>'; //bouton s'inscrire
 			if($inscrit == true)
 			{
@@ -177,11 +176,7 @@ table td.highlighted {
 			?>
 		</form>
 <?php 
-		/*if($ride->startDate!=$ride->endDate) //aller retour 
-		{
-			echo "<small>*La récurrence s'effectue à partir de la date sélectionnée jusqu'à la fin des trajets proposés</small>";
-		}
-*/
+
 		echo '<br/>';
 	echo '<table><tr><th>Utilisateur</th><th>Date(s)</th><th>Validation</th></tr>';
 	foreach($registrations as $registration)

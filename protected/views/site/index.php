@@ -36,7 +36,7 @@ $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
 
 
  ?>
-
+ 
 <br>
 <br>
 <br>

@@ -100,6 +100,18 @@ class Ride extends CActiveRecord
 	}
 
 
+
+	protected function afterFind ()
+    {
+            // convert to display format
+        $this->departure = strtotime ($this->departure);
+        $this->departure = date ('H:m', $this->departure);
+        $this->arrival = strtotime ($this->arrival);
+        $this->arrival = date ('H:m', $this->arrival);
+
+        parent::afterFind ();
+    }
+
 	/**
 	 * @return array relational rules.
 	 */

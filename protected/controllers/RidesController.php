@@ -28,7 +28,7 @@ class RidesController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create'),
+				'actions'=>array('index','view','create','update'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -593,7 +593,15 @@ class RidesController extends Controller
 		$registrations=Registration::model()->findAll('ride_fk=:ride_fk AND endDate>=:today', array(':ride_fk'=>$id, ':today'=>$today));
 			*/
 
-		
+		if(isset($_POST['editer'])){
+			//change la visibilité du ride
+			$ride=$this->loadModel($id);
+
+
+			
+			//redirection sur la page d'accueil
+			$this->redirect(array('rides/update','id'=>$ride->id));
+		}
 		
 		$this->render('view',array('ride'=>$this->loadModel($id),'user'=>$user,'registrations'=>$registrations));
 	}
@@ -686,20 +694,96 @@ class RidesController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
-		$model=$this->loadModel($id);
-
+		$ride=$this->loadModel($id);
+		$user=User::model()->currentUser();
+		if(isset($ride->bindedride))
+		{
+			$rideRetour=$this->loadModel($ride->bindedride);
+		}
+		else
+		{
+			$rideRetour = new Ride;
+		}
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
+
 		if(isset($_POST['Ride']))
 		{
-			$model->attributes=$_POST['Ride'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+			//var_dump($_POST);
+			$ride->attributes=$_POST['Ride'];
+			$ride->startDate=date("Y-m-d",strtotime($ride->startDate));
+			$ride->endDate=date("Y-m-d",strtotime($ride->endDate));
+			$rideRetour->attributes=$_POST['Ride_retour'];
+			$ride->driver_fk=User::currentUser()->id;
+			
+			$jour=date('N', strtotime($ride->startDate));
+			$ride->day=$jour;
+
+			//si retour
+			if($_POST['retour']=='oui')
+			{
+				$rideRetour->driver_fk=User::currentUser()->id;
+				$rideRetour->arrivaltown_fk=$ride->departuretown_fk;
+				$rideRetour->departuretown_fk=$ride->arrivaltown_fk;
+				$rideRetour->seats=$ride->seats;
+
+				$rideRetour->startDate=$ride->startDate;
+				$rideRetour->endDate=$ride->endDate;
+				//die($ride->endDate);
+				$rideRetour->day=$ride->day;
+
+				$rideValid=$ride->validate();
+				$rideRetourValid=$rideRetour->validate();
+				
+				if($rideValid&&$rideRetourValid)
+				{
+					$ride->save();
+					//Récupère l'id du ride allé et le rajoute dans le bindedride du ride retour
+					$rideRetour->bindedride=$ride->id;
+					$rideRetour->save();
+					//Récupère l'id du ride retour et le rajoute dans le bindedride du ride allé
+					$ride->bindedride=$rideRetour->id;
+					$ride->update();
+					//redirection accueil
+					$this->redirect(Yii::app()->user->returnUrl);
+				}
+			}
+			else
+			{
+				if($ride->validate())
+				{
+					/*$ride->startDate=date("Y-m-d",strtotime($ride->startDate));
+					$ride->endDate=date("Y-m-d",strtotime($ride->endDate));*/
+					$ride->save();
+					//redirection accueil
+					$this->redirect(Yii::app()->user->returnUrl);
+				}
+			}
+			$this->redirect(array('view','id'=>$ride->id));
+		}
+
+
+
+
+
+		/*if(isset($_POST['Ride']))
+		{
+			$ride->attributes=$_POST['Ride'];
+			if($ride->save())
+				$this->redirect(array('view','id'=>$ride->id));
+		}*/
+
+		if($ride->driver->id!=User::model()->currentUser()->id)
+		{
+			//$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
+			$this->redirect(array('site/index'));
 		}
 
 		$this->render('update',array(
-			'model'=>$model,
+			'ride'=>$ride,
+			'user'=>$user,
+			'rideretour'=>$rideRetour,
 		));
 	}
 
