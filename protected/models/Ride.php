@@ -105,9 +105,9 @@ class Ride extends CActiveRecord
     {
             // convert to display format
         $this->departure = strtotime ($this->departure);
-        $this->departure = date ('H:m', $this->departure);
+        $this->departure = date ('H:i', $this->departure);
         $this->arrival = strtotime ($this->arrival);
-        $this->arrival = date ('H:m', $this->arrival);
+        $this->arrival = date ('H:i', $this->arrival);
         /*$this->startDate = strtotime ($this->startDate);
         $this->startDate = date ('d.m.Y', $this->startDate);
         $this->endDate = strtotime ($this->endDate);

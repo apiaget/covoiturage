@@ -67,9 +67,11 @@ table td.highlighted {
 }*/
 
 </style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
+<script type="text/javascript" src="http://code.highcharts.com/highcharts-more.js"></script>
 
 
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 
 <!--googlemap api-->
 
@@ -125,33 +127,47 @@ table td.highlighted {
 		if(isset($ride->bindedride))
 		{
 	?>
-	<tr>
-		<td><strong><?php 
-		if(strtotime($ride->departure)<=strtotime($ride->trajetretour->departure))
-		{
-			echo 'Aller';
-		}else{
-			echo 'Retour';
-			//echo strtotime($ride->trajetretour->departure);
-		}
-		
-
-		?>
-
-		</strong></td><td></td>
-	</tr>
+			<tr>
+				<td><strong>
+				<?php if(strtotime($ride->departure)<=strtotime($ride->trajetretour->departure)){echo 'Aller';}else{echo 'Retour';}?>
+				</strong></td><td></td>
+			</tr>
 	<?php
 		}
 	?>
 	<tr>
-		<td>Départ</td><td><?php echo $ride->departuretown->name." à ".substr($ride->departure, 0, 5); ?></td>
+		<td>Départ</td><td><?php echo $ride->departuretown->name." à ".$ride->departure; ?></td>
 	</tr>
 	<tr>
-		<td>Arrivée prévue</td><td><?php echo $ride->arrivaltown->name." vers ".substr($ride->arrival, 0, 5); ?></td>
+		<td>Arrivée prévue</td><td><?php echo $ride->arrivaltown->name." vers ".$ride->arrival; ?></td>
 	</tr>
 	<tr>
 		<td>Description</td><td><?php echo $ride->description; ?></td>
 	</tr>
+	<?php
+		if(isset($ride->bindedride))
+		{
+	?>
+			<tr>
+				<td>
+					<strong>
+					<?php if(strtotime($ride->departure)<=strtotime($ride->trajetretour->departure)){echo 'Retour';}else{echo 'Aller';}?>
+					</strong>
+				</td><td></td>
+			</tr>
+			<tr>
+				<td>Départ</td><td><?php echo $ride->trajetretour->departuretown->name." à ".$ride->trajetretour->departure; ?></td>
+			</tr>
+			<tr>
+				<td>Arrivée prévue</td><td><?php echo $ride->trajetretour->arrivaltown->name." vers ".$ride->trajetretour->arrival; ?></td>
+			</tr>
+			<tr>
+				<td>Description</td><td><?php echo $ride->trajetretour->description; ?></td>
+			</tr>
+	<?php
+		}
+	?>
+
 </table>
 <div name="seats" id="seats">	<!--Affichage de la liste des jours-->
 	<?php
@@ -203,19 +219,13 @@ table td.highlighted {
 ?>
 		<form method="post">
 			<?php
-			if(isset($ride->bindedride))
-			{
-				echo '<input type="checkbox" name="allerretour" id="allerretour" />';
-			}
-
-			if(isset($_GET['date'])){
-				echo '<input type="text" name="dateDebut" id="dateDebut" hidden value="'.date('d.m.Y', strtotime($_GET['date'])).'"/>';
-				echo '<input type="text" name="dateFin" id="dateFin" hidden value="'.date('d.m.Y', strtotime($_GET['date'])).'"/>';
-			}else{
-				echo '<input type="text" name="dateDebut" id="dateDebut" hidden />';
-				echo '<input type="text" name="dateFin" id="dateFin" hidden />';
-			}
-
+				if(isset($_GET['date'])){
+					echo '<input type="text" name="dateDebut" id="dateDebut" hidden value="'.date('d.m.Y', strtotime($_GET['date'])).'"/>';
+					echo '<input type="text" name="dateFin" id="dateFin" hidden value="'.date('d.m.Y', strtotime($_GET['date'])).'"/>';
+				}else{
+					echo '<input type="text" name="dateDebut" id="dateDebut" hidden />';
+					echo '<input type="text" name="dateFin" id="dateFin" hidden />';
+				}
 			?>
 
 			<!--<input type="submit" value="S'inscrire">-->
@@ -244,11 +254,26 @@ table td.highlighted {
 					}
 				}
 				//sinon
-			echo '<tr><td rowspan="2"><input type="submit" value="S\'inscrire" name="inscrire"></td></tr>'; //bouton s'inscrire
-			if($inscrit == true)
-			{
-				echo '<tr><td rowspan="2"><input type="submit" value="Se desinscrire" name="desinscrire"></td></tr>'; //bouton se desinscrire
-			}
+				if(isset($ride->bindedride))
+				{
+					if(strtotime($ride->departure)<=strtotime($ride->trajetretour->departure))
+					{
+						echo '<tr><td rowspan="2"><input type="submit" value="S\'inscrire au trajet Aller" name="inscrire"></td></tr>';
+					}
+					else
+					{
+						echo '<tr><td rowspan="2"><input type="submit" value="S\'inscrire au trajet Retour" name="inscrire"></td></tr>';
+					}
+					echo '<tr><td rowspan="2"><input type="submit" value="S\'inscrire à l\'Aller-Retour" name="inscrireAllerRetour"></td></tr>';
+				}
+				else
+				{
+					echo '<tr><td rowspan="2"><input type="submit" value="S\'inscrire" name="inscrire"></td></tr>'; //bouton s'inscrire
+				}
+				if($inscrit == true)
+				{
+					echo '<tr><td rowspan="2"><input type="submit" value="Se desinscrire" name="desinscrire"></td></tr>'; //bouton se desinscrire
+				}
 			?>
 			</table>
 			<?php
@@ -260,7 +285,7 @@ table td.highlighted {
 <?php 
 
 		echo '<br/>';
-	echo '<table><tr><th>Utilisateur</th><th>Date(s)</th><th>Validation</th></tr>';
+	echo '<table id="registredUsers"><tr><th>Utilisateur</th><th>Date(s)</th><th>Validation</th></tr>';
 	foreach($registrations as $registration)
 	{
 		$nom=$registration->userFk->nom();
@@ -304,7 +329,7 @@ table td.highlighted {
 <?php
 	
 	echo '<br/>';
-	echo '<table><tr><th>Utilisateur</th><th>Numéro de téléphone</th><th>Email</th><th>Date(s)</th><th>Validation</th><th></th></tr>';
+	echo '<table id="registredUsers"><tr><th>Utilisateur</th><th>Numéro de téléphone</th><th>Email</th><th>Date(s)</th><th>Validation</th><th></th></tr>';
 	foreach($registrations as $registration)
 	{
 		$driverid=$user->id;
@@ -375,10 +400,80 @@ table td.highlighted {
 //		voit commentaires avec possibilité de répondre
 //	fin Si
 ?>
-
+<div id="container" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
 
 <script type="text/javascript">
-	$(function () {
+
+
+    $(document).ready(
+	function() {
+		$('#container').highcharts({
+		    chart: {
+		        type: 'columnrange',
+		        inverted: true
+		    },
+		    title: {
+		        text: 'Remplissage du véhicule'
+		    },
+		    yAxis: {
+	            type:"datetime",
+	                dateTimeLabelFormats:{
+	                month: '%b %e, %Y'
+	            },
+		        title: {
+		            text: 'Dates'
+		        },
+	            tickInterval: 86400000 * 7 // 7 days
+		    },
+		    tooltip: {
+	            headerFormat: '<b>{series.name}</b><br>',
+	            pointFormat: '{point.low:%b. %e} - {point.high:%b. %e}'
+	        },
+
+		    plotOptions: {
+		        columnrange: {
+		        	dataLabels: {
+		        		enabled: true,
+		        		formatter: function () {
+	                        //return Highcharts.dateFormat('%b. %e', this.y);
+		        		}
+		        	}
+		        },
+	            series: {
+		    		marker: {
+		    			enabled: true	
+		    		}
+		    	}
+		    },
+		    legend: {
+		        enabled: false
+		    },
+		    series: [{
+		        name: 'Dates',
+		        data: []
+		    }]
+		});
+
+		var chart = $('#container').highcharts();
+		var tableData = $('#registredUsers');
+		console.log(tableData.children().find('tr'));
+	    chart.xAxis[0].setCategories(['5.16-5.30', '5.16-6.6', '5.9-6.6', '5.9-5.23']);
+	    chart.yAxis[0].update({startOfWeek: 5});
+	    chart.series[0].addPoint([Date.UTC(2014,  4, 16),Date.UTC(2014,  4, 30)]);
+	    chart.series[0].addPoint([Date.UTC(2014,  4, 16),Date.UTC(2014,  5, 6)]);
+	    chart.series[0].addPoint([Date.UTC(2014,  4, 9),Date.UTC(2014,  5, 6)]);
+	    chart.series[0].addPoint([Date.UTC(2014,  4, 9),Date.UTC(2014,  4, 23)]);
+	    chart.series[0].data[0].update({
+	        marker:{
+	            color: '#00CD73',
+	            states:{
+	                hover:{
+	                    color: '#4DFFB1'
+	                }
+	            }
+	        }
+	    });
+
 		var isMouseDown = false,
 		isHighlighted;
 		var mX=0;

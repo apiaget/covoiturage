@@ -36,11 +36,7 @@ $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
 
 
  ?>
- 
-<br>
-<br>
-<br>
-<br>
+
 <?php $this->endWidget(); ?>
  
 <?php
@@ -84,18 +80,21 @@ else
 			//SI $registration correspond au jour
 			//if($ride->startDate<=$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0 && $ride->showDuringHolidays($date)){
 			$regRide = Ride::model()->find('id=:id', array(':id'=>$registration->ride_fk));
-
+			//var_dump($regRide);
+			//die;
 			if($regRide->visibility==1 && $registration->startDate<=$date && $registration->endDate>=$date && $regRide->day==date('N',strtotime($date)) && $v[$registration->id]==0 && $regRide->showDuringHolidays($date)){
 				//prendre le ride qui correspond et l'afficher
 				$daydate = date("d-m-Y",strtotime($date));
 				echo "<tr onclick=";
 				echo "\"document.location='/covoiturage/covoiturage/rides/".$regRide->id."?date=".$daydate."';";
 				echo "\" onmouseover='tablein(this);' onmouseout='tableout(this);'>";
-
+					echo "<td>". CHtml::link('Title', array('rides/view', 'id'=>$regRide->id))."</td>";
 					echo "<td>".$regRide->driver->cpnvId."</td>";
 					echo "<td>"."0/".$regRide->seats."</td>";
-					echo "<td>".$regRide->departuretown->name." à ".substr($regRide->departure, 0, 5)."</td>";
-					echo "<td>".$regRide->arrivaltown->name." vers ".substr($regRide->arrival, 0, 5)."</td>";
+					echo "<td>".$regRide->departuretown->name." à ".$regRide->departure."</td>";
+					echo "<td>".$regRide->arrivaltown->name." vers ".$regRide->arrival."</td>";
+					/*echo "<td>".$regRide->departuretown->name." à ".substr($regRide->departure, 0, 5)."</td>";
+					echo "<td>".$regRide->arrivaltown->name." vers ".substr($regRide->arrival, 0, 5)."</td>";*/
 				
 					switch ($regRide->day) {
 							case '1':
@@ -151,8 +150,10 @@ else
 
 					echo "<td><img src='/covoiturage/covoiturage/images/driver.png' width='8%'/> ".$rideCurrent->driver->cpnvId."</td>";
 					echo "<td>"."0/".$rideCurrent->seats."</td>";
+					echo "<td>".$regRide->departuretown->name." à ".$regRide->departure."</td>";
+					echo "<td>".$regRide->arrivaltown->name." vers ".$regRide->arrival."</td>";/*
 					echo "<td>".$rideCurrent->departuretown->name." à ".substr($rideCurrent->departure, 0, 5)."</td>";
-					echo "<td>".$rideCurrent->arrivaltown->name." vers ".substr($rideCurrent->arrival, 0, 5)."</td>";
+					echo "<td>".$rideCurrent->arrivaltown->name." vers ".substr($rideCurrent->arrival, 0, 5)."</td>";*/
 				
 					switch ($rideCurrent->day) {
 							case '1':
@@ -235,8 +236,10 @@ else{
 
 						echo "<td>".$ride->driver->cpnvId."</td>";
 						echo "<td>"."0/".$ride->seats."</td>";
+						echo "<td>".$regRide->departuretown->name." à ".$regRide->departure."</td>";
+						echo "<td>".$regRide->arrivaltown->name." vers ".$regRide->arrival."</td>";/*
 						echo "<td>".$ride->departuretown->name." à ".substr($ride->departure, 0, 5)."</td>";
-						echo "<td>".$ride->arrivaltown->name." vers ".substr($ride->arrival, 0, 5)."</td>";
+						echo "<td>".$ride->arrivaltown->name." vers ".substr($ride->arrival, 0, 5)."</td>";*/
 					
 						switch ($ride->day) {
 								case '1':
