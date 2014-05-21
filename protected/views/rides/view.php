@@ -48,10 +48,70 @@
 table td.highlighted {
   background-color:#E5F1F4;
 }
+#map-canvas {
+	height: 300px;
+	width: 910px;
+	margin: 0px;
+	padding: 0px
+}
+
+/*#panel {
+	position: absolute;
+	top: 5px;
+	left: 50%;
+	margin-left: -180px;
+	z-index: 5;
+	background-color: #fff;
+	padding: 5px;
+	border: 1px solid #999;
+}*/
+
 </style>
 
 
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+
+<!--googlemap api-->
+
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+    <script>
+		var directionsDisplay;
+		var directionsService = new google.maps.DirectionsService();
+		var map;
+
+		function initialize() {
+		  directionsDisplay = new google.maps.DirectionsRenderer();
+		  var SantaCruz = new google.maps.LatLng(46.822650, 6.502052);
+		  var mapOptions = {
+
+		  }
+		  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+		  directionsDisplay.setMap(map);
+		  calcRoute();
+		}
+
+		function calcRoute() {
+		  var start = <?php echo json_encode("Suisse ".$ride->departuretown->name); ?>;
+		  var end = <?php echo json_encode("Suisse ".$ride->arrivaltown->name); ?>;
+		  var request = {
+			  origin:start,
+			  destination:end,
+			  travelMode: google.maps.TravelMode.DRIVING
+		  };
+		  directionsService.route(request, function(response, status) {
+			if (status == google.maps.DirectionsStatus.OK) {
+			  directionsDisplay.setDirections(response);
+			}
+		  });
+		}
+
+		google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+	<!--fin api goolemap -->
+	<!--affichage de la map -->
+<div id="map-canvas"></div>
+<br>
 
 <table>
 	<tr>
@@ -61,6 +121,28 @@ table td.highlighted {
 			</span>
 		</td>
 	</tr>
+	<?php
+		if(isset($ride->bindedride))
+		{
+	?>
+	<tr>
+		<td><strong><?php 
+		if(strtotime($ride->departure)<=strtotime($ride->trajetretour->departure))
+		{
+			echo 'Aller';
+		}else{
+			echo 'Retour';
+			//echo strtotime($ride->trajetretour->departure);
+		}
+		
+
+		?>
+
+		</strong></td><td></td>
+	</tr>
+	<?php
+		}
+	?>
 	<tr>
 		<td>Départ</td><td><?php echo $ride->departuretown->name." à ".substr($ride->departure, 0, 5); ?></td>
 	</tr>

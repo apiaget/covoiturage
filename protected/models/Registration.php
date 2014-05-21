@@ -103,17 +103,23 @@ class Registration extends CActiveRecord
 						$this->addError($attribute, 'Il n\'y a plus de place dans la voiture pour les dates sélectionnées.');
 					}
 					$noSave++;
-				}else{
+				}else if(strtotime($this->startDate)>=strtotime($registration->startDate)&&strtotime($this->endDate)<=strtotime($registration->endDate)){
 					$this->addError($attribute, 'Vous avez déjà une réservation englobant ces dates.');
 					$noSave++;
 				}
 			}
+
+			if($noSave==0)
+			{
+				$this->save(false);
+			}
+
 			//reprendre les registrations avec la nouvelle registration créée
 			$registrations = Registration::model()->findAll('ride_fk = :ride AND user_fk = :user ORDER BY startDate ASC', array(':ride'=>$this->ride_fk, ':user' => User::currentUser()->id));
 			//Fusion des différentes registrations pour une personne
 			for($i=0;$i<count($registrations)-1;$i++)
 			{
-				if(strtotime($registrations[$i]->endDate)>=strtotime($registrations[$i+1]->startDate)&&$noSave==0)
+				if(strtotime($registrations[$i]->endDate)>=strtotime($registrations[$i+1]->startDate))
 				{
 					if($registrations[$i]->accepted==1||$registrations[$i+1]->accepted==1)
 					{
@@ -125,13 +131,11 @@ class Registration extends CActiveRecord
 					$registrations[$i]->endDate=$registrations[$i+1]->endDate;
 					$registrations[$i]->save(false);
 					$registrations[$i+1]->delete(false);
+					$i--;
+					$registrations = Registration::model()->findAll('ride_fk = :ride AND user_fk = :user ORDER BY startDate ASC', array(':ride'=>$this->ride_fk, ':user' => User::currentUser()->id));
+
 				}
 			}
-
-			if($noSave==0)
-			{
-				$this->save(false);
-			}	
 		}
 	}
 

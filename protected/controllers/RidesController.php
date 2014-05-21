@@ -81,7 +81,7 @@ class RidesController extends Controller
 					$startHour=date("H:i",strtotime($registration->rideFk->departure));
 					$endHour=date("H:i",strtotime($registration->rideFk->arrival));
 					$sujet="CPNV Covoiturage - Un de vos trajets a été modifié";
-					$text="Le trajet du ".$start." ".$startHour." au ".$end." ".$endHour." ayant comme parcours  ".$villeDepart." - ".$villeArrivee." a été modifié. ";
+					$text="Le trajet du ".$start." ".$startHour." au ".$end." ".$endHour." ayant comme parcours  ".$villeDepart." - ".$villeArrivee." a été modifié.";
 					$registration->userFk->sendEmail($sujet, $text);
 				}
 			}
@@ -105,7 +105,7 @@ class RidesController extends Controller
 					$startHour=date("H:i",strtotime($registration->rideFk->departure));
 					$endHour=date("H:i",strtotime($registration->rideFk->arrival));
 					$sujet="CPNV Covoiturage - Un de vos trajets a été supprimé";
-					$text="Le trajet du ".$start." ".$startHour." au ".$end." ".$endHour." ayant comme parcours  ".$villeDepart." - ".$villeArrivee." a été supprimé. ";
+					$text="Le trajet du ".$start." ".$startHour." au ".$end." ".$endHour." ayant comme parcours  ".$villeDepart." - ".$villeArrivee." a été supprimé.";
 					$registration->userFk->sendEmail($sujet, $text);
 				}
 			}
@@ -242,33 +242,29 @@ class RidesController extends Controller
 			if(isset($_POST['desinscrire'])){
 				
 				foreach($registrations as $registration){
-						if($registration->userFk->id == User::model()->currentUser()->id)
+					if($registration->userFk->id == User::model()->currentUser()->id)
+					{
+						$registration->delete();
+						//$registration->save();
+
+						//Notification
+						if($registration->rideFk->driver->notifUnsuscribe==1)
 						{
-							$registration->delete();
-							//$registration->save();
-
-							//Notification
-							if($registration->rideFk->driver->notifUnsuscribe==1)
-							{
-								$prenom=$registration->userFk->prenom();
-								$nom=$registration->userFk->nom();
-								$start=date("d-m-Y",strtotime($registration->rideFk->startDate));
-								$end=date("d-m-Y",strtotime($registration->rideFk->endDate));
-								$villeDepart=$registration->rideFk->departuretown->name;
-								$villeArrivee=$registration->rideFk->arrivaltown->name;
-								$startHour=date("H:i",strtotime($registration->rideFk->departure));
-								$endHour=date("H:i",strtotime($registration->rideFk->arrival));
-								$sujet="CPNV Covoiturage - Un utilisateur s'est désinscrit à un de vos trajets";
-								$text="L'utilisateur ".$nom." ".$prenom." s'est désinscrit de votre trajet du ".$start." à ".$startHour." au ".$end." à ".$endHour." ayant comme trajet ".$villeDepart." - ".$villeArrivee.".";
-								$registration->rideFk->driver->sendEmail($sujet, $text);
-							}
-							//
-
-							
+							$prenom=$registration->userFk->prenom();
+							$nom=$registration->userFk->nom();
+							$start=date("d-m-Y",strtotime($registration->rideFk->startDate));
+							$end=date("d-m-Y",strtotime($registration->rideFk->endDate));
+							$villeDepart=$registration->rideFk->departuretown->name;
+							$villeArrivee=$registration->rideFk->arrivaltown->name;
+							$startHour=date("H:i",strtotime($registration->rideFk->departure));
+							$endHour=date("H:i",strtotime($registration->rideFk->arrival));
+							$sujet="CPNV Covoiturage - Un utilisateur s'est désinscrit à un de vos trajets";
+							$text="L'utilisateur ".$nom." ".$prenom." s'est désinscrit de votre trajet du ".$start." à ".$startHour." au ".$end." à ".$endHour." ayant comme trajet ".$villeDepart." - ".$villeArrivee.".";
+							$registration->rideFk->driver->sendEmail($sujet, $text);
 						}
-				
 					}
-					$this->redirect(Yii::app()->user->returnUrl);
+				}
+				$this->redirect(Yii::app()->user->returnUrl);
 			}
 
 			if(isset($_POST['valider'])){
@@ -417,7 +413,6 @@ class RidesController extends Controller
 
 		if(isset($_POST['Ride']))
 		{
-			//var_dump($_POST);
 			$ride->attributes=$_POST['Ride'];
 			$ride->startDate=date("Y-m-d",strtotime($ride->startDate));
 			$ride->endDate=date("Y-m-d",strtotime($ride->endDate));
@@ -437,7 +432,6 @@ class RidesController extends Controller
 
 				$rideRetour->startDate=$ride->startDate;
 				$rideRetour->endDate=$ride->endDate;
-				//die($ride->endDate);
 				$rideRetour->day=$ride->day;
 
 				$rideValid=$ride->validate();
@@ -469,10 +463,6 @@ class RidesController extends Controller
 			}
 			$this->redirect(array('view','id'=>$ride->id));
 		}
-
-
-
-
 
 		/*if(isset($_POST['Ride']))
 		{
@@ -561,43 +551,4 @@ class RidesController extends Controller
 			Yii::app()->end();
 		}
 	}
-	/*public function createRegistration($startDate, $recurrent, $allerretour){
-		$registrationA=new Registration;
-		$registrationA->user_fk=$user->id;
-		$registrationA->ride_fk=$this->loadModel($id)->id;
-		$registrationA->startDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
-		if($recurrent){
-			$registrationA->endDate=$this->loadModel->endDate;
-		}else{
-			$registrationA->endDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
-		}
-		$registrationA->accepted=0;
-
-		if($allerretour){
-			$registrationR=new Registration;
-			$registrationR->user_fk=$user->id;
-			$registrationR->ride_fk=$this->loadModel($id)->bindedride;
-			$registrationR->startDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
-			if($recurrent){
-				$registrationR->endDate=$this->loadModel->endDate;
-			}else{
-				$registrationR->endDate=date('Y-m-d 00:00:00',strtotime($_POST['dateB']));
-			}
-			$registrationR->accepted=0;
-		}
-
-		$similarRegistrationsA=Registration::model()->findAll('startDate<=:date AND endDate>=:date AND user_fk=:user AND ride_fk=:ride',
-			array(':date'=>date('Y-m-d 00:00:00',strtotime($_POST['dateB'])),
-				':user'=>$user->id,
-				':ride'=>$this->loadModel($id)->id
-			));
-		$similarRegistrationsR=Registration::model()->findAll('startDate<=:date AND endDate>=:date AND user_fk=:user AND ride_fk=:ride',
-			array(':date'=>date('Y-m-d 00:00:00',strtotime($_POST['dateB'])),
-				':user'=>$user->id,
-				':ride'=>$this->loadModel($id)->bindedride
-			));
-
-		$registrationA->save();
-		$registrationR->save();
-	}*/
 }
