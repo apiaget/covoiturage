@@ -117,7 +117,7 @@ table td.highlighted {
 
 <table>
 	<tr>
-		<td>Conducteur</td><td><?php echo $ride->driver->cpnvId; ?>
+		<td>Conducteur</td><td><?php echo $ride->driver->prenom(); ?>
 			<span class="user">
 				<?php $array=$user->reputation(); echo "<span class='ratings'><span class='rating' style='width:".$array[0]."%'></span></span> (".$array[1]." votes)";?>
 			</span>
@@ -312,7 +312,7 @@ table td.highlighted {
 			$date = $dateDebut." - ".$dateFin;
 		}
 		
-		echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$date.'</td><td>'.$validation.'</td></tr>';
+		echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$date.'</td><td>'.$validation.'</td><td></td></tr>';
 	}
 	echo '</table>';
 	}
@@ -329,9 +329,9 @@ table td.highlighted {
 <?php
 	
 	echo '<br/>';
-	echo '<table id="registredUsers"><tr><th>Utilisateur</th><th>Date(s)</th><th>Numéro de téléphone</th><th>Email</th><th>Validation</th><th></th></tr>';
+	echo '<table id="registredUsers"><tr><th>Utilisateur</th><th>Date(s)</th><th>Email</th><th>Numéro de téléphone</th><th>Validation</th><th></th></tr>';
 	foreach($registrations as $registration)
-	{
+	{	
 		$driverid=$user->id;
 		$nom=$registration->userFk->nom();
 		$id=$registration->userFk->id;
@@ -372,11 +372,17 @@ table td.highlighted {
 		}
 		else
 		{
-			echo '<form method="post">';
+			//echo '<form method="post">';
 				$validation ="En attente";
-				echo'<input type="hidden" name="idReg" value="'.$registration->id.'" />'; //A REVOIR
-				echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$numero.'</td><td>'.$email.'</td><td>'.$date.'</td><td>'.$validation.'</td><td><input type="submit" name="valider" value="valider"/></td></tr>';
-			echo'</form>';
+				//echo'<input type="hidden" name="idReg" value="'.$registration->id.'" />'; //A REVOIR 
+				echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$date.'</td><td>'.$email.'</td><td>'.$numero.'</td><td>'.$validation.'</td>
+				<td>
+				<form method="post">
+				<input type="hidden" name="idReg" value="'.$registration->id.'" />
+				<input type="submit" name="valider" value="valider"/>
+				</form>
+				</td></tr>';
+			//echo'</form>';
 		}
 	}
 	echo '</table>';
@@ -400,110 +406,141 @@ table td.highlighted {
 //		voit commentaires avec possibilité de répondre
 //	fin Si
 ?>
-<div id="container" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
+<!--<div id="container" style="min-width: 310px; height: 250px; margin: 0 auto"></div>-->
+<div id="container" style="min-width: 310px; margin: 0 auto"></div>
 
 <script type="text/javascript">
 
 
     $(document).ready(
 	function() {
-		$('#container').highcharts({
-		    chart: {
-		        type: 'columnrange',
-		        inverted: true
-		    },
-		    title: {
-		        text: 'Remplissage du véhicule'
-		    },
-		    yAxis: {
-	            type:"datetime",
-	                dateTimeLabelFormats:{
-	                month: '%b %e, %Y'
-	            },
-		        title: {
-		            text: 'Dates'
-		        },
-	            tickInterval: 86400000 * 7 // 7 days
-		    },
-		    tooltip: {
-	            headerFormat: '<b>{series.name}</b><br>',
-	            pointFormat: '{point.low:%b. %e} - {point.high:%b. %e}'
-	        },
-
-		    plotOptions: {
-		        columnrange: {
-		        	dataLabels: {
-		        		enabled: true,
-		        		formatter: function () {
-	                        //return Highcharts.dateFormat('%b. %e', this.y);
-		        		}
-		        	}
-		        },
-	            series: {
-		    		marker: {
-		    			enabled: true	
-		    		}
-		    	}
-		    },
-		    legend: {
-		        enabled: false
-		    },
-		    series: [{
-		        name: 'Dates',
-		        data: []
-		    }]
-		});
-
-		var chart = $('#container').highcharts();
 		var tableData = $('#registredUsers');
-		//console.log(tableData.children().find('tr'));
 		if(tableData.children().find('tr').length>1) //au moins une registration
 		{
+
+			$('#container').highcharts({
+				chart: {
+					type: 'columnrange',
+					inverted: true
+				},
+				title: {
+					text: 'Remplissage du véhicule'
+				},
+				yAxis: {
+					type:"datetime",
+						dateTimeLabelFormats:{
+						month: '%b %e, %Y'
+					},
+					title: {
+						text: 'Dates'
+					},
+					tickInterval: 86400000 * 7 // 7 days
+				},
+				tooltip: {
+					headerFormat: '<b>{series.name}</b><br>',
+					pointFormat: '{point.low:%b. %e} - {point.high:%b. %e}'
+				},
+
+				plotOptions: {
+					columnrange: {
+						dataLabels: {
+							enabled: true,
+							formatter: function () {
+								//return Highcharts.dateFormat('%b. %e', this.y);
+							}
+						}
+					},
+					series: {
+						marker: {
+							enabled: true	
+						}
+					}
+				},
+				legend: {
+					enabled: false
+				},
+				series: [{
+					name: 'Dates',
+					data: []
+				}]
+			});
+
+
+			var chart = $('#container').highcharts();
+			
+
+
+
 			console.log($("#registredUsers tr td:nth-child(1)"));
 			var users = $("#registredUsers tr td:nth-child(1)");
-			var categories = "";
+
+			$('#container').height(50+50*(users.length+1));
+			chart.setSize(910, 50+50*(users.length+1),false);
+
+			var categories = "[";
 			for(var i = 0 ; i < users.length ; i++)
 			{
 				categories += "'"+users.eq(i).html()+"',";
 			}
-			categories = categories.substring(0, categories.length - 2)+"'";
-			console.log(categories);
-			chart.xAxis[0].setCategories([categories]);
+			categories = categories.substring(0, categories.length - 2)+"']";
+			chart.xAxis[0].setCategories(eval(categories));
 			
-
 			var registrationsRow = tableData.children().find('tr').nextAll();
-			console.log(registrationsRow);
+
 			for(var i = 0 ; i < registrationsRow.length ; i++)
 			{
-				var name = registrationsRow.eq(i).find('td').eq(0).html();
 				var dates = registrationsRow.eq(i).find('td').eq(1).html();
+				console.log(dates);
 				var valid = registrationsRow.eq(i).find('td').last().prev().html();
-				console.log(name + " " + dates + " " + valid);
-				//chart.xAxis[0].setCategories([name]);
+				if(dates.length==10)//un seul jour
+				{
+					var date = dates.split('-');
+					chart.series[0].addPoint([Date.UTC(date[2],  date[1]-1, date[0]),Date.UTC(date[2],  date[1]-1, date[0], 23, 59, 59)]);
+				}
+				else
+				{
+					var date = dates.split(' - ');
+					var dates1 = date[0].split('-');
+					var dates2 = date[1].split('-');
+					chart.series[0].addPoint([Date.UTC(dates1[2],  dates1[1]-1, dates1[0]),Date.UTC(dates2[2],  dates2[1]-1, dates2[0])]);
+				}
+				
+				if(valid=="En attente")
+				{
+					chart.series[0].data[i].update({
+						marker:{
+							color: '#FF2A40',
+							states:{
+								hover:{
+									color: '#ff6171'
+								}
+							}
+						}
+					});
+				}else if (valid == "Validé"){
+					chart.series[0].data[i].update({
+						marker:{
+							color: '#00CD73',
+							states:{
+								hover:{
+									color: '#4DFFB1'
+								}
+							}
+						}
+					});
+				}
 			}
-			//registrationsRow.each()
-			/*console.log(registrationsRow);
-			$.each(registrationsRow, function(index, value) { 
-				alert(index + ': ' + value.eq()); 
-			});*/
-			//console.log(tableData.children().find('tr').nextAll());
+			
+			var date = tableData.children().find('tr').nextAll().eq(0).find('td').eq(1).html().substring(0, 10).split('-');
+			console.log(date);
+			var dayNumber = new Date(date[2],  date[1]-1, date[0]).getDay();
+			console.log(dayNumber);
+			chart.yAxis[0].update({startOfWeek: dayNumber});
 		}
-	    //chart.xAxis[0].setCategories(['5.16-5.30', '5.16-6.6', '5.9-6.6', '5.9-5.23']);
-	    chart.yAxis[0].update({startOfWeek: 5});
-	    chart.series[0].addPoint([Date.UTC(2014,  4, 16),Date.UTC(2014,  4, 30)]);
-	    chart.series[0].addPoint([Date.UTC(2014,  4, 16),Date.UTC(2014,  5, 6)]);
-	    chart.series[0].addPoint([Date.UTC(2014,  4, 9),Date.UTC(2014,  5, 6)]);
-	    chart.series[0].addPoint([Date.UTC(2014,  4, 9),Date.UTC(2014,  4, 23)]);
-	    chart.series[0].data[0].update({
-	        marker:{
-	            color: '#00CD73',
-	            states:{
-	                hover:{
-	                    color: '#4DFFB1'
-	                }
-	            }
-	        }
-	    });
+
+		
+
+
 
 		var isMouseDown = false,
 		isHighlighted;

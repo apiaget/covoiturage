@@ -96,8 +96,12 @@ class RidesController extends Controller
 
 			foreach($registrations as $registration)
 			{
-				if($registration->rideFk->id == $ride->id && $registration->userFk->notifDeleteRide==1)
+
+				//$registraion->userFk->sendMail('suppression', ride);
+				//if($registration->rideFk->id == $ride->id && $registration->userFk->notifDeleteRide==1)
+				if($registration->userFk->notifDeleteRide==1)
 				{
+					//$registration->
 					$start=date("d-m-Y",strtotime($registration->rideFk->startDate));
 					$end=date("d-m-Y",strtotime($registration->rideFk->endDate));
 					$villeDepart=$registration->rideFk->departuretown->name;

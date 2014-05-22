@@ -230,11 +230,11 @@ else{
 	echo "<tr><th>Conducteur</th><th>Places</th><th>Départ</th><th>Arrivée</th><th>Jour</th></tr>";
 	$i=0;
 	$date=$datetime = date('Y-m-d 00:00:00', time());
-	while($i<20 && array_sum($r)<count($rides))
+	while($i<80 && array_sum($r)<count($rides))
 	{
 		foreach ($rides as $ride) {
 
-				if($ride->visibility==1 && $ride->startDate<=$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0 && $ride->showDuringHolidays($date)){
+				if($ride->startDate<=$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0 && $ride->showDuringHolidays($date)){
 					$daydate = date("d-m-Y",strtotime($date));
 					echo "<tr onclick=";
 					echo "\"document.location='/covoiturage/covoiturage/rides/".$ride->id."?date=".$daydate."';";
