@@ -1,7 +1,7 @@
 <?php
-	$cpnvId="Joël";
-	$user = User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$cpnvId));
-	$user->sendEmail('blabla','bloblo');
+	//$cpnvId="Joël";
+	//$user = User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$cpnvId));
+	//$user->sendEmail('blabla','bloblo');
 	
 
 /* @var $this SiteController */
@@ -71,24 +71,29 @@ else
 	$i=0;
 
 	$date=$datetime = date('Y-m-d 00:00:00', time());
-
+	//$woaw=0;
 	while($i<20 && array_sum($v)<=count($registrations) && array_sum($r)<=count($ridesCurrent))
 	{
 		//tel jour
+		/*if($woaw==1)
+			{
+				var_dump($registrations);
+				die;
+				
+			}$woaw++;*/
 		foreach($registrations as $registration){
 			//Ride::model()->find('id=:id', array(':id'=>$registration->ride_fk));
 			//SI $registration correspond au jour
 			//if($ride->startDate<=$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0 && $ride->showDuringHolidays($date)){
 			$regRide = Ride::model()->find('id=:id', array(':id'=>$registration->ride_fk));
-			//var_dump($regRide);
-			//die;
+			
 			if($regRide->visibility==1 && $registration->startDate<=$date && $registration->endDate>=$date && $regRide->day==date('N',strtotime($date)) && $v[$registration->id]==0 && $regRide->showDuringHolidays($date)){
 				//prendre le ride qui correspond et l'afficher
 				$daydate = date("d-m-Y",strtotime($date));
 				echo "<tr onclick=";
 				echo "\"document.location='/covoiturage/covoiturage/rides/".$regRide->id."?date=".$daydate."';";
 				echo "\" onmouseover='tablein(this);' onmouseout='tableout(this);'>";
-					echo "<td>". CHtml::link('Title', array('rides/view', 'id'=>$regRide->id))."</td>";
+					//echo "<td>". CHtml::link('Title', array('rides/view', 'id'=>$regRide->id))."</td>";
 					echo "<td>".$regRide->driver->cpnvId."</td>";
 					echo "<td>"."0/".$regRide->seats."</td>";
 					echo "<td>".$regRide->departuretown->name." à ".$regRide->departure."</td>";
@@ -150,8 +155,8 @@ else
 
 					echo "<td><img src='/covoiturage/covoiturage/images/driver.png' width='8%'/> ".$rideCurrent->driver->cpnvId."</td>";
 					echo "<td>"."0/".$rideCurrent->seats."</td>";
-					echo "<td>".$regRide->departuretown->name." à ".$regRide->departure."</td>";
-					echo "<td>".$regRide->arrivaltown->name." vers ".$regRide->arrival."</td>";/*
+					echo "<td>".$rideCurrent->departuretown->name." à ".$rideCurrent->departure."</td>";
+					echo "<td>".$rideCurrent->arrivaltown->name." vers ".$rideCurrent->arrival."</td>";/*
 					echo "<td>".$rideCurrent->departuretown->name." à ".substr($rideCurrent->departure, 0, 5)."</td>";
 					echo "<td>".$rideCurrent->arrivaltown->name." vers ".substr($rideCurrent->arrival, 0, 5)."</td>";*/
 				
@@ -210,6 +215,7 @@ echo CHtml::link("Créer un nouveau trajet", array('rides/create'));
 
 <?php
 //affichage des 20 prochains rides disponibles
+unset($r);
 $r[0]=0;
 foreach($rides as $ride)
 {
@@ -236,8 +242,8 @@ else{
 
 						echo "<td>".$ride->driver->cpnvId."</td>";
 						echo "<td>"."0/".$ride->seats."</td>";
-						echo "<td>".$regRide->departuretown->name." à ".$regRide->departure."</td>";
-						echo "<td>".$regRide->arrivaltown->name." vers ".$regRide->arrival."</td>";/*
+						echo "<td>".$ride->departuretown->name." à ".$ride->departure."</td>";
+						echo "<td>".$ride->arrivaltown->name." vers ".$ride->arrival."</td>";/*
 						echo "<td>".$ride->departuretown->name." à ".substr($ride->departure, 0, 5)."</td>";
 						echo "<td>".$ride->arrivaltown->name." vers ".substr($ride->arrival, 0, 5)."</td>";*/
 					

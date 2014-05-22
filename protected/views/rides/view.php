@@ -329,7 +329,7 @@ table td.highlighted {
 <?php
 	
 	echo '<br/>';
-	echo '<table id="registredUsers"><tr><th>Utilisateur</th><th>Numéro de téléphone</th><th>Email</th><th>Date(s)</th><th>Validation</th><th></th></tr>';
+	echo '<table id="registredUsers"><tr><th>Utilisateur</th><th>Date(s)</th><th>Numéro de téléphone</th><th>Email</th><th>Validation</th><th></th></tr>';
 	foreach($registrations as $registration)
 	{
 		$driverid=$user->id;
@@ -368,7 +368,7 @@ table td.highlighted {
 		if($registration->accepted==1)
 		{
 			$validation ="Validé";
-			echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$numero.'</td><td>'.$email.'</td><td>'.$date.'</td><td>'.$validation.'</td><td></td></tr>';
+			echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$date.'</td><td>'.$email.'</td><td>'.$numero.'</td><td>'.$validation.'</td><td></td></tr>';
 		}
 		else
 		{
@@ -456,8 +456,39 @@ table td.highlighted {
 
 		var chart = $('#container').highcharts();
 		var tableData = $('#registredUsers');
-		console.log(tableData.children().find('tr'));
-	    chart.xAxis[0].setCategories(['5.16-5.30', '5.16-6.6', '5.9-6.6', '5.9-5.23']);
+		//console.log(tableData.children().find('tr'));
+		if(tableData.children().find('tr').length>1) //au moins une registration
+		{
+			console.log($("#registredUsers tr td:nth-child(1)"));
+			var users = $("#registredUsers tr td:nth-child(1)");
+			var categories = "";
+			for(var i = 0 ; i < users.length ; i++)
+			{
+				categories += "'"+users.eq(i).html()+"',";
+			}
+			categories = categories.substring(0, categories.length - 2)+"'";
+			console.log(categories);
+			chart.xAxis[0].setCategories([categories]);
+			
+
+			var registrationsRow = tableData.children().find('tr').nextAll();
+			console.log(registrationsRow);
+			for(var i = 0 ; i < registrationsRow.length ; i++)
+			{
+				var name = registrationsRow.eq(i).find('td').eq(0).html();
+				var dates = registrationsRow.eq(i).find('td').eq(1).html();
+				var valid = registrationsRow.eq(i).find('td').last().prev().html();
+				console.log(name + " " + dates + " " + valid);
+				//chart.xAxis[0].setCategories([name]);
+			}
+			//registrationsRow.each()
+			/*console.log(registrationsRow);
+			$.each(registrationsRow, function(index, value) { 
+				alert(index + ': ' + value.eq()); 
+			});*/
+			//console.log(tableData.children().find('tr').nextAll());
+		}
+	    //chart.xAxis[0].setCategories(['5.16-5.30', '5.16-6.6', '5.9-6.6', '5.9-5.23']);
 	    chart.yAxis[0].update({startOfWeek: 5});
 	    chart.series[0].addPoint([Date.UTC(2014,  4, 16),Date.UTC(2014,  4, 30)]);
 	    chart.series[0].addPoint([Date.UTC(2014,  4, 16),Date.UTC(2014,  5, 6)]);
