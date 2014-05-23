@@ -53,8 +53,8 @@ class RidesController extends Controller
 
 	public function actionView($id)
 	{
-		$cpnvId="Joël";
-		$user=User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$cpnvId));
+		//$user=User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$cpnvId));
+		$user=User::currentUser();
 		$today = date('Y-m-d 00:00:00', time());
 		
 		$registrations=Registration::model()->findAll('ride_fk=:ride_fk AND endDate>=:today', array(':ride_fk'=>$id, ':today'=>$today));

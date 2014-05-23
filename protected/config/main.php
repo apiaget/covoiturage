@@ -22,7 +22,9 @@ return array(
 		'application.models.*',
 		'application.components.*',
 		//preloading yiimailer
-		'ext.YiiMailer.YiiMailer'
+		'ext.YiiMailer.YiiMailer',
+		'ext.PhpActiveResource.ActiveResource',
+
 	),
 
 	'modules'=>array(

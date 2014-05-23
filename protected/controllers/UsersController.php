@@ -58,8 +58,7 @@ class UsersController extends Controller
 
 	public function actionModif()
 	{
-		$cpnvId="Joël";
-		$user=User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$cpnvId));
+		$user=User::currentUser();
 
 		if(isset($_POST['User']))
 		{

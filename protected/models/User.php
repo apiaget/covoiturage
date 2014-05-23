@@ -47,7 +47,6 @@ class User extends CActiveRecord
 			array('email', 'required', 'message'=>'L\'adresse email fournie ne semble pas être valide'),
 			array('email', 'length', 'max'=>60),
 			array('email', 'email', 'message'=>'L\'adresse email fournie ne semble pas être valide'),
-			array('telephone', 'required'),
 			array('telephone', 'telephoneStrength'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -173,15 +172,29 @@ class User extends CActiveRecord
 	}
 
 	public function nom(){
-		return $this->cpnvId;
+		$IU = new IntranetUser();
+		$intranet_user = $IU->find($this->cpnvId);
+		// WARNING: TODO: handle dropped users
+		return $intranet_user->lastname;
 	}
 	public function prenom(){
-		return $this->cpnvId;
+		$IU = new IntranetUser();
+		$intranet_user = $IU->find($this->cpnvId);
+		// WARNING: TODO: handle dropped users
+		return $intranet_user->firstname;
 	}
 
 	public static function currentUser(){
-		$cpnvId="Joël";
-		$user=User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$cpnvId));
+		$user = User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$_SERVER['HTTP_X_FORWARDED_USER']));
+		if (!$user) {
+			$IU =new IntranetUser();
+			$intranet_user = $IU->find($_SERVER['HTTP_X_FORWARDED_USER']);
+			if ($intranet_user === false) throw new CException('Unknown intranet user');
+			$user = new User();
+			$user->cpnvId = $intranet_user->friendly_id;
+			$user->email = $intranet_user->corporate_email;
+			$user->save(false);
+		}
 		return $user;
 	}
 	

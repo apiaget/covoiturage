@@ -2,10 +2,10 @@
 /* @var $this RidesController */
 /* @var $model Ride */
 
-$this->breadcrumbs=array(
+/*$this->breadcrumbs=array(
 	'Rides'=>array('index'),
-	'Create',
-);
+	'Update',
+);*/
 ?>
 
 
@@ -105,7 +105,7 @@ function cacher()
 					<tr>
 						<td>
 							<?php echo $form->labelEx($ride,'startDate', array('label' => 'Date du trajet')); ?>
-							
+							<?php //echo '<input id="startDate" class="hasDatepicker" type="text" value="'.date("d.m.Y",strtotime($ride->startDate)).'" name="Ride[startDate]"></input>'; ?>
 						</td>
 						<td>
 							<?php $this->widget('zii.widgets.jui.CJuiDatePicker',array(
@@ -114,8 +114,11 @@ function cacher()
 									    'name'=>'startDate',
 									    // additional javascript options for the date picker plugin
 									    'options'=>array(
+									    	'changeMonth'=>'true', 
+                    						'changeYear'=>'true', 
 									        'showAnim'=>'fadeIn',//'slide','fold','slideDown','fadeIn','blind','bounce','clip','drop'
-									    	 'dateFormat' => 'dd.mm.yy', // date Format
+									    	'dateFormat' => 'dd.mm.yy', // date Format
+									    	'value'=>date('dd/mm/yy'),
 									    ),
 									    'htmlOptions'=>array(
 									        

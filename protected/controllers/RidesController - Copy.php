@@ -51,9 +51,8 @@ class RidesController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$cpnvId="Joël";
 		$user=User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$cpnvId));
-
+		$user=User::currentUser();
 		//ne pas afficher les rides effacés
 		$ride=$this->loadModel($id);
 		if($ride->visibility==0)
