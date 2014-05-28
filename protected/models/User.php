@@ -201,6 +201,8 @@ class User extends CActiveRecord
 			$user = new User();
 			$user->cpnvId = $intranet_user->friendly_id;
 			$user->email = $intranet_user->corporate_email;
+			$user->prenom=$intranet_user->firstname;
+			$user->nom=$intranet_user->lastname;
 			$user->hideEmail = 0;
 			$user->hideTelephone = 0;
 			$user->notifInscription = 1;

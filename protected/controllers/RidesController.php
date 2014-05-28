@@ -393,6 +393,12 @@ class RidesController extends Controller
 		// $this->performAjaxValidation($model);
 
 
+		if($ride->driver->id!=User::model()->currentUser()->id || $ride->visibility==0)
+		{
+			//$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
+			$this->redirect(array('site/index'));
+		}
+
 		if(isset($_POST['Ride']))
 		{
 			$ride->attributes=$_POST['Ride'];
@@ -451,11 +457,7 @@ class RidesController extends Controller
 				$this->redirect(array('view','id'=>$ride->id));
 		}*/
 
-		if($ride->driver->id!=User::model()->currentUser()->id)
-		{
-			//$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
-			$this->redirect(array('site/index'));
-		}
+		
 
 		$this->render('update',array(
 			'ride'=>$ride,

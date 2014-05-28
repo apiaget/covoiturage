@@ -117,7 +117,7 @@ table td.highlighted {
 
 <table>
 	<tr>
-		<td>Conducteur</td><td><?php echo $ride->driver->prenom(); ?>
+		<td>Conducteur</td><td><?php echo $ride->driver->prenom." ".$ride->driver->nom; ?>
 			<span class="user">
 				<?php $array=$user->reputation(); echo "<span class='ratings'><span class='rating' style='width:".$array[0]."%'></span></span> (".$array[1]." votes)";?>
 			</span>
@@ -544,7 +544,7 @@ table td.highlighted {
 
 
 		var isMouseDown = false,
-		isHighlighted;
+		isHighlighted = true;
 		var mX=0;
 		$("#days td")
 			.mousedown(function (e) {
@@ -554,8 +554,10 @@ table td.highlighted {
 
 				$('#dateDebut').val("");
 				$('#dateFin').val("");
+				//console.log($(this).parent().children().size()+" "+$(this).index());
 				if($(this).parent().attr('id')=="trajets" && $(this).index()<($(this).parent().children().size()-1))
 				{
+					//console.log("coucou");
 					$('#dateDebut').val($('#trajets').children().eq(index).html());
 					$('#dateFin').val($('#trajets').children().eq(index).html());
 					$(this).toggleClass("highlighted", isHighlighted);
@@ -565,6 +567,8 @@ table td.highlighted {
 				}
 				else if ($(this).index()<($(this).parent().children().size()-1))
 				{
+					//console.log("coucou");
+
 					$('#dateDebut').val($('#trajets').children().eq(index).html());
 					$('#dateFin').val($('#trajets').children().eq(index).html());
 					$(this).toggleClass("highlighted", isHighlighted);
@@ -572,7 +576,7 @@ table td.highlighted {
 					var col = $(this).parent().prev().children().eq($(this).index());
 					$(col).toggleClass("highlighted", isHighlighted);
 				}
-				isHighlighted = $(this).hasClass("highlighted");
+				//isHighlighted = $(this).hasClass("highlighted");
 		})
 		.mouseover(function (e) {
 			if (isMouseDown) {
@@ -605,6 +609,7 @@ table td.highlighted {
 					$('#days').children().children("tr").eq(0).children().eq(firsthighlighted+i).addClass('highlighted');
 					$('#days').children().children("tr").eq(1).children().eq(firsthighlighted+i).addClass('highlighted');
 				}
+				//console.log($('#dateFin').val());
 			}
 		})
 		.bind("selectstart", function () {

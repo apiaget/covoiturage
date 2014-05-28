@@ -90,7 +90,7 @@ return array(
 	// using Yii::app()->params['paramName']
 	'params'=>array(
 		// this is used in contact page
-		'mode'=>"maison",
+		'mode'=>"pasmaison",
 		'adminEmail'=>'webmaster@covoiturage.ch',
 	),
 	

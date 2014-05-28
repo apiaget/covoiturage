@@ -14,7 +14,7 @@
 <!-- Fonction permettant de cacher les champs destinés au retour --> 
 <script type="text/javascript">
 //document.getElementById("champ_cache").style.display = "none";
- 
+ /*
 function afficher()
 {
 	var elements =document.getElementsByClassName("champ_cache");
@@ -33,7 +33,21 @@ function cacher()
     {
     	elements[i].style.display = "none";
 	}
-}
+}*/
+
+$(document).ready(
+	function() {
+		//var date = new Date($('#startDate').val());
+		var date1 = $('#startDate').val().split(" ");
+		var day1 = date1[0].split("-");
+		$('#startDate').val(day1[2]+"."+day1[1]+"."+day1[0]);
+
+		var date2 = $('#endDate').val().split(" ");
+		var day2 = date2[0].split("-");
+		$('#endDate').val(day2[2]+"."+day2[1]+"."+day2[0]);
+
+	});
+
 </script>
 
 
@@ -62,7 +76,7 @@ function cacher()
 						<td>Conducteur</td>
 						<td>
 
-							<?php echo $user->cpnvId; ?>
+							<?php echo $user->prenom." ".$user->nom; ?>
 						</td>
 					</tr>
 					<tr>
@@ -174,16 +188,16 @@ function cacher()
 						</td>
 					</tr>
 
-					<tr>
+					<!--<tr>
 						<td>
 							Voulez-vous créer le trajet retour ?<br/>
 							Oui <input type="radio" name="retour" value="oui" id="oui" onClick="afficher();" /> <br />
 							Non <input type="radio" name="retour" value="non" id="non" checked="checked" onClick="cacher();"/> <br />
 						</td>
 						
-					</tr>
-
-					<tr class="champ_cache" style="display: none;">
+					</tr>-->
+					<?php if($ride->bindedride){ ?>
+					<tr>
 						<td>
 							<?php echo $form->labelEx($rideretour,'departure', array('label' => 'Heure de départ (hh:mm)')); ?>
 						</td>
@@ -192,7 +206,7 @@ function cacher()
 							<?php echo $form->error($rideretour,'departure'); ?>
 						</td>
 					</tr>
-					<tr class="champ_cache" style="display: none;">
+					<tr>
 						<td>
 							<?php echo $form->labelEx($rideretour,'arrival', array('label' => 'Heure d\'arrivée (hh:mm)')); ?>
 							
@@ -203,7 +217,7 @@ function cacher()
 						</td>
 					</tr>
 
-					<tr class="champ_cache" style="display: none;">
+					<tr>
 						<td>
 							<?php echo $form->labelEx($rideretour,'description', array('label' => 'Description')); ?>
 						</td>
@@ -212,6 +226,7 @@ function cacher()
 							<?php echo $form->error($rideretour,'description'); ?>
 						</td>
 					</tr>
+					<?php } ?>
 					<tr>
 						<td>
 							<?php echo CHtml::submitButton($ride->isNewRecord ? 'Create' : 'Save'); ?>
@@ -222,7 +237,7 @@ function cacher()
 <?php $this->endWidget(); ?>
 </div>
 <script type="text/javascript">
-
+/*
 var errors = document.getElementsByClassName('errorMessage');
 //console.log(errors[0].parentNode);
 for(var i=0; i<errors.length;i++)
@@ -238,6 +253,6 @@ if($("#Ride_retour_departure").val()!="")
 	console.log("coucou");
 	afficher();
 	document.getElementById('oui').checked='checked';
-}
+}*/
 </script>
 
