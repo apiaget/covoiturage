@@ -386,7 +386,8 @@ table td.highlighted {
 		}
 	}
 	echo '</table>';
-	}
+	}echo Yii::getLogger()->getExecutionTime();
+
 //	voit paramètre du ride ----OK
 //	Si driver
 //		voit personnes inscrites, validée ou non avec leur réputation et leur téléphone

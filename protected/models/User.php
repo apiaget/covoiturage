@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This is the model class for table "users".
  *
@@ -15,6 +14,7 @@
  * @property integer $notifUnsuscribe
  * @property integer $notifDeleteRide
  * @property integer $notifModification
+ * @property integer $notifValidation
  * @property integer $blacklisted
  * @property integer $admin
  *
@@ -172,12 +172,20 @@ class User extends CActiveRecord
 	}
 
 	public function nom(){
+		if(Yii::app()->params['mode']=="maison")
+		{
+			return $this->currentUser()->cpnvId;
+		}
 		$IU = new IntranetUser();
 		$intranet_user = $IU->find($this->cpnvId);
 		// WARNING: TODO: handle dropped users
 		return $intranet_user->lastname;
 	}
 	public function prenom(){
+		if(Yii::app()->params['mode']=="maison")
+		{
+			return $this->currentUser()->cpnvId;
+		}
 		$IU = new IntranetUser();
 		$intranet_user = $IU->find($this->cpnvId);
 		// WARNING: TODO: handle dropped users
@@ -193,6 +201,16 @@ class User extends CActiveRecord
 			$user = new User();
 			$user->cpnvId = $intranet_user->friendly_id;
 			$user->email = $intranet_user->corporate_email;
+			$user->hideEmail = 0;
+			$user->hideTelephone = 0;
+			$user->notifInscription = 1;
+			$user->notifComment = 1;
+			$user->notifUnsuscribe = 1;
+			$user->notifDeleteRide = 1;
+			$user->notifModification = 1;
+			$user->notifValidation = 1;
+			$user->blacklisted = 0;
+			$user->admin = 0;
 			$user->save(false);
 		}
 		return $user;

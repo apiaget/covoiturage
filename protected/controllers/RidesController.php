@@ -59,9 +59,7 @@ class RidesController extends Controller
 		
 		$registrations=Registration::model()->findAll('ride_fk=:ride_fk AND endDate>=:today', array(':ride_fk'=>$id, ':today'=>$today));
 
-		
-		
-		//ne pas afficher les rides effacés
+		//ne pas permettre l'affichage de rides désactivés
 		$ride=$this->loadModel($id);
 		if($ride->visibility==0)
 		{
@@ -69,7 +67,6 @@ class RidesController extends Controller
 		}
 
 		if(isset($_POST['modification'])){
-
 			foreach($registrations as $registration)
 			{
 				if($registration->rideFk->id == $ride->id && $registration->userFk->notifModification==1)
@@ -96,9 +93,6 @@ class RidesController extends Controller
 
 			foreach($registrations as $registration)
 			{
-
-				//$registraion->userFk->sendMail('suppression', ride);
-				//if($registration->rideFk->id == $ride->id && $registration->userFk->notifDeleteRide==1)
 				if($registration->userFk->notifDeleteRide==1)
 				{
 					//$registration->
@@ -118,8 +112,6 @@ class RidesController extends Controller
 		}
 		if(isset($_POST['inscrireAllerRetour'])&&$_POST['dateDebut']!=""&&$_POST['dateFin']!="")
 		{
-			var_dump($_POST);
-			die;
 			$reg = new Registration;
 			$reg->user_fk=User::model()->currentUser()->id;
 			$reg->ride_fk=$this->loadModel($id)->id;
@@ -141,25 +133,25 @@ class RidesController extends Controller
 			//Notification
 			if($result && $resultRetour)
 			{
-					if($reg->rideFk->driver->notifInscription==1)
-					{
-						$prenom=$reg->user_fk=User::model()->currentUser()->prenom();
-						$nom=$reg->user_fk=User::model()->currentUser()->nom();
-						$start=date("d-m-Y",strtotime($reg->startDate));
-						$end=date("d-m-Y",strtotime($reg->endDate));
-						$startretour=date("d-m-Y",strtotime($regRetour->startDate));
-						$endretour=date("d-m-Y",strtotime($regRetour->endDate));
-						$villeDepart=$reg->ride_fk=$this->loadModel($id)->departuretown->name;
-						$villeArrivee=$reg->ride_fk=$this->loadModel($id)->arrivaltown->name;
-						$startHour=date("H:i",strtotime($reg->ride_fk=$this->loadModel($id)->departure));
-						$endHour=date("H:i",strtotime($reg->ride_fk=$this->loadModel($id)->arrival));
-						$startHourRetour=date("H:i",strtotime($regRetour->ride_fk=$this->loadModel($id)->departure));
-						$endHourRetour=date("H:i",strtotime($regRetour->ride_fk=$this->loadModel($id)->arrival));
-						$sujet="CPNV Covoiturage - Un utilisateur s'est inscrit à un de vos trajets";
-						$text="L'utilisateur ".$nom." ".$prenom." s'est inscrit à votre trajet du ".$start." à ".$startHour." au ".$end." à ".$endHour." ayant comme trajet ".$villeDepart." - ".$villeArrivee." et aussi à son retour 
-						(du ".$startretour." au ".$endretour." de ".$endHourRetour." à ".$startHourRetour.")";
-						$reg->ride_fk=$this->loadModel($id)->driver->sendEmail($sujet, $text);
-					}
+				if($reg->rideFk->driver->notifInscription==1)
+				{
+					$prenom=$reg->user_fk=User::model()->currentUser()->prenom();
+					$nom=$reg->user_fk=User::model()->currentUser()->nom();
+					$start=date("d-m-Y",strtotime($reg->startDate));
+					$end=date("d-m-Y",strtotime($reg->endDate));
+					$startretour=date("d-m-Y",strtotime($regRetour->startDate));
+					$endretour=date("d-m-Y",strtotime($regRetour->endDate));
+					$villeDepart=$reg->ride_fk=$this->loadModel($id)->departuretown->name;
+					$villeArrivee=$reg->ride_fk=$this->loadModel($id)->arrivaltown->name;
+					$startHour=date("H:i",strtotime($reg->ride_fk=$this->loadModel($id)->departure));
+					$endHour=date("H:i",strtotime($reg->ride_fk=$this->loadModel($id)->arrival));
+					$startHourRetour=date("H:i",strtotime($regRetour->ride_fk=$this->loadModel($id)->departure));
+					$endHourRetour=date("H:i",strtotime($regRetour->ride_fk=$this->loadModel($id)->arrival));
+					$sujet="CPNV Covoiturage - Un utilisateur s'est inscrit à un de vos trajets";
+					$text="L'utilisateur ".$nom." ".$prenom." s'est inscrit à votre trajet du ".$start." à ".$startHour." au ".$end." à ".$endHour." ayant comme trajet ".$villeDepart." - ".$villeArrivee." et aussi à son retour 
+					(du ".$startretour." au ".$endretour." de ".$endHourRetour." à ".$startHourRetour.")";
+					$reg->ride_fk=$this->loadModel($id)->driver->sendEmail($sujet, $text);
+				}
 			}
 			else
 			{
@@ -210,181 +202,99 @@ class RidesController extends Controller
 			$reg->endDate=date("Y-m-d 00:00:00",strtotime($_POST['dateFin']));
 			$reg->accepted=0;
 			//on rempli les paramètres de la registration
-			
 
-			/*if(isset($_POST['allerretour']))
+			$result = $reg->validate();
+
+			//Notification
+			if($result)
 			{
-				$regRetour = new Registration;
-				$regRetour->user_fk=User::model()->currentUser()->id;
-				$regRetour->ride_fk=$this->loadModel($id)->bindedride;
-				$regRetour->startDate=date("Y-m-d 00:00:00",strtotime($_POST['dateDebut']));
-				$regRetour->endDate=date("Y-m-d 00:00:00",strtotime($_POST['dateFin']));
-				$regRetour->accepted=0;
-
-				//Les registrations sont valides ?
-				$result=$reg->validate();
-				$resultRetour=$regRetour->validate();
-
-				//Notification
-				if($result && $resultRetour)
+				if($reg->rideFk->driver->notifInscription==1)
 				{
-						if($reg->rideFk->driver->notifInscription==1)
-						{
-							$prenom=$reg->user_fk=User::model()->currentUser()->prenom();
-							$nom=$reg->user_fk=User::model()->currentUser()->nom();
-							$start=date("d-m-Y",strtotime($reg->startDate));
-							$end=date("d-m-Y",strtotime($reg->endDate));
-							$startretour=date("d-m-Y",strtotime($regRetour->startDate));
-							$endretour=date("d-m-Y",strtotime($regRetour->endDate));
-							$villeDepart=$reg->ride_fk=$this->loadModel($id)->departuretown->name;
-							$villeArrivee=$reg->ride_fk=$this->loadModel($id)->arrivaltown->name;
-							$startHour=date("H:i",strtotime($reg->ride_fk=$this->loadModel($id)->departure));
-							$endHour=date("H:i",strtotime($reg->ride_fk=$this->loadModel($id)->arrival));
-							$startHourRetour=date("H:i",strtotime($regRetour->ride_fk=$this->loadModel($id)->departure));
-							$endHourRetour=date("H:i",strtotime($regRetour->ride_fk=$this->loadModel($id)->arrival));
-							$sujet="CPNV Covoiturage - Un utilisateur s'est inscrit à un de vos trajets";
-							$text="L'utilisateur ".$nom." ".$prenom." s'est inscrit à votre trajet du ".$start." à ".$startHour." au ".$end." à ".$endHour." ayant comme trajet ".$villeDepart." - ".$villeArrivee." et aussi à son retour 
-							(du ".$startretour." au ".$endretour." de ".$endHourRetour." à ".$startHourRetour.")";
-							$reg->ride_fk=$this->loadModel($id)->driver->sendEmail($sujet, $text);
-						}
+					$prenom=$reg->user_fk=User::model()->currentUser()->prenom();
+					$nom=$reg->user_fk=User::model()->currentUser()->nom();
+					$start=date("d-m-Y",strtotime($reg->startDate));
+					$end=date("d-m-Y",strtotime($reg->endDate));
+					$villeDepart=$reg->ride_fk=$this->loadModel($id)->departuretown->name;
+					$villeArrivee=$reg->ride_fk=$this->loadModel($id)->arrivaltown->name;
+					$startHour=date("H:i",strtotime($reg->ride_fk=$this->loadModel($id)->departure));
+					$endHour=date("H:i",strtotime($reg->ride_fk=$this->loadModel($id)->arrival));
+					$sujet="CPNV Covoiturage - Un utilisateur s'est inscrit à un de vos trajets";
+					$text="L'utilisateur ".$nom." ".$prenom." s'est inscrit à votre trajet du ".$start." à ".$startHour." au ".$end." à ".$endHour." ayant comme trajet ".$villeDepart." - ".$villeArrivee.".";
+					$reg->ride_fk=$this->loadModel($id)->driver->sendEmail($sujet, $text);
 				}
-				else
-				{
-					if($result)
-					{
-						if($reg->rideFk->driver->notifInscription==1)
-						{
-							$prenom=$reg->user_fk=User::model()->currentUser()->prenom();
-							$nom=$reg->user_fk=User::model()->currentUser()->nom();
-							$start=date("d-m-Y",strtotime($reg->startDate));
-							$end=date("d-m-Y",strtotime($reg->endDate));
-							$villeDepart=$reg->ride_fk=$this->loadModel($id)->departuretown->name;
-							$villeArrivee=$reg->ride_fk=$this->loadModel($id)->arrivaltown->name;
-							$startHour=date("H:i",strtotime($reg->ride_fk=$this->loadModel($id)->departure));
-							$endHour=date("H:i",strtotime($reg->ride_fk=$this->loadModel($id)->arrival));
-							$sujet="CPNV Covoiturage - Un utilisateur s'est inscrit à un de vos trajets";
-							$text="L'utilisateur ".$nom." ".$prenom." s'est inscrit à votre trajet du ".$start." à
-							".$startHour." au ".$end." à ".$endHour." ayant comme trajet ".$villeDepart." - ".$villeArrivee.".";
-							$reg->ride_fk=$this->loadModel($id)->driver->sendEmail($sujet, $text);
-						}
-					}
-					if($resultRetour)
-					{
-						if($reg->rideFk->driver->notifInscription==1)
-						{
-							$prenom=$regRetour->user_fk=User::model()->currentUser()->prenom();
-							$nom=$regRetour->user_fk=User::model()->currentUser()->nom();
-							$start=date("d-m-Y",strtotime($regRetour->startDate));
-							$end=date("d-m-Y",strtotime($regRetour->endDate));
-							$villeDepart=$regRetour->ride_fk=$this->loadModel($id)->departuretown->name;
-							$villeArrivee=$regRetour->ride_fk=$this->loadModel($id)->arrivaltown->name;
-							$startHour=date("H:i",strtotime($regRetour->ride_fk=$this->loadModel($id)->departure));
-							$endHour=date("H:i",strtotime($regRetour->ride_fk=$this->loadModel($id)->arrival));
-							$sujet="CPNV Covoiturage - Un utilisateur s'est inscrit à un de vos trajets";
-							$text="L'utilisateur ".$nom." ".$prenom." s'est inscrit à votre trajet du ".$start." à ".$startHour." au ".$end." à ".$endHour." ayant comme trajet ".$villeDepart." - ".$villeArrivee.".";
-							$regRetour->ride_fk=$this->loadModel($id)->driver->sendEmail($sujet, $text);
-						}
-					}
-				}
-				//on rempli les paramètre de la registration
-			}else
-			{*/
-				$result = $reg->validate();
+			}
 
-				//Notification
-				if($result)
-				{
-						if($reg->rideFk->driver->notifInscription==1)
-						{
-							$prenom=$reg->user_fk=User::model()->currentUser()->prenom();
-							$nom=$reg->user_fk=User::model()->currentUser()->nom();
-							$start=date("d-m-Y",strtotime($reg->startDate));
-							$end=date("d-m-Y",strtotime($reg->endDate));
-							$villeDepart=$reg->ride_fk=$this->loadModel($id)->departuretown->name;
-							$villeArrivee=$reg->ride_fk=$this->loadModel($id)->arrivaltown->name;
-							$startHour=date("H:i",strtotime($reg->ride_fk=$this->loadModel($id)->departure));
-							$endHour=date("H:i",strtotime($reg->ride_fk=$this->loadModel($id)->arrival));
-							$sujet="CPNV Covoiturage - Un utilisateur s'est inscrit à un de vos trajets";
-							$text="L'utilisateur ".$nom." ".$prenom." s'est inscrit à votre trajet du ".$start." à ".$startHour." au ".$end." à ".$endHour." ayant comme trajet ".$villeDepart." - ".$villeArrivee.".";
-							$reg->ride_fk=$this->loadModel($id)->driver->sendEmail($sujet, $text);
-						}
-				}
-
-				$errors = $reg->getErrors(); //chope les erreurs retournées par le modèle de $reg (Registration)
-				if(count($errors)!=0)
-				{
-					Yii::app()->user->setFlash('startDate', $errors['startDate'][0]);
-				}
-			//}
+			$errors = $reg->getErrors(); //chope les erreurs retournées par le modèle de $reg (Registration)
+			if(count($errors)!=0)
+			{
+				Yii::app()->user->setFlash('startDate', $errors['startDate'][0]);
+			}
 			$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
 		}
 		/*else if(isset($_POST['dateB']) && $_POST['dateB']==""){
 			Yii::app()->user->setFlash('error', "Date incorrecte !");
 			$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
 		}*/
-			if(isset($_POST['desinscrire'])){
-				
-				foreach($registrations as $registration){
-					if($registration->userFk->id == User::model()->currentUser()->id)
-					{
-						$registration->delete();
-						//$registration->save();
+		if(isset($_POST['desinscrire'])){
+			
+			foreach($registrations as $registration){
+				if($registration->userFk->id == User::model()->currentUser()->id)
+				{
+					$registration->delete();
+					//$registration->save();
 
-						//Notification
-						if($registration->rideFk->driver->notifUnsuscribe==1)
-						{
-							$prenom=$registration->userFk->prenom();
-							$nom=$registration->userFk->nom();
-							$start=date("d-m-Y",strtotime($registration->rideFk->startDate));
-							$end=date("d-m-Y",strtotime($registration->rideFk->endDate));
-							$villeDepart=$registration->rideFk->departuretown->name;
-							$villeArrivee=$registration->rideFk->arrivaltown->name;
-							$startHour=date("H:i",strtotime($registration->rideFk->departure));
-							$endHour=date("H:i",strtotime($registration->rideFk->arrival));
-							$sujet="CPNV Covoiturage - Un utilisateur s'est désinscrit à un de vos trajets";
-							$text="L'utilisateur ".$nom." ".$prenom." s'est désinscrit de votre trajet du ".$start." à ".$startHour." au ".$end." à ".$endHour." ayant comme trajet ".$villeDepart." - ".$villeArrivee.".";
-							$registration->rideFk->driver->sendEmail($sujet, $text);
-						}
+					//Notification
+					if($registration->rideFk->driver->notifUnsuscribe==1)
+					{
+						$prenom=$registration->userFk->prenom();
+						$nom=$registration->userFk->nom();
+						$start=date("d-m-Y",strtotime($registration->rideFk->startDate));
+						$end=date("d-m-Y",strtotime($registration->rideFk->endDate));
+						$villeDepart=$registration->rideFk->departuretown->name;
+						$villeArrivee=$registration->rideFk->arrivaltown->name;
+						$startHour=date("H:i",strtotime($registration->rideFk->departure));
+						$endHour=date("H:i",strtotime($registration->rideFk->arrival));
+						$sujet="CPNV Covoiturage - Un utilisateur s'est désinscrit d'un de vos trajets";
+						$text="L'utilisateur ".$nom." ".$prenom." s'est désinscrit de votre trajet du ".$start." à ".$startHour." au ".$end." à ".$endHour." ayant comme trajet ".$villeDepart." - ".$villeArrivee.".";
+						$registration->rideFk->driver->sendEmail($sujet, $text);
 					}
 				}
-				$this->redirect(Yii::app()->user->returnUrl);
 			}
+			$this->redirect(Yii::app()->user->returnUrl);
+		}
 
-			if(isset($_POST['valider'])){
-				$reg=$_POST['idReg'];
-				foreach($registrations as $registration){
-					if($registration->id == $reg)
+		if(isset($_POST['valider'])){
+			$reg=$_POST['idReg'];
+			foreach($registrations as $registration){
+				if($registration->id == $reg)
+				{
+					$registration->accepted=1;
+					$registration->save(false);
+					//Notification
+					if($registration->userFk->notifValidation==1)
 					{
-						$registration->accepted=1;
-						$registration->save(false);
-						//Notification
-						if($registration->userFk->notifValidation==1)
-						{
-							$start=date("d-m-Y",strtotime($registration->rideFk->startDate));
-							$end=date("d-m-Y",strtotime($registration->rideFk->endDate));
-							$villeDepart=$registration->rideFk->departuretown->name;
-							$villeArrivee=$registration->rideFk->arrivaltown->name;
-							$startHour=date("H:i",strtotime($registration->rideFk->departure));
-							$endHour=date("H:i",strtotime($registration->rideFk->arrival));
-							$text="Votre inscription au ride du 
-							".$start." à ".$startHour." au ".$end." à ".$endHour." ayant comme trajet ".$villeDepart." - ".$villeArrivee."
-							 a été validée";
-							$sujet="CPNV Covoiturage - Validation de votre inscription";
-							$registration->userFk->sendEmail($sujet, $text);
-							
-						}
+						$start=date("d-m-Y",strtotime($registration->rideFk->startDate));
+						$end=date("d-m-Y",strtotime($registration->rideFk->endDate));
+						$villeDepart=$registration->rideFk->departuretown->name;
+						$villeArrivee=$registration->rideFk->arrivaltown->name;
+						$startHour=date("H:i",strtotime($registration->rideFk->departure));
+						$endHour=date("H:i",strtotime($registration->rideFk->arrival));
+						$text="Votre inscription au ride du 
+						".$start." à ".$startHour." au ".$end." à ".$endHour." ayant comme trajet ".$villeDepart." - ".$villeArrivee."
+						 a été validée";
+						$sujet="CPNV Covoiturage - Validation de votre inscription";
+						$registration->userFk->sendEmail($sujet, $text);
+						
 					}
-					
 				}
 			}
+		}
 			
 
 		if(isset($_POST['editer'])){
 			//change la visibilité du ride
 			$ride=$this->loadModel($id);
 
-
-			
 			//redirection sur la page d'accueil
 			$this->redirect(array('rides/update','id'=>$ride->id));
 		}
@@ -406,20 +316,19 @@ class RidesController extends Controller
 
 		if(isset($_POST['Ride']))
 		{
-			//var_dump($_POST);
 			$ride->attributes=$_POST['Ride'];
 			$ride->startDate=date("Y-m-d",strtotime($ride->startDate));
 			$ride->endDate=date("Y-m-d",strtotime($ride->endDate));
+			
 			$rideRetour->attributes=$_POST['Ride_retour'];
 			$ride->driver_fk=User::currentUser()->id;
 			
-			$jour=date('N', strtotime($ride->startDate));
-			$ride->day=$jour;
+			$ride->day=date('N', strtotime($ride->startDate));
+			
 
 			//si retour
 			if($_POST['retour']=='oui')
 			{
-				
 				$rideRetour->driver_fk=User::currentUser()->id;
 				$rideRetour->arrivaltown_fk=$ride->departuretown_fk;
 				$rideRetour->departuretown_fk=$ride->arrivaltown_fk;
@@ -427,7 +336,6 @@ class RidesController extends Controller
 
 				$rideRetour->startDate=$ride->startDate;
 				$rideRetour->endDate=$ride->endDate;
-				//die($ride->endDate);
 				$rideRetour->day=$ride->day;
 
 				$rideValid=$ride->validate();
@@ -435,7 +343,6 @@ class RidesController extends Controller
 				
 				if($rideValid&&$rideRetourValid)
 				{
-					
 					$ride->save();
 					//Récupère l'id du ride allé et le rajoute dans le bindedride du ride retour
 					$rideRetour->bindedride=$ride->id;
@@ -451,19 +358,11 @@ class RidesController extends Controller
 			{
 				if($ride->validate())
 				{
-					/*$ride->startDate=date("Y-m-d",strtotime($ride->startDate));
-					$ride->endDate=date("Y-m-d",strtotime($ride->endDate));*/
 					$ride->save();
 					//redirection accueil
 					$this->redirect(Yii::app()->user->returnUrl);
 				}
 			}
-			
-
-			
-			
-			//if($ride->save())
-				//$this->redirect(array('view','id'=>$ride->id));
 		}
 
 		$this->render('create',array(
@@ -499,11 +398,11 @@ class RidesController extends Controller
 			$ride->attributes=$_POST['Ride'];
 			$ride->startDate=date("Y-m-d",strtotime($ride->startDate));
 			$ride->endDate=date("Y-m-d",strtotime($ride->endDate));
+			
 			$rideRetour->attributes=$_POST['Ride_retour'];
 			$ride->driver_fk=User::currentUser()->id;
 			
-			$jour=date('N', strtotime($ride->startDate));
-			$ride->day=$jour;
+			$ride->day=date('N', strtotime($ride->startDate));
 
 			//si retour
 			if($_POST['retour']=='oui')
@@ -537,8 +436,6 @@ class RidesController extends Controller
 			{
 				if($ride->validate())
 				{
-					/*$ride->startDate=date("Y-m-d",strtotime($ride->startDate));
-					$ride->endDate=date("Y-m-d",strtotime($ride->endDate));*/
 					$ride->save();
 					//redirection accueil
 					$this->redirect(Yii::app()->user->returnUrl);

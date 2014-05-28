@@ -32,7 +32,7 @@ class SiteController extends Controller
 		//$rides = Ride::model()->findAll('endDate>:today', array(':today'=>$datetime));
 		//récupération de toutes les registration pour l'utilisateur courant
 		$registrations = Registration::model()->findAll('user_fk=:user',array(':user'=>User::currentUser()->id));
-		$ridesCurrent = Ride::model()->findAll('endDate>:today and driver_fk=:driver_fk', array(':today'=>$datetime, ':driver_fk'=>User::currentUser()->id));
+		$ridesCurrent = Ride::model()->findAll('endDate>:today and driver_fk=:driver_fk and visibility=1', array(':today'=>$datetime, ':driver_fk'=>User::currentUser()->id));
 		//var_dump($rides);
 		//die;
 		//$ridesregistred = Ride::model()->findAll('

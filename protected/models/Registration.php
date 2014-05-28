@@ -49,12 +49,9 @@ class Registration extends CActiveRecord
 		//this = la registration testée
 		/* on veut s'arranger pour augmenter les registrations et les trucs du genre
 		 * c'est ici qu'en enregistrera la registration
-		 *
 		 */
 		//$this->addError($attribute, 'message');
 		/*foreach($this->userFk->registrations as $reg){
-
-
 			//on fait les saves ici
 	    	if(!$reg->ok){
 	    	  $this->addError($attribute, 'message');
