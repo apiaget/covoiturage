@@ -218,16 +218,15 @@ class User extends CActiveRecord
 		return $user;
 	}
 	
-	public function sendEmail($subject, $text){
+	public function sendEmail($mail,$subject){
 
-		$mail = new YiiMailer();
-		
 		$mail->IsSMTP();
-		$mail->clearLayout();//if layout is already set in config
+		//$mail->setLayout('mail');
+		//$mail->clearLayout();//if layout is already set in config
 		$mail->setFrom('info@covoiturage.ch', 'covoiturage.ch');
-		$mail->setTo($this->email);
 		$mail->setSubject($subject);
-		$mail->setBody($text);
+		$mail->setTo($this->email);
+		//$mail->setBody($text);
 		$mail->Host='mail.cpnv.ch';
 		$mail->send();
 	}

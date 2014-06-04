@@ -62,7 +62,7 @@ function cacher()
 						<td>Conducteur</td>
 						<td>
 
-							<?php echo $user->cpnvId; ?>
+							<?php echo $user->prenom." ".$user->nom; ?>
 						</td>
 					</tr>
 					<tr>

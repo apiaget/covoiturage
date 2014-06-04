@@ -51,7 +51,7 @@ $(document).ready(
 </script>
 
 
-<h1>Création d'un trajet</h1>
+<h1>Mise à jour d'un trajet</h1>
 
 <div class="form">
 <?php $form=$this->beginWidget('CActiveForm', array(
@@ -197,6 +197,11 @@ $(document).ready(
 						
 					</tr>-->
 					<?php if($ride->bindedride){ ?>
+					<input type="text" hidden name="retour" id="retour" value="oui"/>
+					<tr><td><strong>
+						<?php if(strtotime($ride->rides->arrival)>strtotime($ride->arrival))
+						{echo "Trajet retour";}else{echo "Trajet aller";} ?>
+					</strong></td><td></td></tr>
 					<tr>
 						<td>
 							<?php echo $form->labelEx($rideretour,'departure', array('label' => 'Heure de départ (hh:mm)')); ?>

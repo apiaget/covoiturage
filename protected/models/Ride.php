@@ -64,9 +64,12 @@ class Ride extends CActiveRecord
 	}
 	public function timeValidation($attribute)
 	{
+		/*echo strtotime($this->arrival)."<br/>";
+		echo strtotime($this->departure);
+		die();*/
 		if(strtotime($this->arrival)<strtotime($this->departure))
 		{
-			 $this->addError($attribute, 'L\'heure de la fin du trajet doit être plus petite que l\'heure de départ');
+			 $this->addError($attribute, 'L\'heure de la fin du trajet doit être plus grande que l\'heure de départ');
 		}
 	}
 	public function endDateValidation($attribute)
@@ -130,7 +133,7 @@ class Ride extends CActiveRecord
 			'departuretown' => array(self::BELONGS_TO, 'Town', 'departuretown_fk'),
 			'arrivaltown' => array(self::BELONGS_TO, 'Town', 'arrivaltown_fk'),
 			'trajetretour' => array(self::BELONGS_TO, 'Ride', 'bindedride'),
-			'rides' => array(self::HAS_MANY, 'Ride', 'bindedride'),
+			'rides' => array(self::HAS_ONE, 'Ride', 'bindedride'),
 			'driver' => array(self::BELONGS_TO, 'User', 'driver_fk'),
 		);
 	}
