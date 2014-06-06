@@ -53,7 +53,6 @@ class RidesController extends Controller
 
 	public function actionView($id)
 	{
-		//$user=User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$cpnvId));
 		$user=User::currentUser();
 		$today = date('Y-m-d 00:00:00', time());
 		
@@ -66,25 +65,7 @@ class RidesController extends Controller
 			$this->redirect(Yii::app()->user->returnUrl);
 		}
 
-		if(isset($_POST['modification'])){
-			foreach($registrations as $registration)
-			{
-				if($registration->rideFk->id == $ride->id && $registration->userFk->notifModification==1)
-				{
-					$start=date("d-m-Y",strtotime($registration->rideFk->startDate));
-					$end=date("d-m-Y",strtotime($registration->rideFk->endDate));
-					$villeDepart=$registration->rideFk->departuretown->name;
-					$villeArrivee=$registration->rideFk->arrivaltown->name;
-					$startHour=date("H:i",strtotime($registration->rideFk->departure));
-					$endHour=date("H:i",strtotime($registration->rideFk->arrival));
-					$sujet="CPNV Covoiturage - Un de vos trajets a été modifié";
-					$text="Le trajet du ".$start." ".$startHour." au ".$end." ".$endHour." ayant comme parcours  ".$villeDepart." - ".$villeArrivee." a été modifié.";
-					$registration->userFk->sendEmail($sujet, $text);
-				}
-			}
-		}
-
-
+		//Suppression
 		if(isset($_POST['supprimer'])){
 			//change la visibilité du ride
 			$ride=$this->loadModel($id);
@@ -105,6 +86,7 @@ class RidesController extends Controller
 			//redirection sur la page d'accueil
 			$this->redirect(Yii::app()->user->returnUrl);
 		}
+		//Inscription aller-retour
 		if(isset($_POST['inscrireAllerRetour'])&&$_POST['dateDebut']!=""&&$_POST['dateFin']!="")
 		{
 			$reg = new Registration;
@@ -132,9 +114,13 @@ class RidesController extends Controller
 				{
 					$subject = "Covoiturage CPNV - Un utilisateur s'est inscrit à votre trajet";
 					$mail = new YiiMailer('inscription', array(
-						'registration' => $registration,	
+						'registration' => $reg,	
 					));
-					$registration->userFk->sendEmail($mail,$subject);
+					$regRetour->rideFk->driver->sendEmail($mail,$subject);
+					$mail = new YiiMailer('inscription', array(
+						'registration' => $regRetour,	
+					));
+					$regRetour->rideFk->driver->sendEmail($mail,$subject);
 				}
 			}
 			else
@@ -143,11 +129,13 @@ class RidesController extends Controller
 				{
 					if($reg->rideFk->driver->notifInscription==1)
 					{
+						
 						$subject = "Covoiturage CPNV - Un utilisateur s'est inscrit à votre trajet";
 						$mail = new YiiMailer('inscription', array(
-							'registration' => $registration,	
+							'registration' => $reg,	
 						));
-						$registration->userFk->sendEmail($mail,$subject);
+
+						$reg->rideFk->driver->sendEmail($mail,$subject);
 					}
 				}
 				if($resultRetour)
@@ -157,15 +145,17 @@ class RidesController extends Controller
 
 						$subject = "Covoiturage CPNV - Un utilisateur s'est inscrit à votre trajet";
 						$mail = new YiiMailer('inscription', array(
-							'registration' => $registration,	
+							'registration' => $regRetour,	
 						));
-						$registration->userFk->sendEmail($mail,$subject);
+
+						$regRetour->rideFk->driver->sendEmail($mail,$subject);
 					}
 				}
 			}
 			$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
 		}
-		if(isset($_POST['inscrire'])&&$_POST['dateDebut']!=""&&$_POST['dateFin']!="") //&&$_POST['dateDebut']!="" && $_POST['dateDebut'] != ""
+		//inscription à l'aller
+		if(isset($_POST['inscrire'])&&$_POST['dateDebut']!=""&&$_POST['dateFin']!="") 
 		{
 			$reg = new Registration;
 			$reg->user_fk=User::model()->currentUser()->id;
@@ -176,23 +166,19 @@ class RidesController extends Controller
 			//on rempli les paramètres de la registration
 
 			$result = $reg->validate();
-
+			
+	
 			//Notification
 			if($result)
 			{
 				if($reg->rideFk->driver->notifInscription==1)
 				{
-					$prenom=$reg->user_fk=User::model()->currentUser()->prenom();
-					$nom=$reg->user_fk=User::model()->currentUser()->nom();
-					$start=date("d-m-Y",strtotime($reg->startDate));
-					$end=date("d-m-Y",strtotime($reg->endDate));
-					$villeDepart=$reg->ride_fk=$this->loadModel($id)->departuretown->name;
-					$villeArrivee=$reg->ride_fk=$this->loadModel($id)->arrivaltown->name;
-					$startHour=date("H:i",strtotime($reg->ride_fk=$this->loadModel($id)->departure));
-					$endHour=date("H:i",strtotime($reg->ride_fk=$this->loadModel($id)->arrival));
-					$sujet="CPNV Covoiturage - Un utilisateur s'est inscrit à un de vos trajets";
-					$text="L'utilisateur ".$nom." ".$prenom." s'est inscrit à votre trajet du ".$start." à ".$startHour." au ".$end." à ".$endHour." ayant comme trajet ".$villeDepart." - ".$villeArrivee.".";
-					$reg->ride_fk=$this->loadModel($id)->driver->sendEmail($sujet, $text);
+					$subject = "Covoiturage CPNV - Un utilisateur s'est inscrit à votre trajet";
+						$mail = new YiiMailer('inscription', array(
+							'registration' => $reg,	
+						));
+
+						$reg->rideFk->driver->sendEmail($mail,$subject);
 				}
 			}
 
@@ -203,38 +189,29 @@ class RidesController extends Controller
 			}
 			$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
 		}
-		/*else if(isset($_POST['dateB']) && $_POST['dateB']==""){
-			Yii::app()->user->setFlash('error', "Date incorrecte !");
-			$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
-		}*/
+
+		//désinscription
 		if(isset($_POST['desinscrire'])){
 			
 			foreach($registrations as $registration){
 				if($registration->userFk->id == User::model()->currentUser()->id)
 				{
 					$registration->delete();
-					//$registration->save();
 
 					//Notification
 					if($registration->rideFk->driver->notifUnsuscribe==1)
 					{
-						$prenom=$registration->userFk->prenom();
-						$nom=$registration->userFk->nom();
-						$start=date("d-m-Y",strtotime($registration->rideFk->startDate));
-						$end=date("d-m-Y",strtotime($registration->rideFk->endDate));
-						$villeDepart=$registration->rideFk->departuretown->name;
-						$villeArrivee=$registration->rideFk->arrivaltown->name;
-						$startHour=date("H:i",strtotime($registration->rideFk->departure));
-						$endHour=date("H:i",strtotime($registration->rideFk->arrival));
-						$sujet="CPNV Covoiturage - Un utilisateur s'est désinscrit d'un de vos trajets";
-						$text="L'utilisateur ".$nom." ".$prenom." s'est désinscrit de votre trajet du ".$start." à ".$startHour." au ".$end." à ".$endHour." ayant comme trajet ".$villeDepart." - ".$villeArrivee.".";
-						$registration->rideFk->driver->sendEmail($sujet, $text);
+						$subject = "Covoiturage CPNV - Un utilisateur s'est désinscrit de l'un de vos trajets";
+						$mail = new YiiMailer('desinscription', array(
+							'registration' => $registration,	
+						));
+						$registration->rideFk->driver->sendEmail($mail, $subject);
 					}
 				}
 			}
 			$this->redirect(Yii::app()->user->returnUrl);
 		}
-
+		//Validation
 		if(isset($_POST['valider'])){
 			$reg=$_POST['idReg'];
 			foreach($registrations as $registration){
@@ -277,8 +254,7 @@ class RidesController extends Controller
 		$ride=new Ride;
 		$rideRetour=new Ride;
 		$user=User::model()->currentUser();
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+
 
 		if(isset($_POST['Ride']))
 		{
@@ -355,13 +331,10 @@ class RidesController extends Controller
 		{
 			$rideRetour = new Ride;
 		}
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
 
 		if($ride->driver->id!=User::model()->currentUser()->id || $ride->visibility==0)
 		{
-			//$this->redirect(Yii::app()->getRequest()->getUrlReferrer());
+
 			$this->redirect(array('site/index'));
 		}
 
@@ -375,7 +348,9 @@ class RidesController extends Controller
 			$ride->driver_fk=User::currentUser()->id;
 			
 			$ride->day=date('N', strtotime($ride->startDate));
-
+			$today = date('Y-m-d 00:00:00', time());
+			$registrations=Registration::model()->findAll('ride_fk=:ride_fk AND endDate>=:today', array(':ride_fk'=>$id, ':today'=>$today));
+			
 			//si retour
 			if(isset($_POST['retour'])&&$_POST['retour']=='oui')
 			{
@@ -394,39 +369,64 @@ class RidesController extends Controller
 
 				if($rideValid&&$rideRetourValid)
 				{
+					$registrationsRetour=Registration::model()->findAll('ride_fk=:ride_fk AND endDate>=:today', array(':ride_fk'=>$rideRetour->bindedride, ':today'=>$today));
 					$ride->save();
 					//Récupère l'id du ride allé et le rajoute dans le bindedride du ride retour
-					$rideRetour->bindedride=$ride->id;
 					$rideRetour->save();
-					//Récupère l'id du ride retour et le rajoute dans le bindedride du ride allé
-					$ride->bindedride=$rideRetour->id;
-					$ride->update();
-					//redirection accueil
-					//$this->redirect(Yii::app()->user->returnUrl);
+					//Récupère l'id du ride retour et le rajoute dans le bindedride du ride aller
+
+					foreach($registrations as $registration)
+					{
+						if($registration->userFk->notifModification==1)
+						{
+							$subject = "Covoiturage CPNV - Un de vos trajets a été modifié";
+							$mail = new YiiMailer('modification', array(
+								'registration' => $registration,	
+							));
+							$registration->userFk->sendEmail($mail,$subject);
+						}
+					}
+					foreach($registrationsRetour as $registration)
+					{
+						if($registration->userFk->notifModification==1)
+						{
+							$subject = "Covoiturage CPNV - Un de vos trajets a été modifié";
+							$mail = new YiiMailer('modification', array(
+								'registration' => $registration,	
+							));
+							$registration->userFk->sendEmail($mail,$subject);
+						}
+					}
 					$this->redirect(array('view','id'=>$ride->id));
 				}
 			}
+			//si pas de retour
 			else
 			{
-				//var_dump($ride);
-				//die($ride->validate());
+
 				if($ride->validate())
 				{
 					$ride->save();
+					
+					//Notification
+					foreach($registrations as $registration)
+					{
+						if($registration->userFk->notifModification==1)
+						{
+							$subject = "Covoiturage CPNV - Un de vos trajets a été modifié";
+							$mail = new YiiMailer('modification', array(
+								'registration' => $registration,	
+							));
+							$registration->userFk->sendEmail($mail,$subject);
+						}
+					}
 					//redirection accueil
 					$this->redirect(array('view','id'=>$ride->id));
-					//$this->redirect(Yii::app()->user->returnUrl);
 				}
 			}
-			//$this->redirect(array('view','id'=>$ride->id));
 		}
 
-		/*if(isset($_POST['Ride']))
-		{
-			$ride->attributes=$_POST['Ride'];
-			if($ride->save())
-				$this->redirect(array('view','id'=>$ride->id));
-		}*/
+
 
 		
 

@@ -5,7 +5,7 @@
 	$villeArrivee=$registration->rideFk->arrivaltown->name;
 	$startHour=date("H:i",strtotime($registration->rideFk->departure));
 	$endHour=date("H:i",strtotime($registration->rideFk->arrival));
-	$user=$registration->userFk->prenom;
+	$user=$registration->rideFk->driver->prenom;
 
 
 	echo "Bonjour ".$user.",<br>";
