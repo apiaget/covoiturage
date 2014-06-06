@@ -218,103 +218,99 @@ table td.highlighted {
 	if($user->id!=$ride->driver_fk){ //passager ou utilisateur
 ?>
 		<form method="post">
-			<?php
-				if(isset($_GET['date'])){
-					echo '<input type="text" name="dateDebut" id="dateDebut" hidden value="'.date('d.m.Y', strtotime($_GET['date'])).'"/>';
-					echo '<input type="text" name="dateFin" id="dateFin" hidden value="'.date('d.m.Y', strtotime($_GET['date'])).'"/>';
-				}else{
-					echo '<input type="text" name="dateDebut" id="dateDebut" hidden />';
-					echo '<input type="text" name="dateFin" id="dateFin" hidden />';
-				}
-			?>
-
-			<!--<input type="submit" value="S'inscrire">-->
-
-		<div class="form">
 <?php
-
-	    foreach(Yii::app()->user->getFlashes() as $key => $message) { //affiche les messages d'erreur
-	        echo '<div class="errorMessage '.$key.'">' . $message . "</div>\n";
-	    }
-	    //var_dump($ride);
+			if(isset($_GET['date'])){
+				echo '<input type="text" name="dateDebut" id="dateDebut" hidden value="'.date('d.m.Y', strtotime($_GET['date'])).'"/>';
+				echo '<input type="text" name="dateFin" id="dateFin" hidden value="'.date('d.m.Y', strtotime($_GET['date'])).'"/>';
+			}else{
+				echo '<input type="text" name="dateDebut" id="dateDebut" hidden />';
+				echo '<input type="text" name="dateFin" id="dateFin" hidden />';
+			}
 ?>
-		</div>
-
-			
-			<!-- Si l'utilisateur inscrit -->
-			<?php
-			
-				//Si id du user est id du ride conçerné, 
-				$inscrit = false;
-				foreach($registrations as $registration){
-					if($registration->userFk->id == User::model()->currentUser()->id)
-					{
-						$inscrit = true;
-						break;
-					}
+			<div class="form">
+<?php
+				foreach(Yii::app()->user->getFlashes() as $key => $message) { //affiche les messages d'erreur
+					echo '<div class="errorMessage '.$key.'">' . $message . "</div>\n";
 				}
-				//sinon
-				if(isset($ride->bindedride))
+?>
+			</div>
+			<!-- Si l'utilisateur inscrit -->
+<?php
+			//Si id du user est id du ride conçerné, 
+			$inscrit = false;
+			foreach($registrations as $registration){
+				if($registration->userFk->id == User::model()->currentUser()->id)
 				{
-					if(strtotime($ride->departure)<=strtotime($ride->trajetretour->departure))
-					{
-						echo '<tr><td rowspan="2"><input type="submit" value="S\'inscrire au trajet Aller" name="inscrire"></td></tr>';
-					}
-					else
-					{
-						echo '<tr><td rowspan="2"><input type="submit" value="S\'inscrire au trajet Retour" name="inscrire"></td></tr>';
-					}
-					echo '<tr><td rowspan="2"><input type="submit" value="S\'inscrire à l\'Aller-Retour" name="inscrireAllerRetour"></td></tr>';
+					$inscrit = true;
+					break;
+				}
+			}
+			//sinon
+			//si il y a un ride retour
+			if(isset($ride->bindedride))
+			{
+				if(strtotime($ride->departure)<=strtotime($ride->trajetretour->departure))
+				{
+					echo '<tr><td rowspan="2"><input type="submit" value="S\'inscrire au trajet Aller" name="inscrire"></td></tr>';
 				}
 				else
 				{
-					echo '<tr><td rowspan="2"><input type="submit" value="S\'inscrire" name="inscrire"></td></tr>'; //bouton s'inscrire
+					echo '<tr><td rowspan="2"><input type="submit" value="S\'inscrire au trajet Retour" name="inscrire"></td></tr>';
 				}
-				if($inscrit == true)
-				{
-					echo '<tr><td rowspan="2"><input type="submit" value="Se desinscrire" name="desinscrire"></td></tr>'; //bouton se desinscrire
-				}
-			?>
+				echo '<tr><td rowspan="2"><input type="submit" value="S\'inscrire à l\'Aller-Retour" name="inscrireAllerRetour"></td></tr>';
+			}
+			else
+			{
+				echo '<tr><td rowspan="2"><input type="submit" value="S\'inscrire" name="inscrire"></td></tr>'; //bouton s'inscrire
+			}
+
+			//si l'utilisateur a au moins une inscription au ride
+			if($inscrit == true)
+			{
+				echo '<tr><td rowspan="2"><input type="submit" value="Se desinscrire" name="desinscrire"></td></tr>'; //bouton se desinscrire
+			}
+?>
 			</table>
-			<?php
-				foreach(Yii::app()->user->getFlashes() as $key => $message) { //affiche les messages d'erreur
-					echo '<div class="flash-' . $key . '">' . $message . "</div>\n";
-				}
-			?>
+<?php
+			foreach(Yii::app()->user->getFlashes() as $key => $message) { //affiche les messages d'erreur
+				echo '<div class="flash-' . $key . '">' . $message . "</div>\n";
+			}
+?>
 		</form>
 <?php 
+		if(!empty($registrations)){
+			echo '<br/>';
+			echo '<table id="registredUsers"><tr><th>Utilisateur</th><th>Date(s)</th><th>Validation</th></tr>';
+			foreach($registrations as $registration)
+			{
+				$nom=$registration->userFk->nom();
+				$prenom = $registration->userFk->prenom();
 
-		echo '<br/>';
-	echo '<table id="registredUsers"><tr><th>Utilisateur</th><th>Date(s)</th><th>Validation</th></tr>';
-	foreach($registrations as $registration)
-	{
-		$nom=$registration->userFk->nom();
-		$prenom = $registration->userFk->prenom();
+				$dateDebut = date("d-m-Y",strtotime($registration->startDate));
+				$dateFin = date("d-m-Y",strtotime($registration->endDate));
+				$date = "";
+				
+				if($registration->accepted==1)
+				{
+					$validation ="Validé";
+				}
+				else
+				{
+					$validation ="En attente";
+				}
 
-		$dateDebut = date("d-m-Y",strtotime($registration->startDate));
-		$dateFin = date("d-m-Y",strtotime($registration->endDate));
-		$date = "";
-		
-		if($registration->accepted==1)
-		{
-			$validation ="Validé";
+				if($dateDebut==$dateFin){
+					$date=$dateDebut;
+				}
+				else
+				{
+					$date = $dateDebut." - ".$dateFin;
+				}
+				
+				echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$date.'</td><td>'.$validation.'</td><td></td></tr>';
+			}
+			echo '</table>';
 		}
-		else
-		{
-			$validation ="En attente";
-		}
-
-		if($dateDebut==$dateFin){
-			$date=$dateDebut;
-		}
-		else
-		{
-			$date = $dateDebut." - ".$dateFin;
-		}
-		
-		echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$date.'</td><td>'.$validation.'</td><td></td></tr>';
-	}
-	echo '</table>';
 	}
 ?>
 
@@ -327,66 +323,68 @@ table td.highlighted {
 		</form>
 
 <?php
-	
-	echo '<br/>';
-	echo '<table id="registredUsers"><tr><th>Utilisateur</th><th>Date(s)</th><th>Email</th><th>Numéro de téléphone</th><th>Validation</th><th></th></tr>';
-	foreach($registrations as $registration)
-	{	
-		$driverid=$user->id;
-		$nom=$registration->userFk->nom();
-		$id=$registration->userFk->id;
-		$prenom = $registration->userFk->prenom();
-		$dateDebut = date("d-m-Y",strtotime($registration->startDate));
-		$dateFin = date("d-m-Y",strtotime($registration->endDate));
-		$date = "";
-		if($registration->userFk->hideTelephone==0)
-		{
-			$numero =$registration->userFk->telephone;
-		}
-		else
-		{
-			$numero ="Non visible";
-		}
+		if(!empty($registrations)){
+			echo '<br/>';
+			echo '<table id="registredUsers"><tr><th>Utilisateur</th><th>Date(s)</th><th>Email</th><th>Numéro de téléphone</th><th>Validation</th><th></th></tr>';
+			foreach($registrations as $registration)
+			{	
+				$driverid=$user->id;
+				$nom=$registration->userFk->nom();
+				$id=$registration->userFk->id;
+				$prenom = $registration->userFk->prenom();
+				$dateDebut = date("d-m-Y",strtotime($registration->startDate));
+				$dateFin = date("d-m-Y",strtotime($registration->endDate));
+				$date = "";
+				if($registration->userFk->hideTelephone==0)
+				{
+					$numero =$registration->userFk->telephone;
+				}
+				else
+				{
+					$numero ="Non visible";
+				}
 
-		if($registration->userFk->hideEmail==0)
-		{
-			$email =$registration->userFk->email;
-		}
-		else
-		{
-			$email ="Non visible";
-		}
+				if($registration->userFk->hideEmail==0)
+				{
+					$email =$registration->userFk->email;
+				}
+				else
+				{
+					$email ="Non visible";
+				}
 
-		if($dateDebut==$dateFin){
-			$date=$dateDebut;
-		}
-		else
-		{
-			$date = $dateDebut." - ".$dateFin;
-		}
+				if($dateDebut==$dateFin){
+					$date=$dateDebut;
+				}
+				else
+				{
+					$date = $dateDebut." - ".$dateFin;
+				}
 
-		if($registration->accepted==1)
-		{
-			$validation ="Validé";
-			echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$date.'</td><td>'.$email.'</td><td>'.$numero.'</td><td>'.$validation.'</td><td></td></tr>';
-		}
-		else
-		{
-			//echo '<form method="post">';
-				$validation ="En attente";
-				//echo'<input type="hidden" name="idReg" value="'.$registration->id.'" />'; //A REVOIR 
-				echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$date.'</td><td>'.$email.'</td><td>'.$numero.'</td><td>'.$validation.'</td>
-				<td>
-				<form method="post">
-				<input type="hidden" name="idReg" value="'.$registration->id.'" />
-				<input type="submit" name="valider" value="valider"/>
-				</form>
-				</td></tr>';
-			//echo'</form>';
+				if($registration->accepted==1)
+				{
+					$validation ="Validé";
+					echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$date.'</td><td>'.$email.'</td><td>'.$numero.'</td><td>'.$validation.'</td><td></td></tr>';
+				}
+				else
+				{
+					$validation ="En attente";
+					echo'<tr><td>'.$prenom.' '.$nom.'</td><td>'.$date.'</td><td>'.$email.'</td><td>'.$numero.'</td><td>'.$validation.'</td>
+					<td>
+					<form method="post">
+					<input type="hidden" name="idReg" value="'.$registration->id.'" />
+					<input type="submit" name="valider" value="valider"/>
+					</form>
+					</td></tr>';
+				}
+			}
+			echo '</table>';
 		}
 	}
-	echo '</table>';
-	}echo Yii::getLogger()->getExecutionTime();
+if(Yii::app()->params['ExecutionTime']=="yes")
+{
+	echo Yii::getLogger()->getExecutionTime();
+}
 
 //	voit paramètre du ride ----OK
 //	Si driver
@@ -470,9 +468,6 @@ table td.highlighted {
 			var chart = $('#container').highcharts();
 			
 
-
-
-			console.log($("#registredUsers tr td:nth-child(1)"));
 			var users = $("#registredUsers tr td:nth-child(1)");
 
 			$('#container').height(50+50*(users.length+1));
@@ -531,15 +526,12 @@ table td.highlighted {
 					});
 				}
 			}
-			
 			var date = tableData.children().find('tr').nextAll().eq(0).find('td').eq(1).html().substring(0, 10).split('-');
 			console.log(date);
 			var dayNumber = new Date(date[2],  date[1]-1, date[0]).getDay();
 			console.log(dayNumber);
 			chart.yAxis[0].update({startOfWeek: dayNumber});
 		}
-
-		
 
 
 
@@ -554,10 +546,8 @@ table td.highlighted {
 
 				$('#dateDebut').val("");
 				$('#dateFin').val("");
-				//console.log($(this).parent().children().size()+" "+$(this).index());
 				if($(this).parent().attr('id')=="trajets" && $(this).index()<($(this).parent().children().size()-1))
 				{
-					//console.log("coucou");
 					$('#dateDebut').val($('#trajets').children().eq(index).html());
 					$('#dateFin').val($('#trajets').children().eq(index).html());
 					$(this).toggleClass("highlighted", isHighlighted);
@@ -567,8 +557,6 @@ table td.highlighted {
 				}
 				else if ($(this).index()<($(this).parent().children().size()-1))
 				{
-					//console.log("coucou");
-
 					$('#dateDebut').val($('#trajets').children().eq(index).html());
 					$('#dateFin').val($('#trajets').children().eq(index).html());
 					$(this).toggleClass("highlighted", isHighlighted);
@@ -609,7 +597,6 @@ table td.highlighted {
 					$('#days').children().children("tr").eq(0).children().eq(firsthighlighted+i).addClass('highlighted');
 					$('#days').children().children("tr").eq(1).children().eq(firsthighlighted+i).addClass('highlighted');
 				}
-				//console.log($('#dateFin').val());
 			}
 		})
 		.bind("selectstart", function () {

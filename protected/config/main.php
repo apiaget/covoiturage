@@ -89,9 +89,11 @@ return array(
 	// application-level parameters that can be accessed
 	// using Yii::app()->params['paramName']
 	'params'=>array(
+		
+		'mode'=>"pasmaison", //maison = can work without connection to intranet
 		// this is used in contact page
-		'mode'=>"pasmaison",
 		'adminEmail'=>'webmaster@covoiturage.ch',
+		'ExecutionTime'=>'yes', //yes = show execution time, no = don't show execution time
 	),
 	
 );

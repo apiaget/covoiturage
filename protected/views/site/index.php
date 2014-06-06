@@ -273,7 +273,10 @@ else{
 	}
 	echo "</table>";
 }
-echo Yii::getLogger()->getExecutionTime();
+if(Yii::app()->params['ExecutionTime']=="yes")
+{
+	echo Yii::getLogger()->getExecutionTime();
+}
 /*
 //afficher 20 trajets en comptant les récurrences
 

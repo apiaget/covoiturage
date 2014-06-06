@@ -221,15 +221,10 @@ class User extends CActiveRecord
 	public function sendEmail($mail,$subject){
 
 		$mail->IsSMTP();
-		//$mail->setLayout('mail');
-		//$mail->clearLayout();//if layout is already set in config
 		$mail->setFrom('info@covoiturage.ch', 'covoiturage.ch');
 		$mail->setSubject($subject);
 		$mail->setTo($this->email);
-		//$mail->setBody($text);
 		$mail->Host='mail.cpnv.ch';
 		$mail->send();
 	}
-	
-	
 }
