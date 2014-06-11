@@ -56,10 +56,10 @@ echo CHtml::link("<strong>Données personnelles</strong>", array('users/view', '
 			<td><?php echo $form->textField($user,'telephone',array('size'=>35,'maxlength'=>45)); ?></td>
 		</tr>
 
-		<tr>
-			<td><?php echo $form->labelEx($user,'hideTelephone', array('label' => 'Masquer mon téléphone')); ?></td>
-			<td><?php echo $form->checkBox($user,'hideTelephone'); ?></td>
-		</tr>
+		<!--<tr>
+			<td><?php //echo $form->labelEx($user,'hideTelephone', array('label' => 'Masquer mon téléphone')); ?></td>
+			<td><?php //echo $form->checkBox($user,'hideTelephone'); ?></td>
+		</tr>-->
 		<tr><td colspan="2"><span id='notif'><br/>Je suis averti par email lorsque quelqu'un ...</span></td></tr>
 		<tr>
 			<td><?php echo $form->labelEx($user,'notifInscription', array('label' => ' &nbsp; &nbsp; &nbsp; &nbsp;s\'inscrit à l\'un de mes trajets')); ?></td>
