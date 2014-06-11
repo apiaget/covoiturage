@@ -93,7 +93,7 @@ return array(
 		'mode'=>"pasmaison", //maison = can work without connection to intranet
 		// this is used in contact page
 		'adminEmail'=>'webmaster@covoiturage.ch',
-		'ExecutionTime'=>'yes', //yes = show execution time, no = don't show execution time
+		'ExecutionTime'=>'no', //yes = show execution time, no = don't show execution time
 	),
 	
 );
