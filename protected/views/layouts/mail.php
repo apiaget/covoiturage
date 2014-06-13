@@ -11,19 +11,11 @@
 		</tr>
 		<tr>
             <td style="color:#777;font-size:16px;padding-top:5px;">
-			<?php //echo $registration->startDate;?>
-            	<?php //if(isset($data['description'])) echo $data['description'];  ?>
             </td>
 		</tr>
 		<tr>
             <td>
 				<?php echo $content ?>
-				<?php
-					//$arr = get_defined_vars();
-					//var_dump($arr);
-					//var_dump($data);
-				
-				?>
             </td>
 		</tr>
 	</tbody>

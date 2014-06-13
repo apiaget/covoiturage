@@ -13,27 +13,6 @@
 
 <!-- Fonction permettant de cacher les champs destinés au retour --> 
 <script type="text/javascript">
-//document.getElementById("champ_cache").style.display = "none";
- /*
-function afficher()
-{
-	var elements =document.getElementsByClassName("champ_cache");
-	for(var i=0;i<elements.length;i++)    {    	elements[i].style.display = "table-row";	}
-	
-}
-
-
-
-
- 
-function cacher()
-{
-    var elements =document.getElementsByClassName("champ_cache");
-	for(var i=0;i<elements.length;i++)
-    {
-    	elements[i].style.display = "none";
-	}
-}*/
 
 $(document).ready(
 	function() {
@@ -119,7 +98,6 @@ $(document).ready(
 					<tr>
 						<td>
 							<?php echo $form->labelEx($ride,'startDate', array('label' => 'Date du trajet')); ?>
-							<?php //echo '<input id="startDate" class="hasDatepicker" type="text" value="'.date("d.m.Y",strtotime($ride->startDate)).'" name="Ride[startDate]"></input>'; ?>
 						</td>
 						<td>
 							<?php $this->widget('zii.widgets.jui.CJuiDatePicker',array(
@@ -188,14 +166,6 @@ $(document).ready(
 						</td>
 					</tr>
 
-					<!--<tr>
-						<td>
-							Voulez-vous créer le trajet retour ?<br/>
-							Oui <input type="radio" name="retour" value="oui" id="oui" onClick="afficher();" /> <br />
-							Non <input type="radio" name="retour" value="non" id="non" checked="checked" onClick="cacher();"/> <br />
-						</td>
-						
-					</tr>-->
 					<?php if($ride->bindedride){ ?>
 					<input type="text" hidden name="retour" id="retour" value="oui"/>
 					<tr><td><strong>
@@ -241,23 +211,3 @@ $(document).ready(
 		
 <?php $this->endWidget(); ?>
 </div>
-<script type="text/javascript">
-/*
-var errors = document.getElementsByClassName('errorMessage');
-//console.log(errors[0].parentNode);
-for(var i=0; i<errors.length;i++)
-{
-	if(errors[i].parentNode.parentNode.className=="champ_cache")
-	{
-		afficher();
-		document.getElementById('oui').checked='checked';
-	}
-}
-if($("#Ride_retour_departure").val()!="")
-{
-	console.log("coucou");
-	afficher();
-	document.getElementById('oui').checked='checked';
-}*/
-</script>
-

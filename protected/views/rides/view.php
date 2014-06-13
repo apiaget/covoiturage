@@ -2,11 +2,6 @@
 /* @var $this RidesController */
 /* @var $ride Ride */
 
-/*$this->breadcrumbs=array(
-	'Rides'=>array('index'),
-	$ride->id,
-);*/
-
 ?>
 <style type="text/css">
 #seats{
@@ -54,17 +49,6 @@ table td.highlighted {
 	margin: 0px;
 	padding: 0px
 }
-
-/*#panel {
-	position: absolute;
-	top: 5px;
-	left: 50%;
-	margin-left: -180px;
-	z-index: 5;
-	background-color: #fff;
-	padding: 5px;
-	border: 1px solid #999;
-}*/
 
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -118,9 +102,13 @@ table td.highlighted {
 <table>
 	<tr>
 		<td>Conducteur</td><td><?php echo $ride->driver->prenom." ".$ride->driver->nom; ?>
-			<span class="user">
+			<?php if(Yii::app()->params['Votes']=="yes")
+			{?>
+				<span class="user">
 				<?php $array=$user->reputation(); echo "<span class='ratings'><span class='rating' style='width:".$array[0]."%'></span></span> (".$array[1]." votes)";?>
-			</span>
+				</span>
+			<?php }?>
+			
 		</td>
 	</tr>
 	<?php
@@ -486,7 +474,6 @@ if(Yii::app()->params['ExecutionTime']=="yes")
 			for(var i = 0 ; i < registrationsRow.length ; i++)
 			{
 				var dates = registrationsRow.eq(i).find('td').eq(1).html();
-				console.log(dates);
 				var valid = registrationsRow.eq(i).find('td').last().prev().html();
 				if(dates.length==10)//un seul jour
 				{
@@ -527,9 +514,7 @@ if(Yii::app()->params['ExecutionTime']=="yes")
 				}
 			}
 			var date = tableData.children().find('tr').nextAll().eq(0).find('td').eq(1).html().substring(0, 10).split('-');
-			console.log(date);
 			var dayNumber = new Date(date[2],  date[1]-1, date[0]).getDay();
-			console.log(dayNumber);
 			chart.yAxis[0].update({startOfWeek: dayNumber});
 		}
 

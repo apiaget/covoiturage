@@ -48,6 +48,7 @@ class User extends CActiveRecord
 			array('email', 'length', 'max'=>60),
 			array('email', 'email', 'message'=>'L\'adresse email fournie ne semble pas être valide'),
 			array('telephone', 'telephoneStrength'),
+			array('telephone', 'required'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, cpnvId, email, hideEmail, telephone, hideTelephone, notifInscription, notifComment, notifUnsuscribe, notifDeleteRide, notifModification, blacklisted, admin', 'safe', 'on'=>'search'),

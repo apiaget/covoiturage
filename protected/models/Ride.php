@@ -64,9 +64,6 @@ class Ride extends CActiveRecord
 	}
 	public function timeValidation($attribute)
 	{
-		/*echo strtotime($this->arrival)."<br/>";
-		echo strtotime($this->departure);
-		die();*/
 		if(strtotime($this->arrival)<strtotime($this->departure))
 		{
 			 $this->addError($attribute, 'L\'heure de la fin du trajet doit être plus grande que l\'heure de départ');
@@ -111,10 +108,6 @@ class Ride extends CActiveRecord
         $this->departure = date ('H:i', $this->departure);
         $this->arrival = strtotime ($this->arrival);
         $this->arrival = date ('H:i', $this->arrival);
-        /*$this->startDate = strtotime ($this->startDate);
-        $this->startDate = date ('d.m.Y', $this->startDate);
-        $this->endDate = strtotime ($this->endDate);
-        $this->endDate = date ('d.m.Y', $this->endDate);*/
 
         parent::afterFind ();
     }

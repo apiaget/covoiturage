@@ -2,10 +2,6 @@
 /* @var $this RidesController */
 /* @var $model Ride */
 
-$this->breadcrumbs=array(
-	'Rides'=>array('index'),
-	'Create',
-);
 ?>
 
 
@@ -13,7 +9,6 @@ $this->breadcrumbs=array(
 
 <!-- Fonction permettant de cacher les champs destinés au retour --> 
 <script type="text/javascript">
-//document.getElementById("champ_cache").style.display = "none";
  
 function afficher()
 {
@@ -22,10 +17,6 @@ function afficher()
 	
 }
 
-
-
-
- 
 function cacher()
 {
     var elements =document.getElementsByClassName("champ_cache");
@@ -221,7 +212,6 @@ function cacher()
 <script type="text/javascript">
 
 var errors = document.getElementsByClassName('errorMessage');
-//console.log(errors[0].parentNode);
 for(var i=0; i<errors.length;i++)
 {
 	if(errors[i].parentNode.parentNode.className=="champ_cache")
@@ -232,7 +222,6 @@ for(var i=0; i<errors.length;i++)
 }
 if($("#Ride_retour_departure").val()!="")
 {
-	console.log("coucou");
 	afficher();
 	document.getElementById('oui').checked='checked';
 }
