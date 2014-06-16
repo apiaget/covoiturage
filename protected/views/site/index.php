@@ -35,8 +35,7 @@ $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
 
 <style>
 	#creerRide{
-		margin-top: 5px;
-		margin-bottom: 26px;
+		
 		display:block;
 		width: 200px;
 		height: 50px;
@@ -44,6 +43,14 @@ $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
 	}
 	#creerRide:hover{
 		background-image : url(<?php echo Yii::app()->request->baseUrl."/images/boutonon.png" ?>);
+	}
+	#createRideBackground{
+		width: 100%;
+
+padding-top: 4px;
+padding-bottom: 4px;
+margin-top: 5px;
+		margin-bottom: 26px;
 	}
 </style>
 <?php $this->endWidget(); ?>
@@ -152,7 +159,7 @@ else
 				echo "<tr onclick=";
 				echo "\"document.location='".Yii::app()->createUrl('rides/view', array('id' => $rideCurrent->id))."?date=".$daydate."';";
 				echo "\" onmouseover='tablein(this);' onmouseout='tableout(this);'>";
-					echo "<td><img src='".Yii::app()->request->baseUrl."/images/driver.png' width='8%'/> ".$rideCurrent->driver->prenom." ".$rideCurrent->driver->nom."</td>";
+					echo "<td><img src='".Yii::app()->request->baseUrl."/images/driver.png' width='6%'/> ".$rideCurrent->driver->prenom." ".$rideCurrent->driver->nom."</td>";
 					//echo "<td>"."0/".$rideCurrent->seats."</td>";
 					echo "<td>".$rideCurrent->departuretown->name." à ".$rideCurrent->departure."</td>";
 					echo "<td>".$rideCurrent->arrivaltown->name." vers ".$rideCurrent->arrival."</td>";
@@ -202,10 +209,12 @@ echo "</table>";
 
 
 <center>
+	<div id="createRideBackground">
 <?php
 echo "<a id='creerRide' href='".Yii::app()->createUrl('rides/create')."'></a>";
 //echo CHtml::link("Créer un nouveau trajet", array('rides/create'));
 ?>
+</div>
 </center>
 
 

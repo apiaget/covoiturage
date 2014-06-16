@@ -24,7 +24,7 @@
 	}
 </style>
 <div class="user">
-	<?php $array=$user->reputation(); echo "<h3>".$user->prenom()." ".$user->nom()."</h3>";
+	<?php $array=$user->reputation(); echo "<h3>".$user->prenom." ".$user->nom."</h3>";
 	if(Yii::app()->params['Votes']=="yes")
 	{
 		echo "<div class='ratings'><div class='rating' style='width:".$array[0]."%'></div></div> (".$array[1]." votes)";
@@ -44,7 +44,10 @@
 		<tr>
 			<td><?php echo $form->labelEx($user,'email', array('label' => 'Email personnel')); ?></td>
 			<!--<td><?php //echo $form->textField($user,'email',array('size'=>35,'maxlength'=>60)); ?></td>-->
-			<td><?php echo $form->textField($user,'email',array('size'=>35,'maxlength'=>60)); echo "<br/>Réputation : " . $array[0];?></td>
+			<td><?php echo $form->textField($user,'email',array('size'=>35,'maxlength'=>60)); if(Yii::app()->params['Votes']=="yes")
+	{
+		echo "<br/>Réputation : " . $array[0];
+	}?></td>
 		</tr>
 	
 		<tr>
@@ -70,9 +73,14 @@
 		</tr>
 
 		<tr>
+			<td><?php echo $form->labelEx($user,'notifValidation', array('label' => ' &nbsp; &nbsp; &nbsp; &nbsp;valide mon inscription pour un trajet')); ?></td>
+			<td><?php echo $form->checkBox($user,'notifValidation'); ?></td>
+		</tr>
+
+		<!--<tr>
 			<td><?php echo $form->labelEx($user,'notifComment', array('label' => ' &nbsp; &nbsp; &nbsp; &nbsp;commente un de mes trajets')); ?></td>
 			<td><?php echo $form->checkBox($user,'notifComment'); ?></td>
-		</tr>
+		</tr>-->
 
 		<tr>
 			<td><?php echo $form->labelEx($user,'notifDeleteRide', array('label' => ' &nbsp; &nbsp; &nbsp; &nbsp;supprime un des trajets auquel je suis inscrit')); ?></td>

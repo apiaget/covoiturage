@@ -42,7 +42,7 @@ class User extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('hideEmail, hideTelephone, notifInscription, notifComment, notifUnsuscribe, notifDeleteRide, notifModification, blacklisted, admin', 'numerical', 'integerOnly'=>true),
+			array('hideEmail, hideTelephone, notifInscription, notifComment, notifUnsuscribe, notifDeleteRide, notifModification, notifValidation, blacklisted, admin', 'numerical', 'integerOnly'=>true),
 			array('cpnvId, telephone', 'length', 'max'=>45),
 			array('email', 'required', 'message'=>'L\'adresse email fournie ne semble pas être valide'),
 			array('email', 'length', 'max'=>60),

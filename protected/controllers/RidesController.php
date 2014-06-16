@@ -192,8 +192,9 @@ class RidesController extends Controller
 
 		//désinscription
 		if(isset($_POST['desinscrire'])){
-			
+			//parcourt toutes les registrations pour ce ride
 			foreach($registrations as $registration){
+				//si la registration est celle de l'utilisateur courrant, la supprimer
 				if($registration->userFk->id == User::model()->currentUser()->id)
 				{
 					$registration->delete();
@@ -266,7 +267,6 @@ class RidesController extends Controller
 			$ride->driver_fk=User::currentUser()->id;
 			
 			$ride->day=date('N', strtotime($ride->startDate));
-			
 
 			//si retour
 			if($_POST['retour']=='oui')
