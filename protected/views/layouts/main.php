@@ -49,7 +49,7 @@
 	<div class="clear"></div>
 
 	<div id="footer">
-		Copyright &copy; <?php echo date('Y'); ?> by CPNV<br/>
+		Copyright &copy; <?php echo date('Y'); ?> by CPNV <br/>
 		
 	</div><!-- footer -->
 
