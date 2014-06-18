@@ -12,7 +12,7 @@ $form=$this->beginWidget('CActiveForm', array(
 
 
 $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
-    'model'=>$towns,
+    'model'=>Town::model(),
     'attribute'=>'name',
     'source'=>$this->createUrl('towns/search'),
 	'htmlOptions'=>array('placeholder'=>'Rechercher une ville'),
@@ -32,7 +32,7 @@ $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
 
 
  ?>
-
+<?php $this->endWidget(); ?>
 <style>
 	#creerRide{
 		
@@ -53,7 +53,7 @@ margin-top: 5px;
 		margin-bottom: 26px;
 	}
 </style>
-<?php $this->endWidget(); ?>
+
 
 <?php
 //affichage des rides auquel l'utilisateur courant est inscrit
