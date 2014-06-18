@@ -47,16 +47,9 @@ class Registration extends CActiveRecord
 	public function doublon($attribute,$params)
 	{
 		//this = la registration testée
-		/* on veut s'arranger pour augmenter les registrations et les trucs du genre
+		/* on veut s'arranger pour agrandir/fusionner les registrations et les trucs du genre
 		 * c'est ici qu'en enregistrera la registration
 		 */
-		//$this->addError($attribute, 'message');
-		/*foreach($this->userFk->registrations as $reg){
-			//on fait les saves ici
-	    	if(!$reg->ok){
-	    	  $this->addError($attribute, 'message');
-	  		}
-	  	}*/
 		
 		$registrations = Registration::model()->findAll('ride_fk = :ride AND user_fk = :user ORDER BY startDate ASC', array(':ride'=>$this->ride_fk, ':user' => User::currentUser()->id));
 		

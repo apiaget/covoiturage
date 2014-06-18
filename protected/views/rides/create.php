@@ -202,7 +202,7 @@ function cacher()
 					</tr>
 					<tr>
 						<td>
-							<?php echo CHtml::submitButton($ride->isNewRecord ? 'Create' : 'Save'); ?>
+							<?php echo CHtml::submitButton($ride->isNewRecord ? 'Créer' : 'Sauver'); ?>
 						</td>
 					</tr>
 			</table>

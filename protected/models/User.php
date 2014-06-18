@@ -195,26 +195,30 @@ class User extends CActiveRecord
 
 	public static function currentUser(){
 		$user = User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$_SERVER['HTTP_X_FORWARDED_USER']));
-		if (!$user) {
-			$IU =new IntranetUser();
-			$intranet_user = $IU->find($_SERVER['HTTP_X_FORWARDED_USER']);
-			if ($intranet_user === false) throw new CException('Unknown intranet user');
-			$user = new User();
-			$user->cpnvId = $intranet_user->friendly_id;
-			$user->email = $intranet_user->corporate_email;
-			$user->prenom=$intranet_user->firstname;
-			$user->nom=$intranet_user->lastname;
-			$user->hideEmail = 0;
-			$user->hideTelephone = 0;
-			$user->notifInscription = 1;
-			$user->notifComment = 1;
-			$user->notifUnsuscribe = 1;
-			$user->notifDeleteRide = 1;
-			$user->notifModification = 1;
-			$user->notifValidation = 1;
-			$user->blacklisted = 0;
-			$user->admin = 0;
-			$user->save(false);
+		if (!$user&&Yii::app()->params['mode']=="intranet") {
+			try{
+				$IU =new IntranetUser();
+				$intranet_user = $IU->find($_SERVER['HTTP_X_FORWARDED_USER']);
+				if ($intranet_user === false) throw new CException('Unknown intranet user');
+				$user = new User();
+				$user->cpnvId = $intranet_user->friendly_id;
+				$user->email = $intranet_user->corporate_email;
+				$user->prenom=$intranet_user->firstname;
+				$user->nom=$intranet_user->lastname;
+				$user->hideEmail = 0;
+				$user->hideTelephone = 0;
+				$user->notifInscription = 1;
+				$user->notifComment = 1;
+				$user->notifUnsuscribe = 1;
+				$user->notifDeleteRide = 1;
+				$user->notifModification = 1;
+				$user->notifValidation = 1;
+				$user->blacklisted = 0;
+				$user->admin = 0;
+				$user->save(false);
+			}catch(Exception $e){
+				throw new Exception('Vous n\'avez pas accès à l\'intranet');
+			}
 		}
 		return $user;
 	}

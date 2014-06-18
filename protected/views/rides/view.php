@@ -255,7 +255,7 @@ table td.highlighted {
 			//si l'utilisateur a au moins une inscription au ride
 			if($inscrit == true)
 			{
-				echo '<tr><td rowspan="2"><input type="submit" value="Se desinscrire" name="desinscrire"></td></tr>'; //bouton se desinscrire
+				echo '<tr><td rowspan="2"><input type="submit" value="Se désinscrire" name="desinscrire"></td></tr>'; //bouton se desinscrire
 			}
 ?>
 			</table>
