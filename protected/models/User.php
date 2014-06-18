@@ -175,7 +175,7 @@ class User extends CActiveRecord
 	public function nom(){
 		if(Yii::app()->params['mode']=="maison")
 		{
-			return $this->currentUser()->cpnvId;
+			return $this->nom;
 		}
 		$IU = new IntranetUser();
 		$intranet_user = $IU->find($this->cpnvId);
@@ -185,7 +185,7 @@ class User extends CActiveRecord
 	public function prenom(){
 		if(Yii::app()->params['mode']=="maison")
 		{
-			return $this->currentUser()->cpnvId;
+			return $this->prenom;
 		}
 		$IU = new IntranetUser();
 		$intranet_user = $IU->find($this->cpnvId);

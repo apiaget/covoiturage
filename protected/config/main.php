@@ -92,7 +92,7 @@ return array(
 		// this is used in contact page
 		'adminEmail'=>'webmaster@covoiturage.ch',
 		'mode'=>"intranet", //maison = work without connection to intranet
-							//intranet = has access to intranet and can create automatically new users
+						  //intranet = has access to intranet and can create automatically new users
 		'ExecutionTime'=>'no', //yes = show execution time, no = don't show execution time
 		'Votes'=>'no', //yes = show reputation values, no = don't show reputation
 	),

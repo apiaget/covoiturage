@@ -45,9 +45,9 @@
 			<td><?php echo $form->labelEx($user,'email', array('label' => 'Email personnel')); ?></td>
 			<!--<td><?php //echo $form->textField($user,'email',array('size'=>35,'maxlength'=>60)); ?></td>-->
 			<td><?php echo $form->textField($user,'email',array('size'=>35,'maxlength'=>60)); if(Yii::app()->params['Votes']=="yes")
-	{
-		echo "<br/>Réputation : " . $array[0];
-	}?></td>
+																								{
+																									echo "<br/>Réputation : " . $array[0];
+																								}?></td>
 		</tr>
 	
 		<tr>
@@ -58,6 +58,11 @@
 		<tr>
 			<td><?php echo $form->labelEx($user,'telephone', array('label' => 'Téléphone')); ?></td>
 			<td><?php echo $form->textField($user,'telephone',array('size'=>35,'maxlength'=>45)); ?></td>
+		</tr>
+
+		<tr>
+			<td><?php echo $form->labelEx($user,'hideTelephone', array('label' => 'Masquer mon numéro de téléphone')); ?></td>
+			<td><?php echo $form->checkBox($user,'hideTelephone'); ?></td>
 		</tr>
 
 		<tr><td colspan="2"><span id='notif'><br/>Je suis averti par email lorsque quelqu'un ...</span></td></tr>
