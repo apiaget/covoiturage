@@ -27,10 +27,6 @@ $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
     'cssFile'=>'jquery-ui.css',
 ));
 
-//la fonction actionSearch se trouve dans le controller town
-//echo $form->hiddenField($towns,'name',array()); 
-
-
  ?>
 <?php $this->endWidget(); ?>
 <style>
@@ -91,10 +87,6 @@ else
 	while($i<20 && array_sum($v)<=count($registrations) && array_sum($r)<=count($ridesCurrent))
 	{
 		foreach($registrations as $registration){
-			//Ride::model()->find('id=:id', array(':id'=>$registration->ride_fk));
-			//SI $registration correspond au jour
-			//if($ride->startDate<=$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0 && $ride->showDuringHolidays($date)){
-			//$regRide = Ride::model()->find('id=:id', array(':id'=>$registration->ride_fk));
 			$regRide = $registration->rideFk;
 			if($regRide->visibility==1 && $registration->startDate<=$date && $registration->endDate>=$date && $regRide->day==date('N',strtotime($date)) && $v[$registration->id]==0 && $regRide->showDuringHolidays($date)){
 				//prendre le ride qui correspond et l'afficher
@@ -147,12 +139,8 @@ else
 	
 		//affichage des rides pour lesquels l'utilisateur courant est conducteur
 		foreach($ridesCurrent as $rideCurrent){
-			//Ride::model()->find('id=:id', array(':id'=>$registration->ride_fk));
-			//SI $registration correspond au jour
-			//if($ride->startDate<=$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0 && $ride->showDuringHolidays($date)){
 			$driver = User::model()->currentUser();
 
-			//if($rideCurrent->visibility==1 && $rideCurrent->startDate<=$date && $rideCurrent->endDate>=$date && $rideCurrent->day==date('N',strtotime($date)) && $r[$rideCurrent->id]==0 && $rideCurrent->driver_fk==$driver->id && $rideCurrent->showDuringHolidays($date)){
 			if($rideCurrent->startDate<=$date && $rideCurrent->endDate>=$date && $rideCurrent->day==date('N',strtotime($date)) && $r[$rideCurrent->id]==0 && $rideCurrent->showDuringHolidays($date)){
 				//prendre le ride qui correspond et l'afficher
 				$daydate = date("d-m-Y",strtotime($date));
@@ -212,7 +200,6 @@ echo "</table>";
 	<div id="createRideBackground">
 <?php
 echo "<a id='creerRide' href='".Yii::app()->createUrl('rides/create')."'></a>";
-//echo CHtml::link("Créer un nouveau trajet", array('rides/create'));
 ?>
 </div>
 </center>
@@ -296,31 +283,6 @@ if(Yii::app()->params['ExecutionTime']=="yes")
 {
 	echo Yii::getLogger()->getExecutionTime();
 }
-/*
-//afficher 20 trajets en comptant les récurrences
-
-i=0 //dès qu'une occurence de trajet est affichée, augmente de 1
-j=date //commence à aujourd'hui, à chaque tour, augmente d'un jour
-$r[0]=0 //tableau ayant comme index l'id du ride et comme valeur 0 s'il n'a pas affiché toutes ses occurences et 1 si il les a toutes affichées
-        //sert à ne pas boucler à l'infini si on a moins de 20 occurences à afficher
-
-pour tous les rides en tant que ride
-    $r[$ride->id]=0;
-end pour tout les
-
-
-while i<=20 && la somme de $r < le nombre de ride
-    pour tout les rides en tant que ride    //on parcours tous les rides transmis par le controlleur
-        $ride->visibility==1 && $ride->startDate<=$date && $ride->endDate>=$date            && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0 && $ride->showDuringHolidays($date)
-        si le ride n'est pas supprimé && la date de début du ride<=j && la date de fin du ride>=j
-           && ride.joursemaine=j.joursemaine && //afin de n'afficher que les rides voulus
-            affiche le ride
-        end si
-    end pour tout les
-    i++
-    j=j+1 jour
-endwhile
-*/
 
 ?>
 <script type="text/javascript">

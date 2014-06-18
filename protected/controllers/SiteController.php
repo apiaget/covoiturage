@@ -41,7 +41,7 @@ class SiteController extends Controller
 	/**
 	 * This is the action to handle external exceptions.
 	 */
-	/*public function actionError()
+	public function actionError()
 	{
 		if($error=Yii::app()->errorHandler->error)
 		{
@@ -50,7 +50,7 @@ class SiteController extends Controller
 			else
 				$this->render('error', $error);
 		}
-	}*/
+	}
 
 	/**
 	 * Displays the contact page
