@@ -53,7 +53,7 @@ margin-top: 5px;
 
 <?php
 //affichage des rides auquel l'utilisateur courant est inscrit
-if(count($registrations)!=0){
+/*if(count($registrations)!=0){
 	foreach($registrations as $registration)
 	{
 		$v[$registration->id]=0;
@@ -70,12 +70,34 @@ if(count($ridesCurrent)!=0){
 	$r[0]=1;
 }else{
 	$r[0]=-1;
+}*/
+if(count($registrations)!=0){
+	foreach($registrations as $registration)
+	{
+		$v[$registration->id]=0;
+	}
+	$v[0]=1;
+}else{
+	$v[0]=1;
 }
-
+if(count($ridesCurrent)!=0){
+	foreach($ridesCurrent as $rideCurrent)
+	{
+		$r[$rideCurrent->id]=0;
+	}
+	$r[0]=1;
+}else{
+	$r[0]=1;
+}
 //si aucune registration n'est disponible, afficher un message, sinon, afficher les registrations
-if($v[0]==-1 && $r[0]==-1){
+/*if($v[0]==-1 && $r[0]==-1){
+	echo "Vous ne participez à aucun trajet.";
+}*/
+if(count($registrations)==0 && count($ridesCurrent)==0)
+{
 	echo "Vous ne participez à aucun trajet.";
 }
+
 else
 {
 	echo "<table>";
@@ -84,7 +106,7 @@ else
 	$i=0;
 
 	$date=$datetime = date('Y-m-d 00:00:00', time());
-	while($i<20 && array_sum($v)<=count($registrations) && array_sum($r)<=count($ridesCurrent))
+	while($i<20 && (array_sum($v)<=count($registrations) || array_sum($r)<=count($ridesCurrent))) // 1 1 0 / 1 0 1 / 1 1 1 
 	{
 		foreach($registrations as $registration){
 			$regRide = $registration->rideFk;
@@ -131,8 +153,13 @@ else
 				
 			}
 			if($registration->endDate==$date){
-					$v[$registration->id]=1;
-				}
+				$v[$registration->id]=1;
+				/*var_dump($registrations);
+				var_dump($v);
+				var_dump($ridesCurrent);
+				var_dump($r);
+				die("salut");*/
+			}
 				
 		}
 	

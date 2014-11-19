@@ -1,6 +1,8 @@
 <?php 
 	$start=date("d-m-Y",strtotime($registration->rideFk->startDate));
 	$end=date("d-m-Y",strtotime($registration->rideFk->endDate));
+	$startReg=date("d-m-Y",strtotime($registration->startDate));
+	$endReg=date("d-m-Y",strtotime($registration->endDate));
 	$villeDepart=$registration->rideFk->departuretown->name;
 	$villeArrivee=$registration->rideFk->arrivaltown->name;
 	$startHour=date("H:i",strtotime($registration->rideFk->departure));
@@ -10,7 +12,7 @@
 
 	echo "Bonjour ".$user.",<br>";
 
-	echo "Nous avons l'honneur de vous annoncer qu'un utilisateur s'est inscrit au trajet du <b>".$start." au ".$end."</b>";
+	echo "Nous avons l'honneur de vous annoncer qu'un utilisateur s'est inscrit au trajet du <b>".$start." au ".$end."</b> pour les dates du <b>".$startReg." au ".$endReg."</b>";
 
 
 	echo "<br>Le trajet concerné est le suivant :<br><br>";
