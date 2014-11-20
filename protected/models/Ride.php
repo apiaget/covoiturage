@@ -112,6 +112,8 @@ class Ride extends CActiveRecord
         parent::afterFind ();
     }
 
+
+
 	/**
 	 * @return array relational rules.
 	 */
