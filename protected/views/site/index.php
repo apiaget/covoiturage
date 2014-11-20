@@ -11,6 +11,8 @@ $form=$this->beginWidget('CActiveForm', array(
 ));
 
 
+
+
 $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
     'model'=>Town::model(),
     'attribute'=>'name',

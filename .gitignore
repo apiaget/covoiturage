@@ -214,3 +214,4 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 protected/runtime/gii-1.1.14/CrudCode.php
+assets/
