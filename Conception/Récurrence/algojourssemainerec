@@ -1,0 +1,8 @@
+$jours = array();
+
+$valeurBDD = decbin(13);
+
+for($i = 6 ; $i>= 0 ; $i--){
+	$array[$i] = $valeurBDD % pow(2,$i) == $valeurBDD - pow(2,$i);
+	$valeurBDD = $array[$i];
+}
