@@ -1,0 +1,27 @@
+body{
+}
+
+#registrationtable {
+	font-size: 14px;
+	font-family: Arial;
+	border-spacing: 0;
+	
+}
+
+#registrationtable td {
+	padding: 3px 8px 3px 8px;
+	line-height: 130%;
+	margin: 0;
+	text-align: center;
+	border: 1px solid grey;
+    width: 25px;
+}
+
+#registrationtable .arrow {
+	padding: 0;
+	border-left: 0;
+}
+
+#registrationtable .dates {
+	border-right: 0;
+}
