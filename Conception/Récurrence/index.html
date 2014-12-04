@@ -27,9 +27,9 @@
 			<td class="arrow">►</td>
 			<td bgcolor="#2DE546">3/4</td>
 			<td bgcolor="#2DE546">3/4</td>
-			<td bgcolor="#2598FC">3/4</td>
+			<td bgcolor="">3/4</td>
 			<td bgcolor="#2DE546">3/4</td>
-			<td bgcolor="#2DE546">3/4</td>
+			<td bgcolor="">3/4</td>
 			<td bgcolor="#2598FC">3/4</td>
 			<td bgcolor="#2DE546">3/4</td>
 		</tr>
@@ -38,26 +38,37 @@
 				08.12.14<br/>14.12.14
 			</td>
 			<td class="arrow">►</td>
-			<td bgcolor="#F25B23">1/4</td>
-			<td bgcolor="#F25B23">1/4</td>
-			<td bgcolor="#2598FC">1/4</td>
-			<td bgcolor="#F25B23">1/4</td>
-			<td bgcolor="#F25B23">1/4</td>
-			<td bgcolor="#F25B23">1/4</td>
-			<td bgcolor="#F25B23">1/4</td>
+			<td bgcolor="">1/4</td>
+			<td bgcolor="">1/4</td>
+			<td bgcolor="">1/4</td>
+			<td bgcolor="">1/4</td>
+			<td bgcolor="">1/4</td>
+			<td bgcolor="">1/4</td>
+			<td bgcolor="">1/4</td>
 		</tr>
 	</table>
-
-    <div id="registrationData">
+<br><br><br>
+	<div id="registrationData">
         {
             "driver":[1],
-            "ride":["2014-12-03","2014-12-10", "08:00", "08:45",4,[0,1,0,1,0,0,0]],
-            "filling":[[["Axel PIAGET","Elliott CHIARADIA","Joël BUCHS"],["Axel PIAGET","Elliott CHIARADIA","Joël BUCHS"],["Axel PIAGET","Elliott CHIARADIA","Joël BUCHS"]],[["Axel PIAGET"],["Axel PIAGET"],["Axel PIAGET"]]]
+            "ride":["2014-12-03","2014-12-10", "08:00", "08:45",4,[0,1,0,1,0,0,0],4],
+            "filling":[[["Axel PIAGET","Elliott CHIARADIA","Joël BUCHS"],["Axel PIAGET","Elliott CHIARADIA","Joël BUCHS"],["Axel PIAGET","Elliott CHIARADIA","Joël BUCHS"]],[["Axel PIAGET"],["Axel PIAGET"],["Axel PIAGET"]]],
+            "registrations":["04-12-2014"],
+            "userId":[50]
+        }
+    </div>
+    <div id="registrationData333">
+        {
+            "driver":[1],
+            "ride":["2014-12-03","2014-12-10", "08:00", "08:45",4,[0,1,0,1,0,0,0],4],
+            "filling":[[["Axel PIAGET","Elliott CHIARADIA","Joël BUCHS"],["Axel PIAGET","Elliott CHIARADIA","Joël BUCHS"],["Axel PIAGET","Elliott CHIARADIA","Joël BUCHS"]],[["Axel PIAGET"],["Axel PIAGET"],["Axel PIAGET"]]],
+            "registrations":["2014-12-04"],
+            "userId":[50]
         }
     </div>
     <script>
     $(function () {
-        $('#registrationData').registration();
+        $('#registrationData333').registration();
     });
     </script>
 

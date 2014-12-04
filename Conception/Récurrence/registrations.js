@@ -22,11 +22,10 @@
 
             var parameters = $.parseJSON($(el).html());
             $(el).html('');
-            console.log(parameters);
 
             // Put your initialization code here
             var weeks = base.columnsAndRowsNumbers(parameters['ride'],parameters['filling']);
-            base.createCalendar(weeks,parameters['ride']);
+            base.createCalendar(weeks,parameters['ride'],parameters['filling'],parameters['registrations']);
             //console.log(weeks);
 
         };
@@ -108,12 +107,11 @@
 
 
 
-        base.createCalendar = function(weeks, ride){
-            var table = $(document.createElement('table'));
-            console.log(weeks);
+        base.createCalendar = function(weeks, ride, filling, registrations){
+            var table = $('<table id="registrationtable"></table>');
             //ligne du haut
             var daysRow = $('<tr></tr>');
-            var tds = '<td></td><td></td>';
+            var tds = '<td class="dates"></td><td class="arrow"></td>';
             for(var i = 0 ; i < ride[5].length ; i++){
                 if(ride[5][i]===1){
                     tds+='<td>'
@@ -144,34 +142,47 @@
                 }
             }
             daysRow.append($(tds)).appendTo(table);
+            
+            var personNumber = 0;
 
             for(var i = 0 ; i < weeks.weeks.length; i++){
                 var weekRow = $('<tr></tr>');
-                var tdWeekDays = '<td>'+weeks.weeks[i][0].split("-")[2]+'-'+weeks.weeks[i][0].split("-")[1]+'-'+weeks.weeks[i][0].split("-")[0]+
-                '<br/>'+weeks.weeks[i][1].split("-")[2]+'-'+weeks.weeks[i][1].split("-")[1]+'-'+weeks.weeks[i][1].split("-")[0]+'</td>';
+                var tdWeekDays = '<td class="dates">'+weeks.weeks[i][0].split("-")[2]+'-'+weeks.weeks[i][0].split("-")[1]+'-'+weeks.weeks[i][0].split("-")[0].substring(2)+
+                '<br/>'+weeks.weeks[i][1].split("-")[2]+'-'+weeks.weeks[i][1].split("-")[1]+'-'+weeks.weeks[i][1].split("-")[0].substring(2)+'</td>';
 
                 var tdDays = '';
+                
+                weekRow.append($(tdWeekDays)).append($('<td class="arrow">►</td>'));
 
                 for(var j = new Date(weeks.weeks[i][0]) ; j <= new Date(weeks.weeks[i][1]) ; j.setDate(j.getDate()+1) ){
-                    //if(j.)
-                    //    base.dayNumber(startDate.getDay())
-                    console.log('test');
+                    var text = '';
+                    if(ride[5][base.dayNumber(j.getDay())]===1){
+                        text = "<td"
+                        for(var l = 0 ; l < registrations.length ; l++){
+                            if(j.getTime() == new Date(registrations[l]).getTime()){
+                                text+=' bgcolor="'+base.options['registred']+'"';
+                            }
+                        }
+                        text+=">";
+                        for(var k = 0 ; k < weeks.weeks[i][2].length ; k++){
+                            if(j.getTime()==new Date(weeks.weeks[i][2][k][1]).getTime()){
+                                text+=filling[i][personNumber].length+'/'+ride[6];
+                                personNumber++;
+                            }    
+                        }
+                        text+="</td>";
+                    }
+                
+                    weekRow.append($(text));
+                
                 }
+                personNumber=0;
 
-                /*for(var j = 0 ; j < weeks.weeks[i][2].length ; j++){
-
-                }*/
-
-                weekRow.append($(tdWeekDays)).append($('<td>►</td>')).appendTo(table);
+                weekRow.appendTo(table);
             }
             
             $('<tr></tr>').appendTo(table);
-            table.appendTo('#registrationData');
-
-
-
-
-
+            table.appendTo(el);
         }
 
         base.dayNumber = function(oldDayNumber){
@@ -182,7 +193,7 @@
     };
 
     $.Registration.defaultOptions = {
-        registred: "",
+        registred: "#2DE546",
         register: "",
         unregister: ""
     };
