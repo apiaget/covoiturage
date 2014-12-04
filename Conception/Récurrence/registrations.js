@@ -26,6 +26,7 @@
             // Put your initialization code here
             var weeks = base.columnsAndRowsNumbers(parameters['ride'],parameters['filling']);
             base.createCalendar(weeks,parameters['ride'],parameters['filling'],parameters['registrations']);
+            base.createSendTextbox();
             //console.log(weeks);
 
         };
@@ -184,6 +185,26 @@
             $('<tr></tr>').appendTo(table);
             table.appendTo(el);
         }
+
+
+
+
+
+
+
+
+        base.createSendTextbox = function(){
+            //$('<tr></tr>').appendTo(table);
+            $('<input type="textbox"/>').appendTo(el);
+        };
+
+
+
+
+
+
+
+
 
         base.dayNumber = function(oldDayNumber){
             return (oldDayNumber + 6)%7;
