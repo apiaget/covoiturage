@@ -27,6 +27,7 @@
             var weeks = base.columnsAndRowsNumbers(parameters['ride'],parameters['filling']);
             base.createCalendar(weeks,parameters['ride'],parameters['filling'],parameters['registrations']);
             base.createSendTextbox();
+            base.eventsSetter();
             //console.log(weeks);
 
         };
@@ -71,10 +72,10 @@
             text += '{"weeks" :[';
             for (var i = 0 ; i < nbWeeks; i++) {
                 text +='[';
-                text +='"'+firstWeekFirstDay.getFullYear()+'-'+(firstWeekFirstDay.getMonth()+1)+'-'+("0" + firstWeekFirstDay.getDate()).slice(-2)+'"';
+                text +='"'+firstWeekFirstDay.getFullYear()+'-'+("0" + (firstWeekFirstDay.getMonth()+1)).slice(-2)+'-'+("0" + firstWeekFirstDay.getDate()).slice(-2)+'"';
                 var weekDay = new Date(firstWeekFirstDay.getTime());
                 firstWeekFirstDay.setDate(firstWeekFirstDay.getDate()+6);
-                text +=',"'+firstWeekFirstDay.getFullYear()+'-'+(firstWeekFirstDay.getMonth()+1)+'-'+("0" + firstWeekFirstDay.getDate()).slice(-2)+'"';
+                text +=',"'+firstWeekFirstDay.getFullYear()+'-'+("0" + (firstWeekFirstDay.getMonth()+1)).slice(-2)+'-'+("0" + firstWeekFirstDay.getDate()).slice(-2)+'"';
                 
                 text+=',[';
                 var dayCount = 0;
@@ -87,7 +88,8 @@
                         text+='[';
                         text+='1,'; //----------------------------------
                         text+='"'+weekDay.getFullYear()+'-'+(weekDay.getMonth()+1)+'-'+("0" + weekDay.getDate()).slice(-2)+'"';
-                        text+=','+filling[i][dayCount].length;
+                        //text+=','+filling[i][dayCount].length;
+                        text+=',4';
                         text+=']';
 
                         dayCount++; 
@@ -146,7 +148,7 @@
             
             var personNumber = 0;
 
-            for(var i = 0 ; i < weeks.weeks.length; i++){
+            for(var i = 0 ; i < weeks.weeks.length; i++){ //On boucle par semaine
                 var weekRow = $('<tr></tr>');
                 var tdWeekDays = '<td class="dates">'+weeks.weeks[i][0].split("-")[2]+'-'+weeks.weeks[i][0].split("-")[1]+'-'+weeks.weeks[i][0].split("-")[0].substring(2)+
                 '<br/>'+weeks.weeks[i][1].split("-")[2]+'-'+weeks.weeks[i][1].split("-")[1]+'-'+weeks.weeks[i][1].split("-")[0].substring(2)+'</td>';
@@ -155,23 +157,23 @@
                 
                 weekRow.append($(tdWeekDays)).append($('<td class="arrow">►</td>'));
 
-                for(var j = new Date(weeks.weeks[i][0]) ; j <= new Date(weeks.weeks[i][1]) ; j.setDate(j.getDate()+1) ){
+                for(var j = new Date(weeks.weeks[i][0]) ; j <= new Date(weeks.weeks[i][1]) ; j.setDate(j.getDate()+1) ){ //on boucle à travers les 7 jours de la semaine
                     var text = '';
-                    if(ride[5][base.dayNumber(j.getDay())]===1){
-                        text = "<td"
-                        for(var l = 0 ; l < registrations.length ; l++){
+                    if(ride[5][base.dayNumber(j.getDay())]===1){ //si le jour est bel est bien récurrent
+                        text = '<td class="colorable"';
+                        for(var l = 0 ; l < registrations.length ; l++){ //indique si l'utilisateur en cours est inscrit ou pas
                             if(j.getTime() == new Date(registrations[l]).getTime()){
-                                text+=' bgcolor="'+base.options['registred']+'"';
+                                text+=' style="background-color:'+base.options['registred']+';"';
                             }
                         }
                         text+=">";
-                        for(var k = 0 ; k < weeks.weeks[i][2].length ; k++){
-                            if(j.getTime()==new Date(weeks.weeks[i][2][k][1]).getTime()){
-                                text+=filling[i][personNumber].length+'/'+ride[6];
-                                personNumber++;
-                            }    
+
+                        for(var k = 0 ; k < filling.length ; k++){ //indique le remplissage de la voiture
+                            if(new Date(filling[k][0]).getTime()==j.getTime() ){
+                                text+='<span>'+filling[k][1].length+'/'+ride[6]+'</span>';
+                            } 
                         }
-                        text+="</td>";
+                        text+="<p style='display:none;'>"+j.getFullYear()+'-'+("0" + (j.getMonth()+1)).slice(-2)+'-'+("0" + j.getDate()).slice(-2)+"</p></td>";
                     }
                 
                     weekRow.append($(text));
@@ -192,10 +194,51 @@
 
 
 
+        base.eventsSetter = function(){
+            //clic sur un point de la grille
+            //clic sur une date ou le triangle à gauche
+            //clic sur un jour ou le triangle du haut            
+
+            //console.log($(el).children('table'));
+            
+            $("td.colorable").click(function(e){     //function_td
+                //console.log($(this).parent().children().index($(this)) + " ; " + $(this).parent().parent().children().index($(this).parent()));
+                //console.log($(this).css('background-color')=='rgba(0, 0, 0, 0)'||$(this).css('background-color')=='rgb(255, 255, 255)');
+                base.basculeCouleur($(this).parent().children().index($(this)),$(this).parent().parent().children().index($(this).parent()));
+                //$(this).css("background-color",base.options['registred']);
+                e.stopPropagation();
+            });
+        };
+
+        base.basculeCouleur = function(line, row){
+            //fait basculer un point de la grille en fonction de la ligne et de la colonne
+            //calcule toutes les dates qui sont en vert
+                var td = $($('#registrationtable').find('tr')[row]).find('td')[line];
+                if($(td).css('background-color')=='rgba(0, 0, 0, 0)'||$(td).css('background-color')=='rgb(255, 255, 255)'){
+                    if($(td).find('span').html()!=undefined){
+                        
+                        $(td).css("background-color",base.options['registred']);
+                    }
+                }else{
+                    $(td).css("background-color",'#fff');
+                }
+
+                $('#newRegistrationDates').val($("#registrationtable").find("td[style='background-color: rgb(45, 229, 70);']").find('p').map(function() {
+                    return $(this).text();
+                }).get().join(' '));
+
+        };
+
+
+
+
+
+
+
 
         base.createSendTextbox = function(){
             //$('<tr></tr>').appendTo(table);
-            $('<input type="textbox"/>').appendTo(el);
+            $('<br><input id="newRegistrationDates" type="textbox"/>').appendTo(el);
         };
 
 
@@ -214,7 +257,7 @@
     };
 
     $.Registration.defaultOptions = {
-        registred: "#2DE546",
+        registred: "rgb(45, 229, 70)",
         register: "",
         unregister: ""
     };

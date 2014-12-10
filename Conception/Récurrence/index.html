@@ -8,7 +8,7 @@
     <script src="registrations.js"></script>
 </head>
 <body>
-	<table id="registrationtable">
+	<!--<table id="registrationtable">
 		<tr>
 			<td class="dates"></td>
 			<td class="arrow"></td>
@@ -46,29 +46,46 @@
 			<td bgcolor="">1/4</td>
 			<td bgcolor="">1/4</td>
 		</tr>
-	</table>
-<br><br><br>
+	</table>-->
 	<div id="registrationData">
         {
             <br>"driver":[1],
-            <br>"ride":["2014-12-03","2014-12-10", "08:00", "08:45",4,[0,1,0,1,0,0,0],4],
-            <br>"filling":[[["Axel PIAGET","Elliott CHIARADIA","Joël BUCHS"],["Axel PIAGET","Elliott CHIARADIA","Joël BUCHS"],["Axel PIAGET","Elliott CHIARADIA","Joël BUCHS"]],[["Axel PIAGET"],["Axel PIAGET"],["Axel PIAGET"]]],
-            <br>"registrations":["04-12-2014"],
+            <br>"ride":["2014-12-31","2015-01-07", "08:00", "08:45",4,[0,1,0,1,0,0,0],4],
+            <br>"filling":[["2015-01-01",["Axel PIAGET","Elliott CHIARADIA","Joël BUCHS"]],["2015-01-06",["Axel PIAGET","Elliott CHIARADIA","Joël BUCHS"]]],
+            <br>"registrations":["2014-12-31","2015-01-01","2015-01-06"],
             <br>"userId":[50]
-        <br>}
+        <br>}       
     </div>
+    <br/>
     <div id="registrationData333">
         {
             "driver":[1],
-            "ride":["2014-12-03","2014-12-10", "08:00", "08:45",4,[0,1,0,1,0,0,0],4],
-            "filling":[[["Axel PIAGET","Elliott CHIARADIA","Joël BUCHS"],["Axel PIAGET","Elliott CHIARADIA","Joël BUCHS"],["Axel PIAGET","Elliott CHIARADIA","Joël BUCHS"]],[["Axel PIAGET"],["Axel PIAGET"],["Axel PIAGET"]]],
-            "registrations":["2014-12-04"],
+            "ride":["2014-12-31","2015-01-07", "08:00", "08:45",4,[0,1,0,1,0,0,0],4],            
+            "filling":[["2015-01-01",["Axel PIAGET","Elliott CHIARADIA","Joël BUCHS"]],["2015-01-06",["Axel PIAGET","Elliott CHIARADIA","Joël BUCHS"]]],
+            "registrations":["2014-12-31","2015-01-01","2015-01-06"],
             "userId":[50]
         }
     </div>
+    <br>
+	<div id="registrationData222">
+    <!--    {
+            "driver":[1],
+            "ride":["2014-12-10","2014-12-17", "08:00", "08:45",4,[0,1,0,1,0,0,0],4],
+            "filling":[[["Axel PIAGET","Elliott CHIARADIA","Joël BUCHS"],["Axel PIAGET","Elliott CHIARADIA","Joël BUCHS"],["Axel PIAGET","Elliott CHIARADIA","Joël BUCHS"]],[[
+            "Axel PIAGET"],["Axel PIAGET"],["Axel PIAGET"]]],
+            "registrations":["2014-12-11"],
+            "userId":[50]
+        }
+    -->
+    </div>
+
     <script>
     $(function () {
         $('#registrationData333').registration();
+    });
+
+    $(function () {
+        //$('#registrationData222').registration();
     });
     </script>
 
