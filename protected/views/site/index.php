@@ -112,7 +112,8 @@ else
 	{
 		foreach($registrations as $registration){
 			$regRide = $registration->rideFk;
-			if($regRide->visibility==1 && $registration->startDate<=$date && $registration->endDate>=$date && $regRide->day==date('N',strtotime($date)) && $v[$registration->id]==0 && $regRide->showDuringHolidays($date)){
+			//if($regRide->visibility==1 && $registration->startDate<=$date && $registration->endDate>=$date && $regRide->day==date('N',strtotime($date)) && $v[$registration->id]==0 && $regRide->showDuringHolidays($date)){
+			if($regRide->visibility==1 && $registration->startDate<=$date && $registration->endDate>=$date && $v[$registration->id]==0 && $regRide->showDuringHolidays($date)){
 				//prendre le ride qui correspond et l'afficher
 				$daydate = date("d-m-Y",strtotime($date));
 				echo "<tr onclick=";
@@ -170,17 +171,18 @@ else
 		foreach($ridesCurrent as $rideCurrent){
 			$driver = User::model()->currentUser();
 
-			if($rideCurrent->startDate<=$date && $rideCurrent->endDate>=$date && $rideCurrent->day==date('N',strtotime($date)) && $r[$rideCurrent->id]==0 && $rideCurrent->showDuringHolidays($date)){
+			//if($rideCurrent->startDate<=$date && $rideCurrent->endDate>=$date && $rideCurrent->day==date('N',strtotime($date)) && $r[$rideCurrent->id]==0 && $rideCurrent->showDuringHolidays($date)){
+			if($rideCurrent->startDate<=$date && $rideCurrent->endDate>=$date && $r[$rideCurrent->id]==0 && $rideCurrent->showDuringHolidays($date)){
 				//prendre le ride qui correspond et l'afficher
 				$daydate = date("d-m-Y",strtotime($date));
 				echo "<tr onclick=";
 				echo "\"document.location='".Yii::app()->createUrl('rides/view', array('id' => $rideCurrent->id))."?date=".$daydate."';";
 				echo "\" onmouseover='tablein(this);' onmouseout='tableout(this);'>";
-					echo "<td><img src='".Yii::app()->request->baseUrl."/images/driver.png' width='6%'/> ".$rideCurrent->driver->prenom." ".$rideCurrent->driver->nom."</td>";
+					echo "<td><img src='".Yii::app()->request->baseUrl."/images/driver.png' width='6%'/> ".$rideCurrent->driver->prenom()." ".$rideCurrent->driver->nom()."</td>";
 					//echo "<td>"."0/".$rideCurrent->seats."</td>";
 					echo "<td>".$rideCurrent->departuretown->name." à ".$rideCurrent->departure."</td>";
 					echo "<td>".$rideCurrent->arrivaltown->name." vers ".$rideCurrent->arrival."</td>";
-					switch ($rideCurrent->day) {
+					/*switch ($rideCurrent->day) {
 							case '1':
 								$day = "Lundi";
 								break;
@@ -205,8 +207,8 @@ else
 							default:
 								$day = "?";
 								break;
-						}
-					echo "<td>".$day." ".$daydate."</td>";
+						}*/
+					//echo "<td>".$day." ".$daydate."</td>";
 				echo "</tr>";
 				$i++;
 				
@@ -257,18 +259,19 @@ else{
 	{
 		foreach ($rides as $ride) {
 
-				if($ride->startDate<=$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0 && $ride->showDuringHolidays($date)){
+			//if($ride->startDate<=$date && $ride->endDate>=$date && $ride->day==date('N',strtotime($date)) && $r[$ride->id]==0 && $ride->showDuringHolidays($date)){
+				if($ride->startDate<=$date && $ride->endDate>=$date && $r[$ride->id]==0 && $ride->showDuringHolidays($date)){
 					$daydate = date("d-m-Y",strtotime($date));
 					echo "<tr onclick=";
 					echo "\"document.location='".Yii::app()->createUrl('rides/view', array('id' => $ride->id))."?date=".$daydate."';";
 					echo "\" onmouseover='tablein(this);' onmouseout='tableout(this);'>";
 
-						echo "<td>".$ride->driver->prenom." ".$ride->driver->nom."</td>";
+						echo "<td>".$ride->driver->prenom()." ".$ride->driver->nom()."</td>";
 						//echo "<td>"."0/".$ride->seats."</td>";
 						echo "<td>".$ride->departuretown->name." à ".$ride->departure."</td>";
 						echo "<td>".$ride->arrivaltown->name." vers ".$ride->arrival."</td>";
-					
-						switch ($ride->day) {
+
+						/*switch ($ride->day) {
 								case '1':
 									$day = "Lundi";
 									break;
@@ -293,8 +296,9 @@ else{
 								default:
 									$day = "?";
 									break;
-							}
-						echo "<td>".$day." ".$daydate."</td>";
+							}*/
+						//echo "<td>".$day." ".$daydate."</td>";
+					echo "<td>".$daydate."</td>";
 					echo "</tr>";
 					$i++;
 				}

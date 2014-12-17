@@ -88,7 +88,15 @@
         //$('#registrationData222').registration();
     });
     </script>
-
+    <div id="testsJS">
+    </div>
+	<script type="text/javascript">
+		$.get("/covoiturage/users/2", {token:'asdf'}, function(data){
+			//console.log(data);
+			$('#testsJS').html(data);
+		},"json");
+	</script>
+    
 
 </body>
 </html>

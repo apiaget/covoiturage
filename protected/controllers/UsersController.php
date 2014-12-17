@@ -51,9 +51,66 @@ class UsersController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-		));
+		if(strpos(Yii::app()->request->getAcceptTypes(),'application/json')!==false){ //demande du json
+			$token = Yii::app()->request->getQuery('token');
+			$now = date('Y-m-d H:i:s', time());; //temps maintenant
+			if($token == ''){
+				//Doit s'arrêter car aucun token n'est fourni
+				throw new CHttpException(403,'You are not authenticated.');
+			}
+
+			$requestUser = User::model()->find('token=:token and validbefore>:validtime', array(':token'=>$token, 'validtime'=>$now));
+
+			if($requestUser == null)
+			{
+				//Doit demander une authentification du user (car le token n'est plus valide)
+				throw new CHttpException(403,'You are not authenticated.');
+			}else{
+				//met à jour la validité du token
+				$requestUser->validbefore = date("Y-m-d H:i:s",strtotime("+1 month", strtotime($now)));
+				$requestUser->save();
+			}
+
+			$requestedUser = $this->loadModel($id);
+
+			if($requestedUser['token'] == $token){ //l'utilisateur demande ses propres réglages
+
+				echo CJSON::encode(array('firstname'=>$requestedUser->firstname,
+					'lastname'=>$requestedUser->lastname,
+					'email'=>$requestedUser->email,
+					'phone'=>$requestedUser->telephone,
+					'privacy'=>array(
+						'hideEmail'=>$requestedUser->hideEmail,
+						'hidePhone'=>$requestedUser->hideTelephone
+					),
+					'notifications'=>array(
+						'notifComment'=>$requestedUser->notifComment,
+						'notifDeleteRide'=>$requestedUser->notifDeleteRide,
+						'notifRegistration'=>$requestedUser->notifInscription,
+						'notifChange'=>$requestedUser->notifModification,
+						'notifUnsubscribe'=>$requestedUser->notifUnsuscribe,
+					)
+					));
+				Yii::app()->end();
+
+			}else { //Un utilisateur demande les infos d'un autre utilisateur
+				$returnUserArray = array();
+				$returnUserArray['lastname'] = $requestedUser->lastname;
+				$returnUserArray['firstname'] = $requestedUser->firstname;
+				if($requestedUser->hideEmail!=1){
+					$returnUserArray['email'] = $requestedUser->email;
+				}
+				if($requestedUser->hideTelephone!=1){
+					$returnUserArray['phone'] = $requestedUser->telephone;
+				}
+				echo CJSON::encode($returnUserArray);
+				Yii::app()->end();
+			}
+		}else {
+			$this->render('view', array(
+				'model' => $this->loadModel($id),
+			));
+		}
 	}
 
 	public function actionModif()

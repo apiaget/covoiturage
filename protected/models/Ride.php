@@ -15,7 +15,6 @@
  * @property integer $seats
  * @property string $startDate
  * @property string $endDate
- * @property integer $day
  *
  * The followings are the available model relations:
  * @property Comments[] $comments
@@ -47,12 +46,15 @@ class Ride extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('driver_fk, departuretown_fk, arrivaltown_fk, seats', 'required'),
-			array('driver_fk, departuretown_fk, arrivaltown_fk, bindedride, seats, day', 'numerical', 'integerOnly'=>true),
+			//array('driver_fk, departuretown_fk, arrivaltown_fk, bindedride, seats, day', 'numerical', 'integerOnly'=>true),
+			array('driver_fk, departuretown_fk, arrivaltown_fk, bindedride, seats', 'numerical', 'integerOnly'=>true),
 			array('description, departure, arrival, startDate, endDate', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, driver_fk, departuretown_fk, arrivaltown_fk, bindedride, description, departure, arrival, seats, startDate, endDate, day', 'safe', 'on'=>'search'),
-		
+			//array('id, driver_fk, departuretown_fk, arrivaltown_fk, bindedride, description, departure, arrival, seats, startDate, endDate, day', 'safe', 'on'=>'search'),
+
+			array('id, driver_fk, departuretown_fk, arrivaltown_fk, description, departure, arrival, seats, startDate, endDate', 'safe', 'on'=>'search'),
+
 			array('departure, arrival', 'required', 'message'=>'Les heures ne sont pas valides'),
 			array('startDate, endDate', 'required', 'message'=>'Vous devez choisir une date'),
 			array('endDate', 'endDateValidation'),
@@ -128,7 +130,7 @@ class Ride extends CActiveRecord
 			'departuretown' => array(self::BELONGS_TO, 'Town', 'departuretown_fk'),
 			'arrivaltown' => array(self::BELONGS_TO, 'Town', 'arrivaltown_fk'),
 			'trajetretour' => array(self::BELONGS_TO, 'Ride', 'bindedride'),
-			'rides' => array(self::HAS_ONE, 'Ride', 'bindedride'),
+			//'rides' => array(self::HAS_ONE, 'Ride', 'bindedride'),
 			'driver' => array(self::BELONGS_TO, 'User', 'driver_fk'),
 		);
 	}
@@ -143,14 +145,14 @@ class Ride extends CActiveRecord
 			'driver_fk' => 'Driver Fk',
 			'departuretown_fk' => 'Departuretown Fk',
 			'arrivaltown_fk' => 'Arrivaltown Fk',
-			'bindedride' => 'Bindedride',
+			//'bindedride' => 'Bindedride',
 			'description' => 'Description',
 			'departure' => 'Departure',
 			'arrival' => 'Arrival',
 			'seats' => 'Seats',
 			'startDate' => 'Start Date',
 			'endDate' => 'End Date',
-			'day' => 'Day',
+			//'day' => 'Day',
 		);
 	}
 
@@ -176,14 +178,14 @@ class Ride extends CActiveRecord
 		$criteria->compare('driver_fk',$this->driver_fk);
 		$criteria->compare('departuretown_fk',$this->departuretown_fk);
 		$criteria->compare('arrivaltown_fk',$this->arrivaltown_fk);
-		$criteria->compare('bindedride',$this->bindedride);
+		//$criteria->compare('bindedride',$this->bindedride);
 		$criteria->compare('description',$this->description,true);
 		$criteria->compare('departure',$this->departure,true);
 		$criteria->compare('arrival',$this->arrival,true);
 		$criteria->compare('seats',$this->seats);
 		$criteria->compare('startDate',$this->startDate,true);
 		$criteria->compare('endDate',$this->endDate,true);
-		$criteria->compare('day',$this->day);
+		//$criteria->compare('day',$this->day);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

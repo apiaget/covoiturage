@@ -7,6 +7,8 @@
  * @property string $cpnvId
  * @property string $email
  * @property integer $hideEmail
+ * @property integer $firstname
+ * @property integer $lastname
  * @property string $telephone
  * @property integer $hideTelephone
  * @property integer $notifInscription
@@ -14,7 +16,6 @@
  * @property integer $notifUnsuscribe
  * @property integer $notifDeleteRide
  * @property integer $notifModification
- * @property integer $notifValidation
  * @property integer $blacklisted
  * @property integer $admin
  *
@@ -42,7 +43,7 @@ class User extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('hideEmail, hideTelephone, notifInscription, notifComment, notifUnsuscribe, notifDeleteRide, notifModification, notifValidation, blacklisted, admin', 'numerical', 'integerOnly'=>true),
+			array('hideEmail, hideTelephone, notifInscription, notifComment, notifUnsuscribe, notifDeleteRide, notifModification, blacklisted, admin', 'numerical', 'integerOnly'=>true),
 			array('cpnvId, telephone', 'length', 'max'=>45),
 			array('email', 'required', 'message'=>'L\'adresse email fournie ne semble pas être valide'),
 			array('email', 'length', 'max'=>60),
@@ -175,7 +176,7 @@ class User extends CActiveRecord
 	public function nom(){
 		if(Yii::app()->params['mode']=="maison")
 		{
-			return $this->nom;
+			return $this->lastname;
 		}
 		$IU = new IntranetUser();
 		$intranet_user = $IU->find($this->cpnvId);
@@ -185,7 +186,7 @@ class User extends CActiveRecord
 	public function prenom(){
 		if(Yii::app()->params['mode']=="maison")
 		{
-			return $this->prenom;
+			return $this->firstname;
 		}
 		$IU = new IntranetUser();
 		$intranet_user = $IU->find($this->cpnvId);
@@ -195,6 +196,7 @@ class User extends CActiveRecord
 
 	public static function currentUser(){
 		$user = User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$_SERVER['HTTP_X_FORWARDED_USER']));
+		//die($_SERVER['HTTP_X_FORWARDED_USER']);
 		if (!$user&&Yii::app()->params['mode']=="intranet") {
 			try{
 				$IU =new IntranetUser();
@@ -203,8 +205,8 @@ class User extends CActiveRecord
 				$user = new User();
 				$user->cpnvId = $intranet_user->friendly_id;
 				$user->email = $intranet_user->corporate_email;
-				$user->prenom=$intranet_user->firstname;
-				$user->nom=$intranet_user->lastname;
+				$user->firstname=$intranet_user->firstname;
+				$user->lastname=$intranet_user->lastname;
 				$user->hideEmail = 0;
 				$user->hideTelephone = 0;
 				$user->notifInscription = 1;
@@ -212,7 +214,7 @@ class User extends CActiveRecord
 				$user->notifUnsuscribe = 1;
 				$user->notifDeleteRide = 1;
 				$user->notifModification = 1;
-				$user->notifValidation = 1;
+				//$user->notifValidation = 1;
 				$user->blacklisted = 0;
 				$user->admin = 0;
 				$user->save(false);
