@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en">
+<html lang="en" ng-app>
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<title>Récurrence template page</title>
@@ -7,7 +7,7 @@
     <script src="jquery-1.11.1.min.js"></script>
     <script src="registrations.js"></script>
 </head>
-<body>
+<body ng-controller="ctrl">
 	<!--<table id="registrationtable">
 		<tr>
 			<td class="dates"></td>
@@ -90,11 +90,45 @@
     </script>
     <div id="testsJS">
     </div>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
 	<script type="text/javascript">
-		$.get("/covoiturage/users/2", {token:'asdf'}, function(data){
+		/*$.get("/covoiturage/users/2", {token:'asdf'}, function(data){
 			//console.log(data);
 			$('#testsJS').html(data);
-		},"json");
+		},"json");*/
+	</script>
+
+	<script type="text/javascript">
+		//var data =  ["firstname": "Axel","lastname": "Piaget","email": "axel.piaget@cpnv.ch", "phone": "0797227677", "privacy": ["hideEmail": "0","hidePhone": "0"],"notifications": ["notifComment": "1","notifDeleteRide": "1","notifRegistration": "1","notifChange": "1","notifUnsubscribe": "1"]];
+
+		function ctrl($scope, $http) {
+			$http
+				.get('/covoiturage/api/users/1', {
+					params : {
+						"token":"asdf"
+					}
+				})
+				.success(function(data,status,headers,config) {
+					data.notifications.notifChange="0";
+					console.log(data);
+					$http.put('/covoiturage/api/users/3',
+						data, {
+						params : {
+							"token":"asasddf"
+						}	
+					}).success(function(){
+					});
+					
+				}).error(function(data,status,headers,config) {
+					alert('Ca marche pas');
+				});
+		}
+		ctrl.$inject = ['$scope', '$http'];
+
+		//$http.get('/covoiturage/api/users/1', {token:"asdf"}).success(function(data,status,headers,config) {
+
+		//});
+        //$http.put('/covoiturage/api/users/1', data);
 	</script>
     
 

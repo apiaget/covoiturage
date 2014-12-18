@@ -79,30 +79,26 @@ class ApiController extends Controller
         $token = $_GET['token'];
 
         if($_GET['model']=='users') {
-            $data = CJSON::decode(file_get_contents('php://input'));
+            $userRequest = User::model()->find('id=:id', array(':id' => $_GET['id']));
             $userToUpdate = User::model()->find('token=:token', array(':token' => $token));
-            //on ne peut pas changer ni le nom, ni le prénom
-            $userToUpdate->firstname = isset($data['firstname']) ? $data['firstname'] : $userToUpdate->firstname;
-            $userToUpdate->firstname = isset($data['firstname']) ? $data['firstname'] : $userToUpdate->firstname;
-            $userToUpdate->firstname = isset($data['firstname']) ? $data['firstname'] : $userToUpdate->firstname;
-            $userToUpdate->firstname = isset($data['firstname']) ? $data['firstname'] : $userToUpdate->firstname;
-            $userToUpdate->firstname = isset($data['firstname']) ? $data['firstname'] : $userToUpdate->firstname;
-            $userToUpdate->firstname = isset($data['firstname']) ? $data['firstname'] : $userToUpdate->firstname;
-            $userToUpdate->firstname = isset($data['firstname']) ? $data['firstname'] : $userToUpdate->firstname;
-            $userToUpdate->firstname = isset($data['firstname']) ? $data['firstname'] : $userToUpdate->firstname;
 
-            $userToUpdate->save();
+            if(isset($userRequest) && $userToUpdate->id==$userRequest->id) {
+                $data = CJSON::decode(file_get_contents('php://input'));
+                //on ne peut pas changer ni le nom, ni le prénom
+                $userToUpdate->email = isset($data['email']) ? $data['email'] : $userToUpdate->email;
+                $userToUpdate->telephone = isset($data['phone']) ? $data['firstname'] : $userToUpdate->telephone;
+                $userToUpdate->hideEmail = isset($data['privacy']['hideEmail']) ? $data['privacy']['hideEmail'] : $userToUpdate->hideEmail;
+                $userToUpdate->hideTelephone = isset($data['privacy']['hidePhone']) ? $data['privacy']['hidePhone'] : $userToUpdate->hideTelephone;
+                $userToUpdate->notifComment = isset($data['notifications']['notifComment']) ? $data['notifications']['notifComment'] : $userToUpdate->notifComment;
+                $userToUpdate->notifDeleteRide = isset($data['notifications']['notifDeleteRide']) ? $data['notifications']['notifDeleteRide'] : $userToUpdate->notifDeleteRide;
+                $userToUpdate->notifInscription = isset($data['notifications']['notifRegistration']) ? $data['notifications']['notifRegistration'] : $userToUpdate->notifInscription;
+                $userToUpdate->notifModification = isset($data['notifications']['notifChange']) ? $data['notifications']['notifChange'] : $userToUpdate->notifModification;
+                $userToUpdate->notifUnsuscribe = isset($data['notifications']['notifUnsubscribe']) ? $data['notifications']['notifUnsubscribe'] : $userToUpdate->notifUnsuscribe;
 
-            //$model->lastname = $data['lastname'];
-            //$model->email = $data['email'];
-/*
-            if (!$model->save()) {
-                $errors = array();
-                foreach ($model->getErrors() as $e) $errors = array_merge($errors, $e);
-                $this->sendResponse(500, implode("<br />", $errors));
+                $userToUpdate->update();
+            }else{
+                throw new CHttpException(403,'You have no rights to update that user.');
             }
-
-            $this->sendResponse(200);*/
         }
     }
     public function actionDelete()
