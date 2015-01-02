@@ -266,7 +266,7 @@ class RidesController extends Controller
 			$rideRetour->attributes=$_POST['Ride_retour'];
 			$ride->driver_fk=User::currentUser()->id;
 			
-			$ride->day=date('N', strtotime($ride->startDate));
+			//$ride->day=date('N', strtotime($ride->startDate));
 
 			//si retour
 			if($_POST['retour']=='oui')

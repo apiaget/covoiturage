@@ -240,55 +240,16 @@ class User extends CActiveRecord
 		$mail->setTo($this->email);
 		$mail->Host='mail.cpnv.ch';
 */
-		///GMAIL
 		$mail->IsSMTP();
-		$mail->setFrom('axel.piaget@gmail.com', 'Covoiturage');
+		$mail->setFrom('***', '***');
         $mail->setTo($this->email);
         $mail->setSubject($subject);
-        $mail->Host = "smtp.gmail.com";
-        $mail->Port = 587; //ou 587
+        $mail->Host = "***";
+        $mail->Port = "***";
         $mail->SMTPAuth = true;
-        $mail->Username = "axel.piaget@gmail.com";
-        $mail->Password = "fplmvmnljqjdxeae";
-        //$mail->SMTPDebug = 1;
-        $mail->SMTPSecure = 'tls';
+        $mail->Username = "***";
+        $mail->Password = "****";
         $mail->IsHTML(true);
         $mail->send();
-
-
-       /* $mail = new PHPMailer(); // create a new object
-		$mail->IsSMTP(); // enable SMTP
-		$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
-		$mail->SMTPAuth = true; // authentication enabled
-		$mail->SMTPSecure = 'ssl'; // secure transfer enabled REQUIRED for GMail
-		$mail->Host = "smtp.gmail.com";
-		$mail->Port = 465; // or 587
-		$mail->IsHTML(true);
-		$mail->Username = "email@gmail.com";
-		$mail->Password = "password";
-		$mail->SetFrom("example@gmail.com");
-		$mail->Subject = "Test";
-		$mail->Body = "hello";
-		$mail->AddAddress("email@gmail.com");
-		 if(!$mail->Send())
-		    {
-		    echo "Mailer Error: " . $mail->ErrorInfo;
-		    }
-		    else
-		    {
-		    echo "Message has been sent";
-		    }
-*/
-
-		/*if ($mail->send()) {
-			//echo "success";
-		 	//exit(0);  // Yii::app()->user->setFlash('test_mail','Thank you for contacting us. We will respond to you as soon as possible.');
-		}else {
-		 	throw new Exception($mail->getError());
-		    //echo $mail->getError();
-		    //exit(0);
-		    //Yii::app()->user->setFlash('error','Error while sending email: '.$mail->getError());
-		}*/
-		//$mail->send();
 	}
 }

@@ -8,13 +8,20 @@
  * @property integer $driver_fk
  * @property integer $departuretown_fk
  * @property integer $arrivaltown_fk
- * @property integer $bindedride
  * @property string $description
  * @property string $departure
  * @property string $arrival
  * @property integer $seats
  * @property string $startDate
  * @property string $endDate
+ * @property string $monday
+ * @property string $tuesday
+ * @property string $wednesday
+ * @property string $thursday
+ * @property string $friday
+ * @property string $saturday
+ * @property string $sunday
+ * @property string $visibility
  *
  * The followings are the available model relations:
  * @property Comments[] $comments
@@ -22,7 +29,6 @@
  * @property Ridebadges[] $ridebadges
  * @property Towns $departuretownFk
  * @property Towns $arrivaltownFk
- * @property Ride $bindedride0
  * @property Ride[] $rides
  * @property Users $driverFk
  */
@@ -47,7 +53,7 @@ class Ride extends CActiveRecord
 		return array(
 			array('driver_fk, departuretown_fk, arrivaltown_fk, seats', 'required'),
 			//array('driver_fk, departuretown_fk, arrivaltown_fk, bindedride, seats, day', 'numerical', 'integerOnly'=>true),
-			array('driver_fk, departuretown_fk, arrivaltown_fk, bindedride, seats', 'numerical', 'integerOnly'=>true),
+			array('driver_fk, departuretown_fk, arrivaltown_fk, seats', 'numerical', 'integerOnly'=>true),
 			array('description, departure, arrival, startDate, endDate', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -59,8 +65,8 @@ class Ride extends CActiveRecord
 			array('startDate, endDate', 'required', 'message'=>'Vous devez choisir une date'),
 			array('endDate', 'endDateValidation'),
 			array('startDate', 'startDateValidation'),
-			array('arrival', 'timeformat'),
-			array('departure', 'timeformat'),
+			//array('arrival', 'timeformat'),
+			//array('departure', 'timeformat'),
 			array('arrival', 'timeValidation')
 		);
 	}
@@ -91,7 +97,7 @@ class Ride extends CActiveRecord
 			 $this->addError($attribute, 'La date du trajet ne doit pas être située dans le passé');
 		}
 	}
-	public function timeformat($attribute)
+	/*public function timeformat($attribute)
 	{
 	    $pattern = '/^(([0-1]){1,}([0-9]{1,})|(2[0-3]))(:)([0-5]{1}[0-9]{1})$/';
  
@@ -99,7 +105,7 @@ class Ride extends CActiveRecord
 	    {
 	      $this->addError($attribute, 'Le format des heures doit être le suivant : hh:mm');
 	     }
-	}
+	}*/
 
 
 
@@ -129,7 +135,7 @@ class Ride extends CActiveRecord
 			'ridebadges' => array(self::HAS_MANY, 'Ridebadge', 'ride_fk'),
 			'departuretown' => array(self::BELONGS_TO, 'Town', 'departuretown_fk'),
 			'arrivaltown' => array(self::BELONGS_TO, 'Town', 'arrivaltown_fk'),
-			'trajetretour' => array(self::BELONGS_TO, 'Ride', 'bindedride'),
+			//'trajetretour' => array(self::BELONGS_TO, 'Ride', 'bindedride'),
 			//'rides' => array(self::HAS_ONE, 'Ride', 'bindedride'),
 			'driver' => array(self::BELONGS_TO, 'User', 'driver_fk'),
 		);

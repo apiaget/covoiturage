@@ -53,7 +53,7 @@ function cacher()
 						<td>Conducteur</td>
 						<td>
 
-							<?php echo $user->prenom." ".$user->nom; ?>
+							<?php echo $user->prenom()." ".$user->nom(); ?>
 						</td>
 					</tr>
 					<tr>
