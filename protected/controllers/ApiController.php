@@ -100,7 +100,7 @@ class ApiController extends Controller
             $userToUpdate = User::model()->find('id=:id', array(':id' => $_GET['id']));
             $userRequest = User::model()->find('token=:token', array(':token' => $token));
 
-            if(isset($userRequest) && $userToUpdate->id==$userRequest->id) { //on s'assure que l'utilisateur déclanchant la requête (identifié par le token soit le même que l'utilisateur à mettre à jour)
+            if(isset($userRequest) && $userToUpdate->id == $userRequest->id) { //on s'assure que l'utilisateur déclanchant la requête (identifié par le token soit le même que l'utilisateur à mettre à jour)
                 $data = CJSON::decode(file_get_contents('php://input'));
                 //on ne peut pas changer ni le nom, ni le prénom
                 $userToUpdate->email = isset($data['email']) ? $data['email'] : $userToUpdate->email;
@@ -116,6 +116,30 @@ class ApiController extends Controller
                 $userToUpdate->update();
             }else{
                 throw new CHttpException(403,'You have no rights to update that user.');
+            }
+        }else if($_GET['model']=='rides'){
+            $userRequest = User::model()->find('token=:token', array(':token' => $token));
+            $ride = Ride::model()->find('id=:id', array(':id' => $_GET['id']));
+            if(isset($ride) && $ride->driver_fk == $userRequest->id){
+                $data = CJSON::decode(file_get_contents('php://input'));
+                $ride->departuretown_fk = isset($data['departuretown']['id']) ? $data['departuretown']['id'] : 1;
+                $ride->departure = isset($data['departure']) ? "0000-00-00 ".$data['departure'] : "";
+                $ride->arrivaltown_fk = isset($data['arrivaltown']['id']) ? $data['arrivaltown']['id'] : 1;
+                $ride->arrival = isset($data['arrival']) ? "0000-00-00 ".$data['arrival'] : "";
+                $ride->startDate = isset($data['startdate']) ? $data['startdate'] : "";
+                $ride->endDate = isset($data['enddate']) ? $data['enddate'] : "";
+                $ride->description = isset($data['description']) ? $data['description'] : "";
+                $ride->seats = isset($data['seats']) ? $data['seats'] : 0;
+                $ride->monday =  isset($data['recurrence']['monday']) ? $data['recurrence']['monday'] : 0;
+                $ride->tuesday =  isset($data['recurrence']['tuesday']) ? $data['recurrence']['tuesday'] : 0;
+                $ride->wednesday =  isset($data['recurrence']['wednesday']) ? $data['recurrence']['wednesday'] : 0;
+                $ride->thursday =  isset($data['recurrence']['thursday']) ? $data['recurrence']['thursday'] : 0;
+                $ride->friday =  isset($data['recurrence']['friday']) ? $data['recurrence']['friday'] : 0;
+                $ride->saturday =  isset($data['recurrence']['saturday']) ? $data['recurrence']['saturday'] : 0;
+                $ride->sunday =  isset($data['recurrence']['sunday']) ? $data['recurrence']['sunday'] : 0;
+                $ride->visibility =  isset($data['visibility']) ? $data['visibility'] : 1;
+                $ride->save();
+                Yii::app()->end();
             }
         }
     }
