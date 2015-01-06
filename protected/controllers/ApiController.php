@@ -13,6 +13,74 @@ class ApiController extends Controller
     // Actions
     public function actionList()
     {
+        $this->_checkAuth();
+        $token = $_GET['token'];
+
+        if ($_GET['model']=='rides') {
+            header('Content-type: ' . 'application/json');
+
+            $today = date('Y-m-d 00:00:00', time());
+
+            $rides = Ride::model()->findAll('startdate>:today limit :number', array(':today' => $today, ':number' => Yii::app()->params['rideListNumber']));
+
+            $result = "";
+            $array = array();
+            foreach($rides as $ride){
+
+                //die(date("H:i",strtotime($ride->departure)));
+                $registrationsArray = array();
+                $rideArray = array(
+                    "id"=>$ride->id,
+                    "departuretown" => array("id"=>$ride->departuretown->id,"name"=>$ride->departuretown->name),
+                    "departure"=>date("H:i",strtotime($ride->departure)),
+                    "arrivaltown" => array("id"=>$ride->arrivaltown->id,"name"=>$ride->arrivaltown->name),
+                    "arrival"=>date("H:i",strtotime($ride->arrival)),
+                    "startdate"=>$ride->startDate,
+                    "enddate"=>$ride->endDate,
+                    "description"=>$ride->description,
+                    "seats"=>$ride->seats,
+                    "isrecurrence"=>$ride->startDate!=$ride->endDate,
+                    "recurrence" => array(
+                        "monday" => $ride->monday,
+                        "tuesday" => $ride->tuesday,
+                        "wednesday" => $ride->wednesday,
+                        "thursday" => $ride->thursday,
+                        "friday" => $ride->friday,
+                        "saturday" => $ride->saturday,
+                        "sunday" => $ride->sunday
+                    ),
+                    "registrations" => $registrationsArray
+                );
+                array_push($array, $rideArray);
+            }
+
+            echo CJSON::encode($array);
+
+            //var_dump($rides);
+            /*
+             * {
+                "departuretown": {"id": 1000, "name": "Sainte-Croix"},
+                "departure": "17:00",
+                "arrivaltown": {"id": 1001, "name": "Lausanne"},
+                "arrival":"18:00",
+                "startdate":"2015-03-31",
+                "enddate":"2015-04-28",
+                "description":"description de test",
+                "seats": 3,
+                "recurrence": {
+                    "monday":"1",
+                    "tuesday":"0",
+                    "wednesday":"0",
+                    "thursday":"1",
+                    "friday":"0",
+                    "saturday":"1",
+                    "sunday":"0"
+                }
+            }
+             * */
+        }
+        Yii::app()->end();
+
     }
     public function actionView()
     {
@@ -57,7 +125,6 @@ class ApiController extends Controller
                 Yii::app()->end();
             }
         }
-
     }
     public function actionCreate()
     {
@@ -65,15 +132,16 @@ class ApiController extends Controller
         $token = $_GET['token'];
 
         if($_GET['model']=='rides') {
-            // TODO effectuer une validation à l'aide d'un regex !!!
+            // TODO effectuer une validation à l'aide d'un regex
+            // TODO les valeurs par défaut sont probablement moisies
             $userRequest = User::model()->find('token=:token', array(':token' => $token));
             $ride = new Ride();
             $ride->driver_fk = $userRequest->id;
             $data = CJSON::decode(file_get_contents('php://input'));
             $ride->departuretown_fk = isset($data['departuretown']['id']) ? $data['departuretown']['id'] : 1;
-            $ride->departure = isset($data['departure']) ? "0000-00-00 ".$data['departure'] : "";
+            $ride->departure = isset($data['departure']) ? "1970-01-01 ".$data['departure'] : "";
             $ride->arrivaltown_fk = isset($data['arrivaltown']['id']) ? $data['arrivaltown']['id'] : 1;
-            $ride->arrival = isset($data['arrival']) ? "0000-00-00 ".$data['arrival'] : "";
+            $ride->arrival = isset($data['arrival']) ? "1970-01-01 ".$data['arrival'] : "";
             $ride->startDate = isset($data['startdate']) ? $data['startdate'] : "";
             $ride->endDate = isset($data['enddate']) ? $data['enddate'] : "";
             $ride->description = isset($data['description']) ? $data['description'] : "";
@@ -138,7 +206,7 @@ class ApiController extends Controller
                 $ride->saturday =  isset($data['recurrence']['saturday']) ? $data['recurrence']['saturday'] : 0;
                 $ride->sunday =  isset($data['recurrence']['sunday']) ? $data['recurrence']['sunday'] : 0;
                 $ride->visibility =  isset($data['visibility']) ? $data['visibility'] : 1;
-                $ride->save();
+                $ride->save(); //Si on met update(), les données ne sont pas revalidées
                 Yii::app()->end();
             }
         }

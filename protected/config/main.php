@@ -49,6 +49,7 @@ return array(
 			'rules'=>array(
 				/*'<var:(login|logout|contact|home)>'=>'site/<var>',*/
 				array('api/view', 'pattern'=>'api/<model:\w+>/<id:\d+>', 'verb'=>'GET'),
+				array('api/list', 'pattern'=>'api/<model:\w+>', 'verb'=>'GET'),
 				array('api/update', 'pattern'=>'api/<model:\w+>/<id:\d+>', 'verb'=>'PUT'),
 				array('api/create', 'pattern'=>'api/<model:\w+>', 'verb'=>'POST'),
 				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
@@ -98,6 +99,7 @@ return array(
 						  //intranet = has access to intranet and can create automatically new users
 		'ExecutionTime'=>'no', //yes = show execution time, no = don't show execution time
 		'Votes'=>'no', //yes = show reputation values, no = don't show reputation
+		'rideListNumber'=>100, //nombre de ride à charger lors du listing de ceux-ci à travers l'api
 	),
 	
 );
