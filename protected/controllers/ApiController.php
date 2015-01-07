@@ -21,68 +21,87 @@ class ApiController extends Controller
 
             $today = date('Y-m-d 00:00:00', time());
 
-            $rides = Ride::model()->with('departuretown')->with('arrivaltown')->findAll(array('condition'=>'enddate >= :today and visibility = 1', 'limit' => Yii::app()->params['rideListNumber'], 'params'=>array(':today'=>$today)));
-            //TODO : liste de rides : ne voit pas ses propres trajets mais quand même les trajets auquel il est inscrit
-            //       , 2 chargements, un pour la liste et un par ride cliqué
-            //       tes trajets : voit tous les trajets qui le concerne.
-            //$result = "";
-            $array = array();
-            foreach($rides as $ride){
-                //$registrationsArray = array($ride->registrations);
-                //usort($registrationsArray[0], function( $a, $b ) {
-                //    return strtotime($a["date"]) - strtotime($b["date"]);
-                //});
+            if (isset($_GET['mine']) && $_GET['mine'] == 'true') {
+                $userRequest = User::model()->find('token=:token', array(':token' => $token));
+                $rides = Ride::model()->with('registrations')->with('departuretown')->with('arrivaltown')->findAll(array('condition' => 'driver_fk=:user_fk and enddate >= :today and visibility = 1', 'limit' => Yii::app()->params['rideListNumber'], 'params' => array(':user_fk'=> $userRequest->id,':today' => $today)));
 
 
-                $rideArray = array(
-                    "id"=>$ride->id,
-                    "departuretown" => array("id"=>$ride->departuretown->id,"name"=>$ride->departuretown->name),
-                    "departure"=>date("H:i",strtotime($ride->departure)),
-                    "arrivaltown" => array("id"=>$ride->arrivaltown->id,"name"=>$ride->arrivaltown->name),
-                    "arrival"=>date("H:i",strtotime($ride->arrival)),
-                    "startdate"=>$ride->startDate,
-                    "enddate"=>$ride->endDate,
-                    "description"=>$ride->description,
-                    "seats"=>$ride->seats,
-                    "isrecurrence"=>$ride->startDate!=$ride->endDate,
-                    "recurrence" => array(
-                        "monday" => $ride->monday,
-                        "tuesday" => $ride->tuesday,
-                        "wednesday" => $ride->wednesday,
-                        "thursday" => $ride->thursday,
-                        "friday" => $ride->friday,
-                        "saturday" => $ride->saturday,
-                        "sunday" => $ride->sunday
-                    ),
-                    //"registrations" => $registrationsArray
-                );
-                array_push($array, $rideArray);
-            }
-
-            echo CJSON::encode($array);
-
-            //var_dump($rides);
-            /*
-             * {
-                "departuretown": {"id": 1000, "name": "Sainte-Croix"},
-                "departure": "17:00",
-                "arrivaltown": {"id": 1001, "name": "Lausanne"},
-                "arrival":"18:00",
-                "startdate":"2015-03-31",
-                "enddate":"2015-04-28",
-                "description":"description de test",
-                "seats": 3,
-                "recurrence": {
-                    "monday":"1",
-                    "tuesday":"0",
-                    "wednesday":"0",
-                    "thursday":"1",
-                    "friday":"0",
-                    "saturday":"1",
-                    "sunday":"0"
+                $array = array();
+                foreach ($rides as $ride) {
+                    $registrationsArray = array($ride->registrations);
+                    usort($registrationsArray[0], function( $a, $b ) {
+                        return strtotime($a["date"]) - strtotime($b["date"]);
+                    });
+                    $rideArray = array(
+                        "id" => $ride->id,
+                        "departuretown" => array("id" => $ride->departuretown->id, "name" => $ride->departuretown->name),
+                        "departure" => date("H:i", strtotime($ride->departure)),
+                        "arrivaltown" => array("id" => $ride->arrivaltown->id, "name" => $ride->arrivaltown->name),
+                        "arrival" => date("H:i", strtotime($ride->arrival)),
+                        "startdate" => $ride->startDate,
+                        "enddate" => $ride->endDate,
+                        "description" => $ride->description,
+                        "seats" => $ride->seats,
+                        "isrecurrence" => $ride->startDate != $ride->endDate,
+                        "recurrence" => array(
+                            "monday" => $ride->monday,
+                            "tuesday" => $ride->tuesday,
+                            "wednesday" => $ride->wednesday,
+                            "thursday" => $ride->thursday,
+                            "friday" => $ride->friday,
+                            "saturday" => $ride->saturday,
+                            "sunday" => $ride->sunday
+                        ),
+                        "registrations" => $registrationsArray
+                    );
+                    array_push($array, $rideArray);
                 }
+
+                echo CJSON::encode($array);
+            } else if (isset($_GET['q']) && $_GET['q'] != '') {
+
+                $towns = Town::model()->findAll(array('condition' => 'name like :query', 'params' => array(':query'=>'%'.$_GET['q'].'%')));
+                var_dump($towns);
+                $rides = Ride::model()->findAll(array('condition' => 'departuretown_fk in :towns OR arrivaltown_fk in :towns', 'params' => array(':towns'=>$towns)));
+                die;
+
+
+
+                //TODO faire la recherche de ride
+            }else{
+                $userRequest = User::model()->find('token=:token', array(':token' => $token));
+                $rides = Ride::model()->with('departuretown')->with('arrivaltown')->findAll(array('condition' => 'driver_fk!=:user_fk and enddate >= :today and visibility = 1', 'limit' => Yii::app()->params['rideListNumber'], 'params' => array(':user_fk'=>$userRequest->id,':today' => $today)));
+                //TODO : liste de rides : ne voit pas ses propres trajets mais quand même les trajets auquel il est inscrit
+                //       , 2 chargements, un pour la liste et un par ride cliqué
+                //       tes trajets : voit tous les trajets qui le concerne.
+                $array = array();
+                foreach ($rides as $ride) {
+                    $rideArray = array(
+                        "id" => $ride->id,
+                        "departuretown" => array("id" => $ride->departuretown->id, "name" => $ride->departuretown->name),
+                        "departure" => date("H:i", strtotime($ride->departure)),
+                        "arrivaltown" => array("id" => $ride->arrivaltown->id, "name" => $ride->arrivaltown->name),
+                        "arrival" => date("H:i", strtotime($ride->arrival)),
+                        "startdate" => $ride->startDate,
+                        "enddate" => $ride->endDate,
+                        "description" => $ride->description,
+                        "seats" => $ride->seats,
+                        "isrecurrence" => $ride->startDate != $ride->endDate,
+                        "recurrence" => array(
+                            "monday" => $ride->monday,
+                            "tuesday" => $ride->tuesday,
+                            "wednesday" => $ride->wednesday,
+                            "thursday" => $ride->thursday,
+                            "friday" => $ride->friday,
+                            "saturday" => $ride->saturday,
+                            "sunday" => $ride->sunday
+                        ),
+                    );
+                    array_push($array, $rideArray);
+                }
+
+                echo CJSON::encode($array);
             }
-             * */
         }
         Yii::app()->end();
 
@@ -129,6 +148,39 @@ class ApiController extends Controller
                 echo CJSON::encode($returnUserArray);
                 Yii::app()->end();
             }
+        } else if($_GET['model']=='rides'){                             //TODO pas beau !!!
+            header('Content-type: ' . 'application/json');
+
+            $requestedRide = Ride::model()->with('registrations')->find('t.id=:id', array(':id' => $_GET['id']));
+            $registrationsArray = array($requestedRide->registrations);
+            usort($registrationsArray[0], function( $a, $b ) {
+                return strtotime($a["date"]) - strtotime($b["date"]);
+            });
+            $rideArray = array(
+                "id"=>$requestedRide->id,
+                "departuretown" => array("id"=>$requestedRide->departuretown->id,"name"=>$requestedRide->departuretown->name),
+                "departure"=>date("H:i",strtotime($requestedRide->departure)),
+                "arrivaltown" => array("id"=>$requestedRide->arrivaltown->id,"name"=>$requestedRide->arrivaltown->name),
+                "arrival"=>date("H:i",strtotime($requestedRide->arrival)),
+                "startdate"=>$requestedRide->startDate,
+                "enddate"=>$requestedRide->endDate,
+                "description"=>$requestedRide->description,
+                "seats"=>$requestedRide->seats,
+                "isrecurrence"=>$requestedRide->startDate!=$requestedRide->endDate,
+                "recurrence" => array(
+                    "monday" => $requestedRide->monday,
+                    "tuesday" => $requestedRide->tuesday,
+                    "wednesday" => $requestedRide->wednesday,
+                    "thursday" => $requestedRide->thursday,
+                    "friday" => $requestedRide->friday,
+                    "saturday" => $requestedRide->saturday,
+                    "sunday" => $requestedRide->sunday
+                ),
+                "registrations"=> $registrationsArray
+            );
+
+            echo CJSON::encode($rideArray);
+            Yii::app()->end();
         }
     }
     public function actionCreate()
