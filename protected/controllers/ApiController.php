@@ -21,14 +21,19 @@ class ApiController extends Controller
 
             $today = date('Y-m-d 00:00:00', time());
 
-            $rides = Ride::model()->findAll('startdate>:today limit :number', array(':today' => $today, ':number' => Yii::app()->params['rideListNumber']));
-
-            $result = "";
+            $rides = Ride::model()->with('departuretown')->with('arrivaltown')->findAll(array('condition'=>'enddate >= :today and visibility = 1', 'limit' => Yii::app()->params['rideListNumber'], 'params'=>array(':today'=>$today)));
+            //TODO : liste de rides : ne voit pas ses propres trajets mais quand même les trajets auquel il est inscrit
+            //       , 2 chargements, un pour la liste et un par ride cliqué
+            //       tes trajets : voit tous les trajets qui le concerne.
+            //$result = "";
             $array = array();
             foreach($rides as $ride){
+                //$registrationsArray = array($ride->registrations);
+                //usort($registrationsArray[0], function( $a, $b ) {
+                //    return strtotime($a["date"]) - strtotime($b["date"]);
+                //});
 
-                //die(date("H:i",strtotime($ride->departure)));
-                $registrationsArray = array();
+
                 $rideArray = array(
                     "id"=>$ride->id,
                     "departuretown" => array("id"=>$ride->departuretown->id,"name"=>$ride->departuretown->name),
@@ -49,7 +54,7 @@ class ApiController extends Controller
                         "saturday" => $ride->saturday,
                         "sunday" => $ride->sunday
                     ),
-                    "registrations" => $registrationsArray
+                    //"registrations" => $registrationsArray
                 );
                 array_push($array, $rideArray);
             }
@@ -190,22 +195,22 @@ class ApiController extends Controller
             $ride = Ride::model()->find('id=:id', array(':id' => $_GET['id']));
             if(isset($ride) && $ride->driver_fk == $userRequest->id){
                 $data = CJSON::decode(file_get_contents('php://input'));
-                $ride->departuretown_fk = isset($data['departuretown']['id']) ? $data['departuretown']['id'] : 1;
-                $ride->departure = isset($data['departure']) ? "0000-00-00 ".$data['departure'] : "";
-                $ride->arrivaltown_fk = isset($data['arrivaltown']['id']) ? $data['arrivaltown']['id'] : 1;
-                $ride->arrival = isset($data['arrival']) ? "0000-00-00 ".$data['arrival'] : "";
-                $ride->startDate = isset($data['startdate']) ? $data['startdate'] : "";
-                $ride->endDate = isset($data['enddate']) ? $data['enddate'] : "";
-                $ride->description = isset($data['description']) ? $data['description'] : "";
-                $ride->seats = isset($data['seats']) ? $data['seats'] : 0;
-                $ride->monday =  isset($data['recurrence']['monday']) ? $data['recurrence']['monday'] : 0;
-                $ride->tuesday =  isset($data['recurrence']['tuesday']) ? $data['recurrence']['tuesday'] : 0;
-                $ride->wednesday =  isset($data['recurrence']['wednesday']) ? $data['recurrence']['wednesday'] : 0;
-                $ride->thursday =  isset($data['recurrence']['thursday']) ? $data['recurrence']['thursday'] : 0;
-                $ride->friday =  isset($data['recurrence']['friday']) ? $data['recurrence']['friday'] : 0;
-                $ride->saturday =  isset($data['recurrence']['saturday']) ? $data['recurrence']['saturday'] : 0;
-                $ride->sunday =  isset($data['recurrence']['sunday']) ? $data['recurrence']['sunday'] : 0;
-                $ride->visibility =  isset($data['visibility']) ? $data['visibility'] : 1;
+                $ride->departuretown_fk = isset($data['departuretown']['id']) ? $data['departuretown']['id'] : $ride->departuretown_fk;
+                $ride->departure = isset($data['departure']) ? "1970-01-01 ".$data['departure'] : $ride->departure;
+                $ride->arrivaltown_fk = isset($data['arrivaltown']['id']) ? $data['arrivaltown']['id'] : $ride->arrivaltown_fk;
+                $ride->arrival = isset($data['arrival']) ? "1970-01-01 ".$data['arrival'] : $ride->arrival;
+                $ride->startDate = isset($data['startdate']) ? $data['startdate'] : $ride->startDate;
+                $ride->endDate = isset($data['enddate']) ? $data['enddate'] : $ride->endDate;
+                $ride->description = isset($data['description']) ? $data['description'] : $ride->description;
+                $ride->seats = isset($data['seats']) ? $data['seats'] : $ride->seats;
+                $ride->monday =  isset($data['recurrence']['monday']) ? $data['recurrence']['monday'] : $ride->monday;
+                $ride->tuesday =  isset($data['recurrence']['tuesday']) ? $data['recurrence']['tuesday'] : $ride->tuesday;
+                $ride->wednesday =  isset($data['recurrence']['wednesday']) ? $data['recurrence']['wednesday'] : $ride->wednesday;
+                $ride->thursday =  isset($data['recurrence']['thursday']) ? $data['recurrence']['thursday'] : $ride->thursday;
+                $ride->friday =  isset($data['recurrence']['friday']) ? $data['recurrence']['friday'] : $ride->friday;
+                $ride->saturday =  isset($data['recurrence']['saturday']) ? $data['recurrence']['saturday'] : $ride->saturday;
+                $ride->sunday =  isset($data['recurrence']['sunday']) ? $data['recurrence']['sunday'] : $ride->sunday;
+                $ride->visibility =  isset($data['visibility']) ? $data['visibility'] : $ride->visibility;
                 $ride->save(); //Si on met update(), les données ne sont pas revalidées
                 Yii::app()->end();
             }
