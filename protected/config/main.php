@@ -48,10 +48,33 @@ return array(
 			'urlFormat'=>'path',
 			'rules'=>array(
 				/*'<var:(login|logout|contact|home)>'=>'site/<var>',*/
-				array('api/view', 'pattern'=>'api/<model:\w+>/<id:\d+>', 'verb'=>'GET'),
-				array('api/list', 'pattern'=>'api/<model:\w+>', 'verb'=>'GET'),
-				array('api/update', 'pattern'=>'api/<model:\w+>/<id:\d+>', 'verb'=>'PUT'),
-				array('api/create', 'pattern'=>'api/<model:\w+>', 'verb'=>'POST'),
+				//array('api/update', 'pattern'=>'api/rides/<id:\d+>/registrations', 'verb'=>'PUT'),
+				//array('api/view', 'pattern'=>'api/<model:\w+>/<id:\d+>', 'verb'=>'GET'),
+				//array('api/list', 'pattern'=>'api/<model:\w+>', 'verb'=>'GET'),
+				//array('api/update', 'pattern'=>'api/<model:\w+>/<id:\d+>', 'verb'=>'PUT'),
+				//array('api/delete', 'pattern'=>'api/<model:\w+>/<id:\d+>', 'verb'=>'DELETE'),
+				//array('api/create', 'pattern'=>'api/<model:\w+>', 'verb'=>'POST'),
+				//array('api/<controller:\w+>'=>'api_<controller>/index'),
+
+
+
+
+				array('api_Registrations/update', 'pattern'=>'api/rides/<id:\d+>/registrations', 'verb'=>'PUT'),
+				array('api_<controller>/view', 'pattern'=>'api/<controller:\w+>/<id:\d+>', 'verb'=>'GET'),
+				array('api_<controller>/list', 'pattern'=>'api/<model:\w+>', 'verb'=>'GET'),
+				array('api_<controller>/update', 'pattern'=>'api/<model:\w+>/<id:\d+>', 'verb'=>'PUT'),
+				array('api_<controller>/delete', 'pattern'=>'api/<model:\w+>/<id:\d+>', 'verb'=>'DELETE'),
+				array('api_<controller>/create', 'pattern'=>'api/<model:\w+>', 'verb'=>'POST'),
+
+
+
+
+
+
+				//array('api/<controller:\w+>/<id:\d+>'=>'Api/<controller>/view'),
+				//array('api/<controller:\w+>/<action:\w+>/<id:\d+>'=>'Api/<controller>/<action>'),
+				//array('api/<controller:\w+>/<action:\w+>'=>'Api/<controller>/<action>'),
+
 				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
 				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
