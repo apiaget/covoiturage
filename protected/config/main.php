@@ -23,8 +23,7 @@ return array(
 		'application.components.*',
 		//preloading yiimailer
 		'ext.YiiMailer.YiiMailer',
-		'ext.PhpActiveResource.ActiveResource',
-
+		'ext.PhpActiveResource.ActiveResource'
 	),
 
 	'modules'=>array(
@@ -57,14 +56,15 @@ return array(
 				//array('api/<controller:\w+>'=>'api_<controller>/index'),
 
 
+				// requête GET /api/rides/1   "passe" par le fichier       protected/controllers/api_RidesController.php
+				// 														OU protected/controllers/api/RidesController.php
+				array('api_<controller>/update', 'pattern'=>'api/rides/<id:\d+>/<controller:\w+>', 'verb'=>'PUT'),
 
-
-				array('api_Registrations/update', 'pattern'=>'api/rides/<id:\d+>/registrations', 'verb'=>'PUT'),
-				array('api_<controller>/view', 'pattern'=>'api/<controller:\w+>/<id:\d+>', 'verb'=>'GET'),
-				array('api_<controller>/list', 'pattern'=>'api/<model:\w+>', 'verb'=>'GET'),
-				array('api_<controller>/update', 'pattern'=>'api/<model:\w+>/<id:\d+>', 'verb'=>'PUT'),
-				array('api_<controller>/delete', 'pattern'=>'api/<model:\w+>/<id:\d+>', 'verb'=>'DELETE'),
-				array('api_<controller>/create', 'pattern'=>'api/<model:\w+>', 'verb'=>'POST'),
+				array('api_<controller>/view', 'pattern'=>'api/<controller:\w+>/<id:\d+>', 'verb'=>'GET'), //Fonctionne
+				array('api_<controller>/list', 'pattern'=>'api/<controller:\w+>', 'verb'=>'GET'),
+				array('api_<controller>/update', 'pattern'=>'api/<controller:\w+>/<id:\d+>', 'verb'=>'PUT'),
+				array('api_<controller>/delete', 'pattern'=>'api/<controller:\w+>/<id:\d+>', 'verb'=>'DELETE'),
+				array('api_<controller>/create', 'pattern'=>'api/<controller:\w+>', 'verb'=>'POST'),
 
 
 

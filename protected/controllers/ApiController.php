@@ -13,7 +13,7 @@ class ApiController extends Controller
     // Actions
     public function actionList()
     {
-        $this->_checkAuth();
+  /*      $this->_checkAuth();
         $token = $_GET['token'];
 
         if ($_GET['model']=='rides') {
@@ -35,7 +35,7 @@ class ApiController extends Controller
                 // Trajets triés sur la date de commencement du trajet
                 /* TODO imaginer un tri plus pertinant ? Dans le cas où un trajet est disponible depuis longtemps mais qu'on s'y inscrit pour l'occurence dans 1 mois,
                  * ce vieux trajet apparaîtera en premier même si on a des inscriptions avant
-                 */
+                 *//*
                 usort($rides, function( $a, $b ) {
                     return strtotime($a["startDate"]) - strtotime($b["endDate"]);
                 });
@@ -146,11 +146,11 @@ class ApiController extends Controller
             }
         }
         Yii::app()->end();
-
+*/
     }
     public function actionView()
     {
-        $this->_checkAuth();
+        /*$this->_checkAuth();
         $token = $_GET['token'];
 
         if($_GET['model']=='users') {
@@ -190,7 +190,7 @@ class ApiController extends Controller
                 echo CJSON::encode($returnUserArray);
                 Yii::app()->end();
             }
-        } else if($_GET['model']=='rides'){                             //TODO pas beau !!!
+        }*//* else if($_GET['model']=='rides'){                             //TODO pas beau !!!
             header('Content-type: ' . 'application/json');
 
             $requestedRide = Ride::model()->with('registrations')->find('t.id=:id and visibility=1', array(':id' => $_GET['id']));
@@ -227,11 +227,11 @@ class ApiController extends Controller
                 header('HTTP/1.1 404');
             }
             Yii::app()->end();
-        }
+        }*/
     }
     public function actionCreate()
     {
-        $this->_checkAuth();
+        /*$this->_checkAuth();
         $token = $_GET['token'];
         header('Content-type: ' . 'application/json');
 
@@ -293,7 +293,7 @@ class ApiController extends Controller
             }
 
             Yii::app()->end();
-        }
+        }*/
     }
     public function actionUpdate()
     {
@@ -322,7 +322,7 @@ class ApiController extends Controller
                 throw new CHttpException(403,'You have no rights to update that user.');
             }
         }else if($_GET['model']=='rides'){
-            header('Content-type: ' . 'application/json');
+           /* header('Content-type: ' . 'application/json');
             $userRequest = User::model()->find('token=:token', array(':token' => $token));
             $ride = Ride::model()->find('id=:id and visibility=1', array(':id' => $_GET['id']));
             //var_dump($ride);die;
@@ -384,12 +384,12 @@ class ApiController extends Controller
                 throw new CHttpException(404,'Ride not found.');
             }else {
                 throw new CHttpException(403,'You have no rights to update that ride.');
-            }
+            }*/
         }
     }
     public function actionDelete()
     {
-        $this->_checkAuth();
+       /* $this->_checkAuth();
         $token = $_GET['token'];
 
         if ($_GET['model'] == 'rides') {
@@ -405,7 +405,7 @@ class ApiController extends Controller
             }else{
                 throw new CHttpException(403,'You have no rights to delete that ride.');
             }
-        }
+        }*/
     }
 
 

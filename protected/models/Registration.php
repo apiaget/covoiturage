@@ -7,9 +7,7 @@
  * @property integer $id
  * @property integer $user_fk
  * @property integer $ride_fk
- * @property string $startDate
- * @property string $endDate
- * @property integer $accepted
+ * @property datetime $date
  *
  * The followings are the available model relations:
  * @property Users $userFk
@@ -35,21 +33,21 @@ class Registration extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('user_fk, ride_fk', 'required'),
-			array('user_fk, ride_fk, accepted', 'numerical', 'integerOnly'=>true),
-			array('startDate, endDate', 'safe'),
-			array('startDate', 'doublon'),
+			array('user_fk, ride_fk', 'numerical', 'integerOnly'=>true),
+			//array('startDate, endDate', 'safe'),
+			//array('startDate', 'doublon'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, user_fk, ride_fk, startDate, endDate, accepted', 'safe', 'on'=>'search'),
+			array('id, user_fk, ride_fk, date', 'safe', 'on'=>'search'),
 		);
 	}
 
-	public function doublon($attribute,$params)
+/*	public function doublon($attribute,$params)
 	{
 		//this = la registration testée
 		/* on veut s'arranger pour agrandir/fusionner les registrations et les trucs du genre
 		 * c'est ici qu'en enregistrera la registration
-		 */
+		 *//*
 		
 		$registrations = Registration::model()->findAll('ride_fk = :ride AND user_fk = :user ORDER BY startDate ASC', array(':ride'=>$this->ride_fk, ':user' => User::currentUser()->id));
 		
@@ -127,7 +125,7 @@ class Registration extends CActiveRecord
 				}
 			}
 		}
-	}
+	}*/
 
 	/**
 	 * @return array relational rules.
@@ -152,9 +150,9 @@ class Registration extends CActiveRecord
 			'id' => 'ID',
 			'user_fk' => 'User Fk',
 			'ride_fk' => 'Ride Fk',
-			'startDate' => 'Start Date',
-			'endDate' => 'End Date',
-			'accepted' => 'Accepted',
+		//	'startDate' => 'Start Date',
+		//	'endDate' => 'End Date',
+		//	'accepted' => 'Accepted',
 		);
 	}
 
@@ -206,7 +204,7 @@ class Registration extends CActiveRecord
 	*	return true si y'a de la place, false sinon
 	*
 	*/
-	public function placeDispoRide()
+	/*public function placeDispoRide()
 	{
 		$registrations = Registration::model()->findAll('ride_fk = :ride AND user_fk!=:user AND (
 				(:dateDebut <= startDate AND :dateFin >= endDate)
@@ -240,5 +238,5 @@ class Registration extends CActiveRecord
 
 		//si le tableau contient le nombre de place pour le ride, ça veut dire qu'il n'y a plus de places
 		return !(in_array($ride->seats,$seatsTaken));
-	}
+	}*/
 }
