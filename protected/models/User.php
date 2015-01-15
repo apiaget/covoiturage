@@ -7,8 +7,8 @@
  * @property string $cpnvId
  * @property string $email
  * @property integer $hideEmail
- * @property integer $firstname
- * @property integer $lastname
+ * @property string $firstname
+ * @property string $lastname
  * @property string $telephone
  * @property integer $hideTelephone
  * @property integer $notifInscription

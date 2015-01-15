@@ -80,6 +80,8 @@ class Api_RegistrationsController extends Controller
 
 		$registrations = Registration::model()->findAll('user_fk = :user AND ride_fk = :ride AND date >= :today', array(':today' => $today, ':user' => $userRequest->id, ':ride' => $id));
 
+		$registrations = array("registrations" => $registrations);
+
 		echo CJSON::encode($registrations);
 		Yii::app()->end();
 

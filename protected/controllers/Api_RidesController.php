@@ -190,7 +190,7 @@ class Api_RidesController extends Controller
 	{
 		header('Content-type: ' . 'application/json');
 
-		$requestedRide = Ride::model()->with('registrations')->find('t.id=:id and visibility=1', array(':id' => $id));
+		$requestedRide = Ride::model()->with('registrations')->with('driver')->find('t.id=:id and visibility=1', array(':id' => $id));
 		if($requestedRide != null) {
 			$registrationsArray = array($requestedRide->registrations);
 			usort($registrationsArray[0], function ($a, $b) {
@@ -198,6 +198,7 @@ class Api_RidesController extends Controller
 			});
 			$rideArray = array(
 				"id" => $requestedRide->id,
+				"driver" => array("prenom" => $requestedRide->driver->firstname, "nom" => $requestedRide->driver->lastname),
 				"departuretown" => array("id" => $requestedRide->departuretown->id, "name" => $requestedRide->departuretown->name),
 				"departure" => date("H:i", strtotime($requestedRide->departure)),
 				"arrivaltown" => array("id" => $requestedRide->arrivaltown->id, "name" => $requestedRide->arrivaltown->name),
@@ -268,6 +269,7 @@ class Api_RidesController extends Controller
 			});
 			$rideArray = array(
 				"id"=>$ride->id,
+				"driver" => array("prenom" => $ride->driver->firstname, "nom" => $ride->driver->lastname),
 				"departuretown" => array("id"=>$ride->departuretown->id,"name"=>$ride->departuretown->name),
 				"departure"=>date("H:i",strtotime($ride->departure)),
 				"arrivaltown" => array("id"=>$ride->arrivaltown->id,"name"=>$ride->arrivaltown->name),
@@ -336,6 +338,7 @@ class Api_RidesController extends Controller
 				});
 				$rideArray = array(
 					"id"=>$ride->id,
+					"driver" => array("prenom" => $ride->driver->firstname, "nom" => $ride->driver->lastname),
 					"departuretown" => array("id"=>$ride->departuretown->id,"name"=>$ride->departuretown->name),
 					"departure"=>date("H:i",strtotime($ride->departure)),
 					"arrivaltown" => array("id"=>$ride->arrivaltown->id,"name"=>$ride->arrivaltown->name),
