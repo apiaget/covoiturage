@@ -1,0 +1,3 @@
+http://stackoverflow.com/questions/12839090/send-notification-to-user-from-app-via-notification-api
+
+https://www.computerminds.co.uk/drupal-code/creating-facebook-canvas-apps-page-tabs
