@@ -107,7 +107,6 @@ class Api_RidesController extends Controller
 			echo CJSON::encode($array);
 		} else if (isset($_GET['q']) && $_GET['q'] != '') { //voit que les trajets dont le nom des villes contient la requête
 			$towns = Town::model()->findAll(array('condition' => 'name like :query', 'params' => array(':query'=>'%'.$_GET['q'].'%')));
-			var_dump(count($towns));
 			$townsArray = array();
 			foreach($towns as $t){
 				array_push($townsArray, $t->id);

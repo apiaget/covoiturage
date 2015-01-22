@@ -130,7 +130,8 @@ class Api_UsersController extends Controller
 
 			$userToUpdate->update();
 		}else{
-			throw new CHttpException(403,'You have no rights to update that user.');
+			die('test');
+			//throw new CHttpException(403,'You have no rights to update that user.');
 		}
 		Yii::app()->end();
 	}

@@ -62,6 +62,7 @@ class Api_RegistrationsController extends Controller
 		header('Content-type: ' . 'application/json');
 		$userRequest = User::model()->find('token=:token', array(':token' => $token));
 
+
 		$registrations = Registration::model()->findAll('user_fk = :user AND ride_fk = :ride AND date >= :today', array(':today' => $today, ':user' => $userRequest->id, ':ride' => $id));
 
 		foreach($registrations as $registration){
