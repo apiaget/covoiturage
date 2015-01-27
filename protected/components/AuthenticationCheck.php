@@ -3,6 +3,12 @@
     {
         public function checkAuth()
         {
+            if(!isset($_GET['token'])){
+                if(Yii::app()->urlManager->parseUrl(Yii::app()->request)=="Api_users/connexion"){
+                    return true;
+                }
+                throw new CHttpException(401,'You are not authenticated.');
+            }
             $token = $_GET['token'];
             $now = date('Y-m-d H:i:s', time()); //temps maintenant
             if($token == ''){

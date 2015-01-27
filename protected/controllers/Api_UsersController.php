@@ -36,7 +36,7 @@ class Api_UsersController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('view','update'),
+				'actions'=>array('view','update','connexion','deconnexion'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -130,9 +130,110 @@ class Api_UsersController extends Controller
 
 			$userToUpdate->update();
 		}else{
-			die('test');
-			//throw new CHttpException(403,'You have no rights to update that user.');
+			throw new CHttpException(403,'You have no rights to update that user.');
 		}
 		Yii::app()->end();
 	}
+
+	public function actionConnexion()
+	{
+		header('Content-type: ' . 'application/json');
+
+		$email = "";
+		$password = "";
+
+		$data = CJSON::decode(file_get_contents('php://input'));
+		if (isset($data['email']) && isset($data['password'])) {
+			$email = $data['email'];
+			$password = $data['password'];
+		} else {
+			throw new CHttpException(400, 'email or password field not filled');
+		}
+
+		$ch = curl_init();
+
+		curl_setopt_array($ch, array(
+			CURLOPT_RETURNTRANSFER => 1,
+			CURLOPT_SSL_VERIFYPEER => true,
+			CURLOPT_SSL_VERIFYHOST => 2,
+			CURLOPT_CAINFO => getcwd() . "/cert/cacert.pem", //http://curl.haxx.se/docs/caextract.html (contient bon nombre de certificats de CA)
+			CURLOPT_URL => 'https://intranet.cpnv.ch/connexion',
+			CURLOPT_HTTPHEADER => array(
+				"Accept:application/json"
+			),
+			CURLOPT_POSTFIELDS => http_build_query(array(
+				'user_session[email]' => $email,
+				'user_session[password]' => $password,
+			))
+		));
+
+		$server_output = curl_exec($ch);
+
+
+		if ($server_output === false) {
+			//n'arrive pas à atteindre l'intranet
+			var_dump(curl_error($ch));
+		} else if (isset(json_decode($server_output)->errors) && in_array("Identifiant ou mot de passe invalide", json_decode($server_output)->errors[0])){ //erreur d'authentification
+			throw new CHttpException(401, 'Identifiant ou mot de passe invalide');
+		}else{
+			//ça marche
+			$userData = json_decode($server_output);
+			$friendlyid=$userData->friendly_id;
+
+			$userRequest = User::model()->find('cpnvId=:friendlyid', array(':friendlyid' => $friendlyid));
+			if($userRequest!=null){ //utilisateur déjà existant
+				$userRequest->token = md5(uniqid($friendlyid, true));
+				$userRequest->validbefore = date("Y-m-d H:i:s",strtotime("+1 month", strtotime(date('Y-m-d H:i:s', time()))));
+				$userRequest->save(false);
+
+				$returnToken = array();
+				$returnToken['token'] = $userRequest->token;
+				echo CJSON::encode($returnToken);
+				Yii::app()->end();
+
+			}else{ //utilisateur non existant dans la DB de covoiturage
+				$user = new User();
+				$user->cpnvId = $friendlyid;
+				$user->email = $userData->corporate_email;
+				$user->firstname=$userData->firstname;
+				$user->lastname=$userData->lastname;
+				$user->hideEmail = 0;
+				$user->hideTelephone = 0;
+				$user->notifInscription = 1;
+				$user->notifComment = 1;
+				$user->notifUnsuscribe = 1;
+				$user->notifDeleteRide = 1;
+				$user->notifModification = 1;
+				$user->blacklisted = 0;
+				$user->admin = 0;
+				$user->token = md5(uniqid($friendlyid, true));
+				$user->validbefore = date("Y-m-d H:i:s",strtotime("+1 month", strtotime(date('Y-m-d H:i:s', time()))));
+				$user->save(false);
+
+				$returnToken = array();
+				$returnToken['token'] = $user->token;
+				echo CJSON::encode($returnToken);
+				Yii::app()->end();
+			}
+		}
+
+		curl_close ($ch);
+
+		die("tentative de connexion");
+
+		//$userToUpdate = User::model()->find('id=:id', array(':id' => $id));
+
+
+		Yii::app()->end();
+	}
+
+	public function actionDeconnexion()
+	{
+		die("tentative de déconnexion");
+		header('Content-type: ' . 'application/json');
+		$token = $_GET['token'];
+
+		Yii::app()->end();
+	}
+
 }

@@ -18,6 +18,8 @@
  * @property integer $notifModification
  * @property integer $blacklisted
  * @property integer $admin
+ * @property varchar $token
+ * @property datetime $validbefore
  *
  * The followings are the available model relations:
  * @property Comments[] $comments
@@ -143,6 +145,8 @@ class User extends CActiveRecord
 		$criteria->compare('notifModification',$this->notifModification);
 		$criteria->compare('blacklisted',$this->blacklisted);
 		$criteria->compare('admin',$this->admin);
+		$criteria->compare('token',$this->token);
+		$criteria->compare('validbefore',$this->validbefore);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
