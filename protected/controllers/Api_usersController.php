@@ -188,9 +188,9 @@ class Api_UsersController extends Controller
 
 				$returnToken = array();
 				$returnToken['token'] = $userRequest->token;
+				$returnToken['id'] = $userRequest->id;
 				echo CJSON::encode($returnToken);
 				Yii::app()->end();
-
 			}else{ //utilisateur non existant dans la DB de covoiturage
 				$user = new User();
 				$user->cpnvId = $friendlyid;
