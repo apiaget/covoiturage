@@ -73,15 +73,15 @@ class Api_UsersController extends Controller
 				'email' => $requestedUser->email,
 				'phone' => $requestedUser->telephone,
 				'privacy' => array(
-					'hideEmail' => $requestedUser->hideEmail,
-					'hidePhone' => $requestedUser->hideTelephone
+					'hideEmail' => (bool)$requestedUser->hideEmail,
+					'hidePhone' => (bool)$requestedUser->hideTelephone
 				),
 				'notifications' => array(
-					'notifComment' => $requestedUser->notifComment,
-					'notifDeleteRide' => $requestedUser->notifDeleteRide,
-					'notifRegistration' => $requestedUser->notifInscription,
-					'notifChange' => $requestedUser->notifModification,
-					'notifUnsubscribe' => $requestedUser->notifUnsuscribe,
+					'notifComment' => (bool)$requestedUser->notifComment,
+					'notifDeleteRide' => (bool)$requestedUser->notifDeleteRide,
+					'notifRegistration' => (bool)$requestedUser->notifInscription,
+					'notifChange' => (bool)$requestedUser->notifModification,
+					'notifUnsubscribe' => (bool)$requestedUser->notifUnsuscribe,
 				)
 			));
 			Yii::app()->end();
@@ -187,8 +187,8 @@ class Api_UsersController extends Controller
 				$userRequest->save(false);
 
 				$returnToken = array();
-				$returnToken['token'] = $userRequest->token;
 				$returnToken['id'] = $userRequest->id;
+				$returnToken['token'] = $userRequest->token;
 				echo CJSON::encode($returnToken);
 				Yii::app()->end();
 			}else{ //utilisateur non existant dans la DB de covoiturage
@@ -197,20 +197,21 @@ class Api_UsersController extends Controller
 				$user->email = $userData->corporate_email;
 				$user->firstname=$userData->firstname;
 				$user->lastname=$userData->lastname;
-				$user->hideEmail = 0;
-				$user->hideTelephone = 0;
-				$user->notifInscription = 1;
-				$user->notifComment = 1;
-				$user->notifUnsuscribe = 1;
-				$user->notifDeleteRide = 1;
-				$user->notifModification = 1;
-				$user->blacklisted = 0;
-				$user->admin = 0;
+				$user->hideEmail = false;
+				$user->hideTelephone = false;
+				$user->notifInscription = true;
+				$user->notifComment = true;
+				$user->notifUnsuscribe = true;
+				$user->notifDeleteRide = true;
+				$user->notifModification = true;
+				$user->blacklisted = false;
+				$user->admin = false;
 				$user->token = md5(uniqid($friendlyid, true));
 				$user->validbefore = date("Y-m-d H:i:s",strtotime("+1 month", strtotime(date('Y-m-d H:i:s', time()))));
 				$user->save(false);
 
 				$returnToken = array();
+				$returnToken['id'] = $userRequest->id;
 				$returnToken['token'] = $user->token;
 				echo CJSON::encode($returnToken);
 				Yii::app()->end();
