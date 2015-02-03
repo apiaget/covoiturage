@@ -17,3 +17,9 @@ RewriteCond %{REQUEST_FILENAME} !-d
 # otherwise forward it to index.php
 
 RewriteRule . index.php
+
+
+
+<Limit GET POST PUT DELETE>
+  Allow from all
+</Limit>
