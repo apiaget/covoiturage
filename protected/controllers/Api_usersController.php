@@ -65,7 +65,10 @@ class Api_UsersController extends Controller
 		$token = $_GET['token'];
 
 		$requestedUser = User::model()->find('id=:id', array(':id' => $id));
-
+		if($requestedUser==null){
+			throw new CHttpException(404, "user doesn't exist");
+			Yii::app()->end();
+		}
 		if ($requestedUser['token'] == $token) { //l'utilisateur demande ses propres réglages
 
 			echo CJSON::encode(array('firstname' => $requestedUser->firstname,
