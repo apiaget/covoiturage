@@ -14,6 +14,6 @@ $this->pageTitle=Yii::app()->name;
 
 
 <?php
-echo $test;
+echo '<a href="'.$test.'">lien fb</a>';
 ?>
 

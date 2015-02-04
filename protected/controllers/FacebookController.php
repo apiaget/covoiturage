@@ -24,8 +24,8 @@ class FacebookController extends Controller
 	protected function afterRender($view, &$output) {
 		parent::afterRender($view,$output);
 		//Yii::app()->facebook->addJsCallback($js); // use this if you are registering any additional $js code you want to run on init()
-		Yii::app()->facebook->initJs($output); // this initializes the Facebook JS SDK on all pages
-		Yii::app()->facebook->renderOGMetaTags(); // this renders the OG tags
+		//Yii::app()->facebook->initJs($output); // this initializes the Facebook JS SDK on all pages
+		//Yii::app()->facebook->renderOGMetaTags(); // this renders the OG tags
 		return true;
 	}
 
@@ -70,10 +70,11 @@ class FacebookController extends Controller
 
 
 		//Yii::app()->facebook->destroySession();
-
-
-
-		$this->render('index', array('test' => "test 1 2 1 2"));
+		session_start();
+		\Facebook\FacebookSession::setDefaultApplication( Yii::app()->params['IDAPP'], Yii::app()->params['SECRETAPP']);
+		$helper = new \Facebook\FacebookRedirectLoginHelper('http://localhost/covoiturage/facebook');
+		//echo $helper->getLoginUrl(['email']);
+		$this->render('index', array('test' => $helper->getLoginUrl(['email'])));
 	}
 
 
