@@ -1,6 +1,6 @@
 <?php
 
-class FacebookController extends Controller
+class TwitterController extends Controller
 {
 	/**
 	 * Declares class-based actions.
@@ -70,11 +70,12 @@ class FacebookController extends Controller
 
 
 		//Yii::app()->facebook->destroySession();
-		session_start();
-		\Facebook\FacebookSession::setDefaultApplication( Yii::app()->params['IDAPP'], Yii::app()->params['SECRETAPP']);
-		$helper = new \Facebook\FacebookRedirectLoginHelper('http://localhost/covoiturage/facebook');
+		$connection = new \Abraham\TwitterOAuth\TwitterOAuth(Yii::app()->params['CUSTKEY'],Yii::app()->params['CUSTSECR'],Yii::app()->params['USTOK'],Yii::app()->params['USSEC']);
+		$test = $connection->post('direct_messages/new', array('text'=>'message test','user_id'=>'1209090570'));
+		var_dump($test);
+		die;
 		//echo $helper->getLoginUrl(['email']);
-		$this->render('index', array('test' => $helper->getLoginUrl(['email','manage_notifications '])));
+		$this->render('index', array('test' => 'test'));
 	}
 
 
