@@ -91,13 +91,13 @@ class Api_RidesController extends Controller
 					"seats" => $ride->seats,
 					"isrecurrence" => $ride->startDate != $ride->endDate,
 					"recurrence" => array(
-						"monday" => $ride->monday,
-						"tuesday" => $ride->tuesday,
-						"wednesday" => $ride->wednesday,
-						"thursday" => $ride->thursday,
-						"friday" => $ride->friday,
-						"saturday" => $ride->saturday,
-						"sunday" => $ride->sunday
+						"monday" => (bool)$ride->monday,
+						"tuesday" => (bool)$ride->tuesday,
+						"wednesday" => (bool)$ride->wednesday,
+						"thursday" => (bool)$ride->thursday,
+						"friday" => (bool)$ride->friday,
+						"saturday" => (bool)$ride->saturday,
+						"sunday" => (bool)$ride->sunday
 					),
 					//"registrations" => $registrationsArray
 				);
@@ -133,13 +133,13 @@ class Api_RidesController extends Controller
 					"seats" => $ride->seats,
 					"isrecurrence" => $ride->startDate != $ride->endDate,
 					"recurrence" => array(
-						"monday" => $ride->monday,
-						"tuesday" => $ride->tuesday,
-						"wednesday" => $ride->wednesday,
-						"thursday" => $ride->thursday,
-						"friday" => $ride->friday,
-						"saturday" => $ride->saturday,
-						"sunday" => $ride->sunday
+						"monday" => (bool)$ride->monday,
+						"tuesday" => (bool)$ride->tuesday,
+						"wednesday" => (bool)$ride->wednesday,
+						"thursday" => (bool)$ride->thursday,
+						"friday" => (bool)$ride->friday,
+						"saturday" => (bool)$ride->saturday,
+						"sunday" => (bool)$ride->sunday
 					),
 				);
 				array_push($array, $rideArray);
@@ -164,13 +164,13 @@ class Api_RidesController extends Controller
 					"seats" => $ride->seats,
 					"isrecurrence" => $ride->startDate != $ride->endDate,
 					"recurrence" => array(
-						"monday" => $ride->monday,
-						"tuesday" => $ride->tuesday,
-						"wednesday" => $ride->wednesday,
-						"thursday" => $ride->thursday,
-						"friday" => $ride->friday,
-						"saturday" => $ride->saturday,
-						"sunday" => $ride->sunday
+						"monday" => (bool)$ride->monday,
+						"tuesday" => (bool)$ride->tuesday,
+						"wednesday" => (bool)$ride->wednesday,
+						"thursday" => (bool)$ride->thursday,
+						"friday" => (bool)$ride->friday,
+						"saturday" => (bool)$ride->saturday,
+						"sunday" => (bool)$ride->sunday
 					),
 				);
 				array_push($array, $rideArray);
