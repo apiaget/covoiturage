@@ -208,8 +208,8 @@ class Api_RidesController extends Controller
 				"seats" => $requestedRide->seats,
 				"isrecurrence" => $requestedRide->startDate != $requestedRide->endDate,
 				"recurrence" => array(
-					"monday" => "test",
 					"monday" => (bool)$requestedRide->monday,
+					"tuesday" => (bool)$requestedRide->tuesday,
 					"wednesday" => (bool)$requestedRide->wednesday,
 					"thursday" => (bool)$requestedRide->thursday,
 					"friday" => (bool)$requestedRide->friday,
