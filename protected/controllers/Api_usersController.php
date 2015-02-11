@@ -223,20 +223,19 @@ class Api_UsersController extends Controller
 
 		curl_close ($ch);
 
-		die("tentative de connexion");
-
-		//$userToUpdate = User::model()->find('id=:id', array(':id' => $id));
-
-
 		Yii::app()->end();
 	}
 
 	public function actionDeconnexion()
 	{
-		die("tentative de déconnexion");
 		header('Content-type: ' . 'application/json');
 		$token = $_GET['token'];
-
+		$requestedUser = User::model()->find('token=:token', array(':token' => $token));
+		if(null != $requestedUser){
+			$requestedUser->token='';
+			$requestedUser->validbefore = date('Y-m-d H:i:s', time());
+			$requestedUser->save(false);
+		}
 		Yii::app()->end();
 	}
 
