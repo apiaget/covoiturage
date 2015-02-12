@@ -5,7 +5,7 @@
 	<title>Récurrence template page</title>
 	<link rel="stylesheet" type="text/css" href="main.css">
     <script src="jquery-1.11.1.min.js"></script>
-    <script src="registrations.js"></script>
+    <!--<script src="registrations.js"></script>-->
     <script src="registrations2.js"></script>
 </head>
 <body ng-controller="ctrl">
@@ -95,11 +95,19 @@
     </div>
 	<div id="registrationSystem">
 		{
-			"startdate":"2015-03-02 00:00:00",
-			"enddate":"2015-03-30 00:00:00",
+			"startdate":"2015-03-03 00:00:00",
+			"enddate":"2015-03-29 00:00:00",
 			"seats":"3",
 			"isrecurrence":true,
-			"recurrence":[true,true,true,true,true,false,false],
+			"recurrence": {
+			"monday": true,
+			"tuesday": true,
+			"wednesday": true,
+			"thursday": true,
+			"friday": true,
+			"saturday": false,
+			"sunday": false
+			},
 			"registrations": [[
 				{"id": "220","user_fk": "32","ride_fk": "2","date": "2015-03-02"},
 				{"id": "351","user_fk": "71","ride_fk": "2","date": "2015-03-04"},
@@ -113,11 +121,11 @@
 
     <script>
     $(function () {
-        $('#registrationData333').registration();
+        //$('#registrationData333').registration();
     });
 
 	$(function () {
-		$('#registrationSystem').registration2();
+		$('#registrationSystem').registration();
 	});
 
     </script>
