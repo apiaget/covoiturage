@@ -90,15 +90,34 @@
                 entete+='<td><div class="carre-noir">Sun<br/><img src="img/arrowDownBlack.png"/></div></td>';
 
             entete+='</tr>';
-
+            $(entete).appendTo(table);
 
             //nombre de semaines
             var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
-            var diffDays = Math.round(Math.abs((startweek.getTime() - endweek.getTime())/(oneDay)));
-            console.log(startweek);
-            console.log(endweek);
-            console.log(diffDays/7);
-            $(entete).appendTo(table);
+            var diffDays = Math.ceil(Math.abs((startweek.getTime() - endweek.getTime())/(7*oneDay)));
+
+            //Create weeks rows
+            for(var week = 0 ; week < diffDays ; week++){
+
+                //Date on the first column
+                var row = '<tr><td>' +
+                    ("0" + startweek.getDate()).slice(-2)+'.'+("0" + (startweek.getMonth() + 1)).slice(-2)+'.'+startweek.getFullYear()
+                    + '</td>';
+
+                for(var day = 0 ; day < 7 ; day++){
+                    if(recurrence[day]){
+
+                        var count = base.countRegistrationsPerDate(parameters.registrations[0], startweek);
+
+                        row+='<td></td>';
+                    }
+                    startweek = new Date(startweek.setDate(startweek.getDate() + 1));
+                }
+                row += '</tr>';
+                $(row).appendTo(table);
+            }
+
+
             table.appendTo(el);
             /*
             var startDate = ride[0].split("-");
@@ -151,6 +170,22 @@
                 diff = date.getDate() + (day==0 ? 0 : -day+7);
             return new Date(date.setDate(diff));
         };
+
+        base.countRegistrationsPerDate = function(registrations, date){
+            var registrationsPerDate = 0;
+            var isRegistredThatDate = 0;
+            for(var i = 0 ; i < registrations.length ; i ++){
+                if(new Date(registrations[i].date) == date){
+                    registrationsPerDate++;
+                }
+                console.log(new Date(registrations[i].date));
+                console.log(date+'\n');
+            }
+            //console.log(registrations);
+            //console.log(date);
+            console.log(registrationsPerDate);
+            return [registrationsPerDate, isRegistredThatDate];
+        }
 
         base.init();
     };
