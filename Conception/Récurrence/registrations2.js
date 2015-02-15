@@ -31,26 +31,12 @@
 
             var parameters = $.parseJSON($(el).html());
             $(el).html('');
-            console.log(parameters);
-            base.recurrence(parameters);
-            base.createCalendar(parameters);
+            //troooollololol
+            base.recurrence(parameters); //Converti les jours récurrents en valeurs numériques (plus facile de travailler avec par la suite)
+            base.createCalendar(parameters); //Crée le calendrier
+            base.eventsSetter(); //ajoute le comportement au cases
         };
 
-        //tableau en fonction de
-        //startdate et enddate
-        //seats
-        //jours récurrents
-        //enregistrements par jours
-
-        /*base.createCalendar = function(parameters) {
-            var now = new Date();
-            //console.log(now);
-            //console.log(new Date(parameters.startdate));
-            var dateMondayFirstWeek = base.getFirstWeek(now, parameters);
-            //header
-
-
-        };*/
 
         base.recurrence = function(parameters){
             recurrence = [parameters.recurrence['monday']?1:0,
@@ -59,12 +45,12 @@
                 parameters.recurrence['thursday']?1:0,
                 parameters.recurrence['friday']?1:0,
                 parameters.recurrence['saturday']?1:0,
-                parameters.recurrence['sunday']?1:0,
+                parameters.recurrence['sunday']?1:0
             ];
         };
 
         base.createCalendar = function(parameters){
-            var table = $('<table id="registrationtable"></table>');
+            var table = $('<table class="tableau-calendrier"></table>');
 
             var startdate = new Date(parameters.startdate);
             var enddate = new Date(parameters.enddate);
@@ -100,16 +86,21 @@
             for(var week = 0 ; week < diffDays ; week++){
 
                 //Date on the first column
-                var row = '<tr><td>' +
+                var row = '<tr><td class="semaine">' +
                     ("0" + startweek.getDate()).slice(-2)+'.'+("0" + (startweek.getMonth() + 1)).slice(-2)+'.'+startweek.getFullYear()
                     + '</td>';
 
                 for(var day = 0 ; day < 7 ; day++){
                     if(recurrence[day]){
-
-                        var count = base.countRegistrationsPerDate(parameters.registrations[0], startweek);
-
-                        row+='<td></td>';
+                        var count = base.countRegistrationsPerDate(parameters.registrations[0], startweek, parameters.userId);
+                        row+='<td>';
+                        if(1 == count[1]){
+                            row+='<div class="carre-vert"><p>';
+                        }else{
+                            row+='<div class="carre-blanc"><p>';
+                        }
+                        row+=count[0]+'/'+parameters.seats+'</p></div>';
+                        row+='</td>';
                     }
                     startweek = new Date(startweek.setDate(startweek.getDate() + 1));
                 }
@@ -119,42 +110,6 @@
 
 
             table.appendTo(el);
-            /*
-            var startDate = ride[0].split("-");
-            startDate = new Date(startDate[0], (startDate[1] - 1), startDate[2]);
-            startDate = startDate.getTime() < new Date().getTime() ? new Date() : startDate;
-
-            var startDayDayNb = base.dayNumber(startDate.getDay());
-            var recurringDaysAfter = 0;
-            do{
-            if(ride[5][startDayDayNb]===1){
-            recurringDaysAfter=1;
-            }
-            startDayDayNb++;
-            }while(recurringDaysAfter===0&&startDayDayNb<7);
-
-            if(recurringDaysAfter===0){
-            startDate = new Date(startDate.getTime() + 7 * 86400000);
-            }
-            var endDate = ride[1].split("-");
-            endDate = new Date(endDate[0], (endDate[1] - 1), endDate[2]);
-
-            //startDate : Premier jour où un ride peut être proposé. Si le ride est récurrent depuis mai et qu'on est en décembre, indiquera une date en décembre.
-            //endDate : Dernier jour où un ride peut être proposé.
-
-            //firstWeekFirstDay : Lundi de la première semaine où des rides sont affichés.
-            //lastWeeklastDay : Dimanche de la dernière semaine où des rides sont affichés.
-
-            //nbWeeks : Nombre de semaines où des rides seront affichés.
-
-            //dayCount : Compte le nombre de jours ayant été affichés par semaine. Si on en est au premier, ne pas insérer de virgule avant.
-
-            var firstWeekFirstDay = base.dayNumber(startDate.getDay()) === 0 ? startDate : new Date(startDate.getTime() - base.dayNumber(startDate.getDay())*86400000);
-            var lastWeeklastDay = base.dayNumber(endDate.getDay()) === 0 ? endDate : new Date(endDate.getTime() + (6 - base.dayNumber(endDate.getDay()))*86400000);
-
-            var nbDaysBetweenStartAndEndDates = Math.round((lastWeeklastDay.getTime() - firstWeekFirstDay.getTime())/(24*60*60*1000));
-            var nbWeeks = Math.ceil(nbDaysBetweenStartAndEndDates/7);
-            */
         };
 
         base.getMonday = function(dateToConvert){
@@ -171,27 +126,52 @@
             return new Date(date.setDate(diff));
         };
 
-        base.countRegistrationsPerDate = function(registrations, date){
+        base.countRegistrationsPerDate = function(registrations, date, userId){
             var registrationsPerDate = 0;
             var isRegistredThatDate = 0;
             for(var i = 0 ; i < registrations.length ; i ++){
                 if(new Date(registrations[i].date) == date){
                     registrationsPerDate++;
                 }
-                console.log(new Date(registrations[i].date));
-                console.log(date+'\n');
+                var regdate = new Date(registrations[i].date);
+
+                if(regdate.getFullYear() == date.getFullYear() && regdate.getMonth() == date.getMonth() && regdate.getDate() == date.getDate()){
+                    registrationsPerDate++;
+                    if(registrations[i].user_fk == userId){
+                        isRegistredThatDate++;
+                    }
+                }
+
             }
-            //console.log(registrations);
-            //console.log(date);
-            console.log(registrationsPerDate);
             return [registrationsPerDate, isRegistredThatDate];
-        }
+        };
+
+        base.eventsSetter = function(){
+            //Clic sur un carré de la grille (sélectionne juste la case)
+            $("div.carre-blanc, div.carre-vert").click(function(e){
+                $(this).toggleClass("carre-vert").toggleClass("carre-blanc");
+            });
+            //Clic sur le triangle du haut (sélectionne la colonne complète)
+            $("div.carre-noir").click(function(e){
+                var index = $(this).parent().index() + 1;
+                $('.tableau-calendrier td:nth-child('+index+')').slice(1).find('div').attr("class", "carre-vert");
+            });
+            //Clic sur la column des 1er lundi des semaines (sélectionne la ligne complète)
+            $("td.semaine").click(function(e){
+                $(this).parent().children("td").slice(1).children("div").attr("class", "carre-vert");
+            });
+        };
+
+
+        base.createSendTextbox = function(){
+            $('<br><input id="newRegistrationDates" type="textbox"/>').appendTo(el);
+        };
+
 
         base.init();
     };
 
     $.Registration.defaultOptions = {
-        registred: "rgb(45, 229, 70)"
     };
 
     $.fn.registration = function(options){
