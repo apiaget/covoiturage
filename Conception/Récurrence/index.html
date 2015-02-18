@@ -6,7 +6,7 @@
 	<link rel="stylesheet" type="text/css" href="main.css">
     <script src="jquery-1.11.1.min.js"></script>
     <!--<script src="registrations.js"></script>-->
-    <script src="registrations2.js"></script>
+    <script src="registrations.js"></script>
 </head>
 <body ng-controller="ctrl">
 	<!--<table id="registrationtable">
@@ -93,7 +93,7 @@
             "userId":[50]
         }
     </div>
-	<div id="registrationSystem">
+	<div class="tableau-calendrier">
 		{
 			"startdate":"2015-03-03 00:00:00",
 			"enddate":"2015-03-29 00:00:00",
@@ -137,7 +137,7 @@
     });
 
 	$(function () {
-		$('#registrationSystem').registration();
+		$('.tableau-calendrier').registration();
 	});
 
     </script>
