@@ -15,7 +15,8 @@
         base.init = function(){
             base.options = $.extend({},$.Registration.defaultOptions, options);
 
-            var parameters = $.parseJSON($(el).html());
+            //var parameters = $.parseJSON($(el).html());
+            var parameters = options;
             $(el).html('');
             $('<input id="registrationDates" type="hidden"/>').appendTo(el);
             base.recurrence(parameters); //Converti les jours récurrents en valeurs numériques (plus facile de travailler avec par la suite)

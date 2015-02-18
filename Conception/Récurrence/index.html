@@ -94,27 +94,6 @@
         }
     </div>
 	<div class="tableau-calendrier">
-		{
-			"startdate":"2015-03-03 00:00:00",
-			"enddate":"2015-03-29 00:00:00",
-			"seats":"3",
-			"isrecurrence":true,
-			"recurrence": {
-			"monday": true,
-			"tuesday": true,
-			"wednesday": true,
-			"thursday": true,
-			"friday": true,
-			"saturday": false,
-			"sunday": false
-			},
-			"registrations": [[
-				{"id": "220","user_fk": "2","ride_fk": "2","date": "2015-03-02"},
-				{"id": "351","user_fk": "71","ride_fk": "2","date": "2015-03-04"},
-				{"id": "501","user_fk": "103","ride_fk": "2","date": "2015-03-10"}
-			]],
-			"userId":"2"
-		}
 	</div>
     <br>
     <style>
@@ -137,7 +116,26 @@
     });
 
 	$(function () {
-		$('.tableau-calendrier').registration();
+		$('.tableau-calendrier').registration({
+            "startdate":"2015-03-03 00:00:00",
+            "enddate":"2015-03-29 00:00:00",
+            "seats":"3",
+            "recurrence": {
+                "monday": true,
+                "tuesday": true,
+                "wednesday": true,
+                "thursday": true,
+                "friday": true,
+                "saturday": false,
+                "sunday": false
+            },
+            "registrations": [[
+                {"id": "220","user_fk": "2","ride_fk": "2","date": "2015-03-02"},
+                {"id": "351","user_fk": "71","ride_fk": "2","date": "2015-03-04"},
+                {"id": "501","user_fk": "103","ride_fk": "2","date": "2015-03-10"}
+            ]],
+            "userId":"2"
+        });
 	});
 
     </script>
