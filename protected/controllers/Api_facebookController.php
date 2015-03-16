@@ -32,10 +32,12 @@ class Api_facebookController extends Controller
             $postArray = array();
             if("status"==$post->type){
                 $postArray['text'] = $post->message;
-                $postArray['date'] = $post->updated_time;
+                $postArray['date'] = date("d.m.Y", strtotime($post->updated_time));
+                $postArray['isImage'] = false;
             }else if("photo"==$post->type){
                 $postArray['text'] = $post->message;
-                $postArray['date'] = $post->updated_time;
+                $postArray['date'] = date("d.m.Y", strtotime($post->updated_time));
+                $postArray['isImage'] = true;
 
                 //get the photo
                 $request = new \Facebook\FacebookRequest(
@@ -49,7 +51,6 @@ class Api_facebookController extends Controller
                 $postArray['image'] = $graphPhoto['images'][2]->source;
             }
             array_push($result, $postArray);
-
         }
         echo CJSON::encode($result);
         Yii::app()->end();
