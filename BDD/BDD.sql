@@ -17,8 +17,18 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Base de données :  `covoiturage`
+-- Base de données :  `covoiturag_db`
 --
+
+CREATE SCHEMA IF NOT EXISTS `covoiturag_db` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
+USE `covoiturag_db` ;
+
+-- -----------------------------------------------------
+-- Création utilisateur
+-- -----------------------------------------------------
+CREATE USER 'username'@'localhost' IDENTIFIED BY 'motdepasse';
+GRANT ALL PRIVILEGES ON covoiturag_db.* TO 'username'@'localhost';
+FLUSH PRIVILEGES;
 
 -- --------------------------------------------------------
 
