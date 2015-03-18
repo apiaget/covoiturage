@@ -8,12 +8,12 @@
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
 	'name'=>'Covoiturage',
+	'aliases'=>array(
+		'vendor' => realpath(__DIR__ . '/../../vendor'),
+	),
 	'sourceLanguage'=>'fr_fr',
 	'language' => 'fr',
-	
-	//preloading yiimailer
-	//'ext.YiiMailer.YiiMailer',
-	
+
 	// preloading 'log' component
 	'preload'=>array('log'),
 
@@ -45,51 +45,34 @@ return array(
 		// uncomment the following to enable URLs in path-format
 		'urlManager'=>array(
 			'urlFormat'=>'path',
+			'showScriptName'=>false,
+			'caseSensitive'=>false,
 			'rules'=>array(
-				/*'<var:(login|logout|contact|home)>'=>'site/<var>',*/
-				//array('api/update', 'pattern'=>'api/rides/<id:\d+>/registrations', 'verb'=>'PUT'),
-				//array('api/view', 'pattern'=>'api/<model:\w+>/<id:\d+>', 'verb'=>'GET'),
-				//array('api/list', 'pattern'=>'api/<model:\w+>', 'verb'=>'GET'),
-				//array('api/update', 'pattern'=>'api/<model:\w+>/<id:\d+>', 'verb'=>'PUT'),
-				//array('api/delete', 'pattern'=>'api/<model:\w+>/<id:\d+>', 'verb'=>'DELETE'),
-				//array('api/create', 'pattern'=>'api/<model:\w+>', 'verb'=>'POST'),
-				//array('api/<controller:\w+>'=>'api_<controller>/index'),
 
+				array('Api_<controller>/connexion', 'pattern'=>'api/<controller:\w+>/connexion', 'verb'=>'POST'), //deconnexion
+				array('Api_<controller>/deconnexion', 'pattern'=>'api/<controller:\w+>/deconnexion', 'verb'=>'POST'), //deconnexion
 
 				// requête GET /api/rides/1   "passe" par le fichier       protected/controllers/api_RidesController.php
 				// 														OU protected/controllers/api/RidesController.php
-				array('api_<controller>/update', 'pattern'=>'api/rides/<id:\d+>/<controller:\w+>', 'verb'=>'PUT'),
+				array('Api_<controller>/update', 'pattern'=>'api/rides/<id:\d+>/<controller:\w+>', 'verb'=>'PUT'),
+				array('Api_<controller>/view', 'pattern'=>'api/<controller:\w+>/<id:\d+>', 'verb'=>'GET'),
+				array('Api_<controller>/list', 'pattern'=>'api/<controller:\w+>', 'verb'=>'GET'),
+				array('Api_<controller>/update', 'pattern'=>'api/<controller:\w+>/<id:\d+>', 'verb'=>'PUT'),
+				array('Api_<controller>/delete', 'pattern'=>'api/<controller:\w+>/<id:\d+>', 'verb'=>'DELETE'),
+				array('Api_<controller>/create', 'pattern'=>'api/<controller:\w+>', 'verb'=>'POST'),
 
-				array('api_<controller>/view', 'pattern'=>'api/<controller:\w+>/<id:\d+>', 'verb'=>'GET'), //Fonctionne
-				array('api_<controller>/list', 'pattern'=>'api/<controller:\w+>', 'verb'=>'GET'),
-				array('api_<controller>/update', 'pattern'=>'api/<controller:\w+>/<id:\d+>', 'verb'=>'PUT'),
-				array('api_<controller>/delete', 'pattern'=>'api/<controller:\w+>/<id:\d+>', 'verb'=>'DELETE'),
-				array('api_<controller>/create', 'pattern'=>'api/<controller:\w+>', 'verb'=>'POST'),
-
-
-
-
-
-
-				//array('api/<controller:\w+>/<id:\d+>'=>'Api/<controller>/view'),
-				//array('api/<controller:\w+>/<action:\w+>/<id:\d+>'=>'Api/<controller>/<action>'),
-				//array('api/<controller:\w+>/<action:\w+>'=>'Api/<controller>/<action>'),
 
 				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
 				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
-			),
-			'showScriptName'=>false,
+			)
 		),
-		/*'db'=>array(
-			'connectionString' => 'sqlite:'.dirname(__FILE__).'/../data/testdrive.db',
-		),*/
 		// uncomment the following to use a MySQL database
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=covoiturage',
+			'connectionString' => 'mysql:host=localhost;dbname=covoiturag_db',
 			'emulatePrepare' => true,
-			'username' => 'root',
-			'password' => '',
+			'username' => 'username',
+			'password' => 'password',
 			'charset' => 'utf8',
 		),
 		'errorHandler'=>array(
@@ -113,8 +96,6 @@ return array(
 		),
 	),
 
-	// application-level parameters that can be accessed
-	// using Yii::app()->params['paramName']
 	'params'=>array(
 		// this is used in contact page
 		'adminEmail'=>'webmaster@covoiturage.ch',
@@ -123,6 +104,9 @@ return array(
 		'ExecutionTime'=>'no', //yes = show execution time, no = don't show execution time
 		'Votes'=>'no', //yes = show reputation values, no = don't show reputation
 		'rideListNumber'=>100, //nombre de ride à charger lors du listing de ceux-ci à travers l'api
+		'townsListNumber'=>10, //nombre de ride à charger lors du listing de ceux-ci à travers l'api
+		'IDAPP'=>"***",         //app id facebook
+		'SECRETAPP'=>"***",     //secret key facebook
+        'FACEBOOKPAGE'=>"***",  //page id facebook
 	),
-	
 );
