@@ -59,51 +59,92 @@ class Api_RidesController extends Controller
 
 		if (isset($_GET['mine']) && $_GET['mine'] == 'true') { //voit que les trajets où il est inscrit ou qu'il conduit
 			$userRequest = User::model()->find('token=:token', array(':token' => $token));
-			$rides = Ride::model()->with('driver')->with('departuretown')->with('arrivaltown')->findAll(array('condition' => 'driver_fk=:user_fk and enddate >= :today and visibility = 1', 'limit' => Yii::app()->params['rideListNumber'], 'params' => array(':user_fk'=> $userRequest->id,':today' => $today)));
-
+			//Trajets conduits par l'utilisateur
+            $rides = Ride::model()->with('driver')->with('departuretown')->with('arrivaltown')->findAll(array('condition' => 'driver_fk=:user_fk and enddate >= :today and visibility = 1', 'limit' => Yii::app()->params['rideListNumber'], 'params' => array(':user_fk'=> $userRequest->id,':today' => $today)));
+            //Trajets auxquels l'utilisateur est inscrit
 			$registrations = Registration::model()->with('rideFk')->findAll(array('condition' => 'user_fk=:user_fk and date >= :today and visibility=1', 'params' => array(':user_fk'=> $userRequest->id,':today' => $today)));
 
-			foreach($registrations as $registration) {
-				array_push($rides, $registration->rideFk);
-			}
+            $trajets = array(); //Contient les trajets ainsi que la date où ils ont lieu pour l'utilisateur
+
+            foreach($registrations as $registration) {
+                $trajet = (array)$registration->rideFk;
+                $trajet = $trajet[array_keys($trajet)[1]];
+                $trajet['date'] = $registration->date;
+                $trajet['driver'] = array("nom" => $registration->rideFk->driver->firstname, "prenom" => $registration->rideFk->driver->lastname);
+                $trajet['departuretown'] = array("id" => $registration->rideFk->departuretown->id, "name" => $registration->rideFk->departuretown->name );
+                $trajet['arrivaltown'] = array("id" => $registration->rideFk->arrivaltown->id, "name" => $registration->rideFk->arrivaltown->name );
+                $trajet['isDriver'] = false;
+                $trajet = (object)$trajet;
+                array_push($trajets, $trajet);
+            }
+
+            $today = date('Y-m-d H:i:s');
+            foreach($rides as $ride){
+                //on trouve toutes les dates où il a lieu à partir d'aujourd'hui
+                $date = $ride->startDate;
+                $enddate = $ride->endDate;
+                $days=array(
+                    1 => $ride->monday,
+                    2 => $ride->tuesday,
+                    3 => $ride->wednesday,
+                    4 => $ride->thursday,
+                    5 => $ride->friday,
+                    6 => $ride->saturday,
+                    7 => $ride->sunday
+                );
+                do{
+                    if($today<=date('Y-m-d H:i:s', strtotime($date)) && $days[date('N', strtotime($date))]){
+                        $trajet = (array)$ride;
+                        $trajet = $trajet[array_keys($trajet)[1]];
+                        //var_dump($trajet[array_keys($trajet)[1]]);
+                        $trajet['date'] = date('Y-m-d', strtotime($date));
+                        $trajet['driver'] = array("nom" => $ride->driver->firstname, "prenom" => $ride->driver->lastname);
+                        $trajet['departuretown'] = array("id" => $ride->departuretown->id, "name" => $ride->departuretown->name );
+                        $trajet['arrivaltown'] = array("id" => $ride->arrivaltown->id, "name" => $ride->arrivaltown->name );
+                        $trajet['isDriver'] = true;
+                        $trajet = (object)$trajet;
+                        array_push($trajets, $trajet);
+                    }
+                    $date = date('Y-m-d H:i:s', strtotime($date . ' + 1 day'));
+                }while($date<=$enddate);
+            }
 
 			// Trajets triés sur la date de commencement du trajet
 			/* TODO imaginer un tri plus pertinant ? Dans le cas où un trajet est disponible depuis longtemps mais qu'on s'y inscrit pour l'occurence dans 1 mois,
 			 * ce vieux trajet apparaîtera en premier même si on a des inscriptions avant
 			 */
-			usort($rides, function( $a, $b ) {
-				return strtotime($a["startDate"]) - strtotime($b["endDate"]);
-			});
+
+            usort($trajets, function($a, $b){
+                return strcmp(strtotime($a->date), strtotime($b->date));
+            });
 
 			$array = array();
-			foreach ($rides as $ride) {
+			foreach ($trajets as $trajet) {
 				$rideArray = array(
-					"id" => $ride->id,
-					"isDriver" => $ride->driver->id==$userRequest->id,
-					"driver" => array("prenom" => $ride->driver->firstname, "nom" => $ride->driver->lastname),
-					"departuretown" => array("id" => $ride->departuretown->id, "name" => $ride->departuretown->name),
-					"departure" => date("H:i", strtotime($ride->departure)),
-					"arrivaltown" => array("id" => $ride->arrivaltown->id, "name" => $ride->arrivaltown->name),
-					"arrival" => date("H:i", strtotime($ride->arrival)),
-					"startdate" => $ride->startDate,
-					"enddate" => $ride->endDate,
-					"description" => $ride->description,
-					"seats" => $ride->seats,
-					"isrecurrence" => $ride->startDate != $ride->endDate,
+					"id" => $trajet->id,
+					"isDriver" => $trajet->isDriver,
+					"driver" => $trajet->driver,
+					"departuretown" => $trajet->departuretown,
+					"departure" => date("H:i", strtotime($trajet->departure)),
+					"arrivaltown" => $trajet->arrivaltown,
+					"arrival" => date("H:i", strtotime($trajet->arrival)),
+                    "startdate" => $trajet->date,
+                    "enddate" => $trajet->date,
+					"description" => $trajet->description,
+					"seats" => $trajet->seats,
+					"isrecurrence" => $trajet->startDate != $trajet->endDate,
 					"recurrence" => array(
-						"monday" => (bool)$ride->monday,
-						"tuesday" => (bool)$ride->tuesday,
-						"wednesday" => (bool)$ride->wednesday,
-						"thursday" => (bool)$ride->thursday,
-						"friday" => (bool)$ride->friday,
-						"saturday" => (bool)$ride->saturday,
-						"sunday" => (bool)$ride->sunday
+						"monday" => (bool)$trajet->monday,
+						"tuesday" => (bool)$trajet->tuesday,
+						"wednesday" => (bool)$trajet->wednesday,
+						"thursday" => (bool)$trajet->thursday,
+						"friday" => (bool)$trajet->friday,
+						"saturday" => (bool)$trajet->saturday,
+						"sunday" => (bool)$trajet->sunday
 					),
-					//"registrations" => $registrationsArray
 				);
 				array_push($array, $rideArray);
 			}
-
 			echo CJSON::encode($array);
 		} else if (isset($_GET['q']) && $_GET['q'] != '') { //voit que les trajets dont le nom des villes contient la requête
 			$towns = Town::model()->findAll(array('condition' => 'name like :query', 'params' => array(':query'=>'%'.$_GET['q'].'%')));
