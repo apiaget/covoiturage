@@ -26,9 +26,7 @@ USE `covoiturag_db` ;
 -- -----------------------------------------------------
 -- Création utilisateur
 -- -----------------------------------------------------
-CREATE USER 'username'@'localhost' IDENTIFIED BY 'motdepasse';
-GRANT ALL PRIVILEGES ON covoiturag_db.* TO 'username'@'localhost';
-FLUSH PRIVILEGES;
+GRANT ALL ON `covoiturag_db`.* to 'username'@'localhost' identified by 'motdepasse';
 
 -- --------------------------------------------------------
 
@@ -2879,7 +2877,7 @@ INSERT INTO `towns` (`id`, `name`) VALUES
 (2012, 'Grandcour'),
 (2013, 'Henniez'),
 (2014, 'Missy'),
-(2017, 'Payerne'),
+(2015, 'Payerne'),
 (2016, 'Trey'),
 (2017, 'Treytorrens (Payerne)'),
 (2018, 'Villarzel'),
