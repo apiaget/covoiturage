@@ -64,87 +64,33 @@ class Api_RegistrationsController extends Controller
 
 		$registrations = Registration::model()->findAll('user_fk = :user AND ride_fk = :ride AND date >= :today', array(':today' => $today, ':user' => $userRequest->id, ':ride' => $id));
 
-		foreach($registrations as $registration){
-			$registration->delete();
-		}
-		$data = CJSON::decode(file_get_contents('php://input'));
-		$newRegistrations = $data['registrations'];
-		foreach($newRegistrations as $newRegistration)
-		{
-			$newReg = new Registration;
-			$newReg->ride_fk = $id;
-			$newReg->user_fk = $userRequest->id;
-			$newReg->date = $newRegistration;
-			$newReg->save();
-		}
+        foreach($registrations as $registration){
+            $registration->delete();
+        }
+        $data = CJSON::decode(file_get_contents('php://input'));
+        $newRegistrations = $data['registrations'];
+        foreach($newRegistrations as $newRegistration)
+        {
+            $newReg = new Registration;
+            $newReg->ride_fk = $id;
+            $newReg->user_fk = $userRequest->id;
+            $newReg->date = $newRegistration;
+            $newReg->save();
+        }
 
-		$registrations = Registration::model()->findAll('user_fk = :user AND ride_fk = :ride AND date >= :today', array(':today' => $today, ':user' => $userRequest->id, ':ride' => $id));
+        //On veut indiquer au conducter que les inscriptions au trajet qu'il propose ont été modifiées
+        $ride=Ride::model()->find('id=:rideId', array(':rideId'=>$id));
+        $driver = $ride->driver;
+        $registrations = Registration::model()->findAll('user_fk = :user AND ride_fk = :ride AND date >= :today', array(':today' => $today, ':user' => $userRequest->id, ':ride' => $id));
+        $subject = "Covoiturage CPNV - Un utilisateur a modifié ses inscriptions à ton trajet";
+        $mail = new YiiMailer('modificationsinscriptions', array(
+            'ride' => $ride,
+            'registrations' => $registrations,
+        ));
+        $driver->sendEmail($mail,$subject);
 
 		$registrations = array("registrations" => $registrations);
-
 		echo CJSON::encode($registrations);
 		Yii::app()->end();
-
-		//die;
-		//$ride = Ride::model()->find('id=:id and visibility=1', array(':id' => $id));
-		//if(isset($ride) && $ride->driver_fk == $userRequest->id){
-		//	$data = CJSON::decode(file_get_contents('php://input'));
-		//	$ride->departuretown_fk = isset($data['departuretown']['id']) ? $data['departuretown']['id'] : $ride->departuretown_fk;
-		//	$ride->departure = isset($data['departure']) ? "1970-01-01 ".$data['departure'] : $ride->departure;
-		//	$ride->arrivaltown_fk = isset($data['arrivaltown']['id']) ? $data['arrivaltown']['id'] : $ride->arrivaltown_fk;
-		//	$ride->arrival = isset($data['arrival']) ? "1970-01-01 ".$data['arrival'] : $ride->arrival;
-		//	$ride->startDate = isset($data['startdate']) ? $data['startdate'] : $ride->startDate;
-		//	$ride->endDate = isset($data['enddate']) ? $data['enddate'] : $ride->endDate;
-		//	$ride->description = isset($data['description']) ? $data['description'] : $ride->description;
-		//	$ride->seats = isset($data['seats']) ? $data['seats'] : $ride->seats;
-		//	$ride->monday =  isset($data['recurrence']['monday']) ? $data['recurrence']['monday'] : $ride->monday;
-		//	$ride->tuesday =  isset($data['recurrence']['tuesday']) ? $data['recurrence']['tuesday'] : $ride->tuesday;
-		//	$ride->wednesday =  isset($data['recurrence']['wednesday']) ? $data['recurrence']['wednesday'] : $ride->wednesday;
-		//	$ride->thursday =  isset($data['recurrence']['thursday']) ? $data['recurrence']['thursday'] : $ride->thursday;
-		//	$ride->friday =  isset($data['recurrence']['friday']) ? $data['recurrence']['friday'] : $ride->friday;
-		//	$ride->saturday =  isset($data['recurrence']['saturday']) ? $data['recurrence']['saturday'] : $ride->saturday;
-		//	$ride->sunday =  isset($data['recurrence']['sunday']) ? $data['recurrence']['sunday'] : $ride->sunday;
-		//	$ride->visibility =  isset($data['visibility']) ? $data['visibility'] : $ride->visibility;
-		//	$ride->save(); //Si on met update(), les données ne sont pas revalidées
-//
-		//	if(count($ride->errors)>0){
-		//		header('HTTP/1.1 400');
-		//	}else{
-		//		header('HTTP/1.1 200');
-		//		$registrationsArray = array($ride->registrations);
-		//		usort($registrationsArray[0], function( $a, $b ) {
-		//			return strtotime($a["date"]) - strtotime($b["date"]);
-		//		});
-		//		$rideArray = array(
-		//			"id"=>$ride->id,
-		//			"departuretown" => array("id"=>$ride->departuretown->id,"name"=>$ride->departuretown->name),
-		//			"departure"=>date("H:i",strtotime($ride->departure)),
-		//			"arrivaltown" => array("id"=>$ride->arrivaltown->id,"name"=>$ride->arrivaltown->name),
-		//			"arrival"=>date("H:i",strtotime($ride->arrival)),
-		//			"startdate"=>$ride->startDate,
-		//			"enddate"=>$ride->endDate,
-		//			"description"=>$ride->description,
-		//			"seats"=>$ride->seats,
-		//			"isrecurrence"=>$ride->startDate!=$ride->endDate,
-		//			"recurrence" => array(
-		//				"monday" => $ride->monday,
-		//				"tuesday" => $ride->tuesday,
-		//				"wednesday" => $ride->wednesday,
-		//				"thursday" => $ride->thursday,
-		//				"friday" => $ride->friday,
-		//				"saturday" => $ride->saturday,
-		//				"sunday" => $ride->sunday
-		//			),
-		//			"registrations"=> $registrationsArray
-		//		);
-		//		echo CJSON::encode($rideArray);
-		//	}
-		//	Yii::app()->end();
-		//}else if(!isset($ride)){
-		//	throw new CHttpException(404,'Ride not found.');
-		//}else {
-		//	throw new CHttpException(403,'You have no rights to update that ride.');
-		//}
 	}
-
 }
