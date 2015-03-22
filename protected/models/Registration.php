@@ -42,91 +42,6 @@ class Registration extends CActiveRecord
 		);
 	}
 
-/*	public function doublon($attribute,$params)
-	{
-		//this = la registration testée
-		/* on veut s'arranger pour agrandir/fusionner les registrations et les trucs du genre
-		 * c'est ici qu'en enregistrera la registration
-		 *//*
-		
-		$registrations = Registration::model()->findAll('ride_fk = :ride AND user_fk = :user ORDER BY startDate ASC', array(':ride'=>$this->ride_fk, ':user' => User::currentUser()->id));
-		
-		//si l'utilisateur n'a pas encore fait de registration pour ce ride
-		if(count($registrations)==0)
-		{
-			if($this->placeDispoRide())
-			{
-				$this->save(false);
-			}
-			else
-			{
-				$this->addError($attribute, 'Il n\'y a plus de place dans la voiture pour les dates sélectionnées.');
-			}
-		}
-		else //si l'utilisateur a déjà au moins une registration sur ce ride
-		{
-			$noSave=0;
-			//Modifier pour que l'utilisateur puisse agrandir ses registrations ou avoir plusieurs plages de réservations
-			foreach ($registrations as $registration) {
-				if(strtotime($this->endDate. ' + 7 days')>=strtotime($registration->startDate) && strtotime($this->startDate)<strtotime($registration->startDate))
-				{
-					if($this->placeDispoRide())
-					{
-						$registration->startDate=date("Y-m-d 00:00:00",strtotime($this->startDate));
-						$registration->save(false);
-					}else
-					{
-						$this->addError($attribute, 'Il n\'y a plus de place dans la voiture pour les dates sélectionnées.');
-					}
-					$noSave++;
-				}
-				else if(strtotime($this->startDate. ' - 7 days')<=strtotime($registration->endDate) && strtotime($this->endDate)>strtotime($registration->endDate))
-				{
-					if($this->placeDispoRide())
-					{
-						$registration->endDate=date("Y-m-d 00:00:00",strtotime($this->endDate));
-						$registration->save(false);
-					}else
-					{
-						$this->addError($attribute, 'Il n\'y a plus de place dans la voiture pour les dates sélectionnées.');
-					}
-					$noSave++;
-				}else if(strtotime($this->startDate)>=strtotime($registration->startDate)&&strtotime($this->endDate)<=strtotime($registration->endDate)){
-					$this->addError($attribute, 'Vous avez déjà une réservation englobant ces dates.');
-					$noSave++;
-				}
-			}
-
-			if($noSave==0)
-			{
-				$this->save(false);
-			}
-
-			//reprendre les registrations avec la nouvelle registration créée
-			$registrations = Registration::model()->findAll('ride_fk = :ride AND user_fk = :user ORDER BY startDate ASC', array(':ride'=>$this->ride_fk, ':user' => User::currentUser()->id));
-			//Fusion des différentes registrations pour une personne
-			for($i=0;$i<count($registrations)-1;$i++)
-			{
-				if(strtotime($registrations[$i]->endDate)>=strtotime($registrations[$i+1]->startDate))
-				{
-					if($registrations[$i]->accepted==1||$registrations[$i+1]->accepted==1)
-					{
-						$registrations[$i]->accepted=1;
-					}
-					else{
-						$registrations[$i]->accepted=0;
-					}
-					$registrations[$i]->endDate=$registrations[$i+1]->endDate;
-					$registrations[$i]->save(false);
-					$registrations[$i+1]->delete(false);
-					$i--;
-					$registrations = Registration::model()->findAll('ride_fk = :ride AND user_fk = :user ORDER BY startDate ASC', array(':ride'=>$this->ride_fk, ':user' => User::currentUser()->id));
-
-				}
-			}
-		}
-	}*/
-
 	/**
 	 * @return array relational rules.
 	 */
@@ -150,9 +65,6 @@ class Registration extends CActiveRecord
 			'id' => 'ID',
 			'user_fk' => 'User Fk',
 			'ride_fk' => 'Ride Fk',
-		//	'startDate' => 'Start Date',
-		//	'endDate' => 'End Date',
-		//	'accepted' => 'Accepted',
 		);
 	}
 
@@ -196,47 +108,4 @@ class Registration extends CActiveRecord
 	{
 		return parent::model($className);
 	}
-
-
-	/*
-	*	PlaceDisponible? entre deux dates et pour un ride
-	*	Test si y'a des places disponibles sur le ride auquel la registration s'applique
-	*	return true si y'a de la place, false sinon
-	*
-	*/
-	/*public function placeDispoRide()
-	{
-		$registrations = Registration::model()->findAll('ride_fk = :ride AND user_fk!=:user AND (
-				(:dateDebut <= startDate AND :dateFin >= endDate)
-				OR (:dateDebut <= endDate AND :dateDebut >= startDate)
-				OR (:dateFin >= startDate AND :dateFin <= endDate)
-				OR (:dateDebut >= startDate AND :dateFin <= endDate))',
-		array(':ride'=>$this->ride_fk,':user' => User::model()->currentUser()->id ,':dateDebut' => $this->startDate, ':dateFin' => $this->endDate));
-
-		$ride = Ride::model()->findByPk($this->ride_fk);
-
-		$dateRemplissageTableau = $date=date('Y-m-d 00:00:00', strtotime($this->startDate));
-		$seatsTaken = array();
-		$i=0;
-		do{ //prépare le tableau où sera indiqué le nombre de places utilisées par date
-			$seatsTaken[$i]=0;
-			$i++;
-			$dateRemplissageTableau = date('Y-m-d 00:00:00', strtotime($dateRemplissageTableau. ' + 7 days'));
-		}while(strtotime($dateRemplissageTableau)<=strtotime($this->endDate));
-
-		$i=0;
-		do{ //remplis le tableau
-			foreach ($registrations as $registration) {
-				if($registration->startDate <= $date && $registration->endDate >= $date && $registration->accepted==1)
-				{
-					$seatsTaken[$i]=$seatsTaken[$i]+1;
-				}
-			}
-			$i++;
-			$date = date('Y-m-d 00:00:00', strtotime($date. ' + 7 days'));
-		}while(strtotime($date)<=strtotime($this->endDate));
-
-		//si le tableau contient le nombre de place pour le ride, ça veut dire qu'il n'y a plus de places
-		return !(in_array($ride->seats,$seatsTaken));
-	}*/
 }

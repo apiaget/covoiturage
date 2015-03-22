@@ -58,9 +58,6 @@ class User extends CActiveRecord
 		);
 	}
 
-
-
-
 	/**
 	 * check if the user password is strong enough
 	 * check the password against the pattern requested
@@ -73,9 +70,6 @@ class User extends CActiveRecord
 	    if(!preg_match($pattern, $this->$attribute))
 	      $this->addError($attribute, 'Le numéro de téléphone ne semble pas valide');
 	}
-
-
-
 
 	/**
 	 * @return array relational rules.
@@ -163,71 +157,6 @@ class User extends CActiveRecord
 	{
 		return parent::model($className);
 	}
-
-	public function reputation(){
-		$votes = Vote::model()->findAll('targetuser_fk=:userid', array(':userid'=>$this->id));
-		if(count($votes)!=0){
-			$total=0;
-			foreach ($votes as $vote) {
-				$total+=$vote->vote;
-			}
-			return array($total*20/count($votes), count($votes));
-		}else{
-			return array(0, 0);
-		}
-	}
-
-	public function nom(){
-		if(Yii::app()->params['mode']=="maison")
-		{
-			return $this->lastname;
-		}
-		$IU = new IntranetUser();
-		$intranet_user = $IU->find($this->cpnvId);
-		// WARNING: TODO: handle dropped users
-		return $intranet_user->lastname;
-	}
-	public function prenom(){
-		if(Yii::app()->params['mode']=="maison")
-		{
-			return $this->firstname;
-		}
-		$IU = new IntranetUser();
-		$intranet_user = $IU->find($this->cpnvId);
-		// WARNING: TODO: handle dropped users
-		return $intranet_user->firstname;
-	}
-
-	public static function currentUser(){
-		$user = User::model()->find('cpnvId=:cpnvId', array(':cpnvId'=>$_SERVER['HTTP_X_FORWARDED_USER']));
-		//die($_SERVER['HTTP_X_FORWARDED_USER']);
-		if (!$user&&Yii::app()->params['mode']=="intranet") {
-			try{
-				$IU =new IntranetUser();
-				$intranet_user = $IU->find($_SERVER['HTTP_X_FORWARDED_USER']);
-				if ($intranet_user === false) throw new CException('Unknown intranet user');
-				$user = new User();
-				$user->cpnvId = $intranet_user->friendly_id;
-				$user->email = $intranet_user->corporate_email;
-				$user->firstname=$intranet_user->firstname;
-				$user->lastname=$intranet_user->lastname;
-				$user->hideEmail = 0;
-				$user->hideTelephone = 0;
-				$user->notifInscription = 1;
-				$user->notifComment = 1;
-				$user->notifUnsuscribe = 1;
-				$user->notifDeleteRide = 1;
-				$user->notifModification = 1;
-				//$user->notifValidation = 1;
-				$user->blacklisted = 0;
-				$user->admin = 0;
-				$user->save(false);
-			}catch(Exception $e){
-				throw new Exception('Vous n\'avez pas accès à l\'intranet');
-			}
-		}
-		return $user;
-	}
 	
 	public function sendEmail($mail,$subject){
 
@@ -244,16 +173,19 @@ class User extends CActiveRecord
 		$mail->setTo($this->email);
 		$mail->Host='mail.cpnv.ch';
 */
-		$mail->IsSMTP();
-		$mail->setFrom('***', '***');
+        $mail->IsSMTP();
+        $mail->setFrom('email', 'nom');
         $mail->setTo($this->email);
         $mail->setSubject($subject);
-        $mail->Host = "***";
-        $mail->Port = "***";
+        $mail->Host = "smtp";
+        $mail->Port = 587; //ou 587
         $mail->SMTPAuth = true;
-        $mail->Username = "***";
-        $mail->Password = "****";
+        $mail->Username = "username";
+        $mail->Password = "password";
+        //$mail->SMTPDebug = 1;
+        $mail->SMTPSecure = 'tls';
         $mail->IsHTML(true);
         $mail->send();
+
 	}
 }

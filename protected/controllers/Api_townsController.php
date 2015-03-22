@@ -51,7 +51,6 @@ class Api_TownsController extends Controller
 
 
     public function actionList(){
-        //TODO Ordonner les rides
         $token = $_GET['token'];
         header('Content-type: ' . 'application/json');
 

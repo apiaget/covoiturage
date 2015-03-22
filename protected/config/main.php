@@ -28,12 +28,12 @@ return array(
 
 	'modules'=>array(
 		// uncomment the following to enable the Gii tool
-		'gii'=>array(
+		/*'gii'=>array(
 			'class'=>'system.gii.GiiModule',
 			'password'=>'covoiturage',
 			// If removed, Gii defaults to localhost only. Edit carefully to taste.
 			'ipFilters'=>array('127.0.0.1','::1'),
-		),
+		),*/
 	),
 
 	// application components
@@ -72,7 +72,7 @@ return array(
 			'connectionString' => 'mysql:host=localhost;dbname=covoiturag_db',
 			'emulatePrepare' => true,
 			'username' => 'username',
-			'password' => 'password',
+			'password' => 'motdepasse',
 			'charset' => 'utf8',
 		),
 		'errorHandler'=>array(
@@ -97,12 +97,7 @@ return array(
 	),
 
 	'params'=>array(
-		// this is used in contact page
 		'adminEmail'=>'webmaster@covoiturage.ch',
-		'mode'=>"maison", //maison = work without connection to intranet
-						  //intranet = has access to intranet and can create automatically new users
-		'ExecutionTime'=>'no', //yes = show execution time, no = don't show execution time
-		'Votes'=>'no', //yes = show reputation values, no = don't show reputation
 		'rideListNumber'=>100, //nombre de ride à charger lors du listing de ceux-ci à travers l'api
 		'townsListNumber'=>10, //nombre de ride à charger lors du listing de ceux-ci à travers l'api
 		'IDAPP'=>"***",         //app id facebook

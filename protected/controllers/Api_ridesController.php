@@ -59,7 +59,7 @@ class Api_RidesController extends Controller
 
 		if (isset($_GET['mine']) && $_GET['mine'] == 'true') { //voit que les trajets où il est inscrit ou qu'il conduit
 			$userRequest = User::model()->find('token=:token', array(':token' => $token));
-			//Trajets conduits par l'utilisateur
+			//Trajets conduits par l'utilisateur. A noter qu'on charge déjà des informations supplémentaires pour éviter de devoir exécuter des requêtes supplémentaires par la suite (ex : récupérer les nom des villes)
             $rides = Ride::model()->with('driver')->with('departuretown')->with('arrivaltown')->findAll(array('condition' => 'driver_fk=:user_fk and enddate >= :today and visibility = 1', 'limit' => Yii::app()->params['rideListNumber'], 'params' => array(':user_fk'=> $userRequest->id,':today' => $today)));
             //Trajets auxquels l'utilisateur est inscrit
 			$registrations = Registration::model()->with('rideFk')->findAll(array('condition' => 'user_fk=:user_fk and date >= :today and visibility=1', 'params' => array(':user_fk'=> $userRequest->id,':today' => $today)));

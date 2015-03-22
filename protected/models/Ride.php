@@ -52,21 +52,13 @@ class Ride extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('driver_fk, departuretown_fk, arrivaltown_fk, seats', 'required'),
-			//array('driver_fk, departuretown_fk, arrivaltown_fk, bindedride, seats, day', 'numerical', 'integerOnly'=>true),
 			array('driver_fk, departuretown_fk, arrivaltown_fk, seats', 'numerical', 'integerOnly'=>true),
 			array('description, departure, arrival, startDate, endDate', 'safe'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			//array('id, driver_fk, departuretown_fk, arrivaltown_fk, bindedride, description, departure, arrival, seats, startDate, endDate, day', 'safe', 'on'=>'search'),
-
 			array('id, driver_fk, departuretown_fk, arrivaltown_fk, description, departure, arrival, seats, startDate, endDate', 'safe', 'on'=>'search'),
-
 			array('departure, arrival', 'required', 'message'=>'Les heures ne sont pas valides'),
 			array('startDate, endDate', 'required', 'message'=>'Vous devez choisir une date'),
 			array('endDate', 'endDateValidation'),
 			array('startDate', 'startDateValidation'),
-			//array('arrival', 'timeformat'),
-			//array('departure', 'timeformat'),
 			array('arrival', 'timeValidation')
 		);
 	}
@@ -92,30 +84,11 @@ class Ride extends CActiveRecord
 			 $this->addError($attribute, 'La date du trajet ne doit pas être située dans le passé');
 		}
 	}
-	/*public function timeformat($attribute)
-	{
-	    $pattern = '/^(([0-1]){1,}([0-9]{1,})|(2[0-3]))(:)([0-5]{1}[0-9]{1})$/';
- 
-	    if(!preg_match($pattern, $this->$attribute))
-	    {
-	      $this->addError($attribute, 'Le format des heures doit être le suivant : hh:mm');
-	     }
-	}*/
-
-
 
 	protected function afterFind ()
     {
-            // convert to display format
-        //$this->departure = strtotime($this->departure);
-        //$this->departure = date('H:i', $this->departure);
-        //$this->arrival = strtotime($this->arrival);
-        //$this->arrival = date('H:i', $this->arrival);
-		//TODO changement des dates
         parent::afterFind ();
     }
-
-
 
 	/**
 	 * @return array relational rules.
@@ -130,8 +103,6 @@ class Ride extends CActiveRecord
 			'ridebadges' => array(self::HAS_MANY, 'Ridebadge', 'ride_fk'),
 			'departuretown' => array(self::BELONGS_TO, 'Town', 'departuretown_fk'),
 			'arrivaltown' => array(self::BELONGS_TO, 'Town', 'arrivaltown_fk'),
-			//'trajetretour' => array(self::BELONGS_TO, 'Ride', 'bindedride'),
-			//'rides' => array(self::HAS_ONE, 'Ride', 'bindedride'),
 			'driver' => array(self::BELONGS_TO, 'User', 'driver_fk'),
 		);
 	}
@@ -146,14 +117,12 @@ class Ride extends CActiveRecord
 			'driver_fk' => 'Driver Fk',
 			'departuretown_fk' => 'Departuretown Fk',
 			'arrivaltown_fk' => 'Arrivaltown Fk',
-			//'bindedride' => 'Bindedride',
 			'description' => 'Description',
 			'departure' => 'Departure',
 			'arrival' => 'Arrival',
 			'seats' => 'Seats',
 			'startDate' => 'Start Date',
 			'endDate' => 'End Date',
-			//'day' => 'Day',
 		);
 	}
 
@@ -179,7 +148,6 @@ class Ride extends CActiveRecord
 		$criteria->compare('driver_fk',$this->driver_fk);
 		$criteria->compare('departuretown_fk',$this->departuretown_fk);
 		$criteria->compare('arrivaltown_fk',$this->arrivaltown_fk);
-		//$criteria->compare('bindedride',$this->bindedride);
 		$criteria->compare('description',$this->description,true);
 		$criteria->compare('departure',$this->departure,true);
 		$criteria->compare('arrival',$this->arrival,true);
@@ -202,13 +170,5 @@ class Ride extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
-	}
-
-	public function showDuringHolidays($date)
-	{
-		if (strtotime($this->endDate)-strtotime($this->startDate)>0 && Holiday::model()->isHoliday($date)) {
-			return false;
-		}
-		return true;
 	}
 }
