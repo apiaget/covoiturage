@@ -26,7 +26,7 @@ USE `covoiturag_db` ;
 -- -----------------------------------------------------
 -- Création utilisateur
 -- -----------------------------------------------------
-GRANT ALL ON `covoiturag_db`.* to 'username'@'localhost' identified by 'motdepasse';
+GRANT ALL ON `covoiturag_db`.* to 'username'@'localhost' identified by 'password';
 
 -- --------------------------------------------------------
 
