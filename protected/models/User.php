@@ -12,10 +12,9 @@
  * @property string $telephone
  * @property integer $hideTelephone
  * @property integer $notifInscription
- * @property integer $notifComment
- * @property integer $notifUnsuscribe
  * @property integer $notifDeleteRide
  * @property integer $notifModification
+ * @property integer $notifComment
  * @property integer $blacklisted
  * @property integer $admin
  * @property varchar $token
@@ -45,7 +44,7 @@ class User extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('hideEmail, hideTelephone, notifInscription, notifComment, notifUnsuscribe, notifDeleteRide, notifModification, blacklisted, admin', 'numerical', 'integerOnly'=>true),
+			array('hideEmail, hideTelephone, notifInscription, notifComment, notifDeleteRide, notifModification, blacklisted, admin', 'numerical', 'integerOnly'=>true),
 			array('cpnvId, telephone', 'length', 'max'=>45),
 			array('email', 'required', 'message'=>'L\'adresse email fournie ne semble pas être valide'),
 			array('email', 'length', 'max'=>60),
@@ -99,11 +98,10 @@ class User extends CActiveRecord
 			'telephone' => 'Téléphone',
 			'hideTelephone' => 'Hide Telephone',
 			'notifInscription' => 'Notif Inscription',
-			'notifComment' => 'Notif Comment',
-			'notifUnsuscribe' => 'Notif Unsuscribe',
 			'notifDeleteRide' => 'Notif Delete Ride',
-			'notifModification' => 'Notif Modification',
-			'blacklisted' => 'Blacklisted',
+            'notifModification' => 'Notif Modification',
+            'notifComment' => 'Notif Comment',
+            'blacklisted' => 'Blacklisted',
 			'admin' => 'Admin',
 		);
 	}
@@ -133,11 +131,10 @@ class User extends CActiveRecord
 		$criteria->compare('telephone',$this->telephone,true);
 		$criteria->compare('hideTelephone',$this->hideTelephone);
 		$criteria->compare('notifInscription',$this->notifInscription);
-		$criteria->compare('notifComment',$this->notifComment);
-		$criteria->compare('notifUnsuscribe',$this->notifUnsuscribe);
-		$criteria->compare('notifDeleteRide',$this->notifDeleteRide);
-		$criteria->compare('notifModification',$this->notifModification);
-		$criteria->compare('blacklisted',$this->blacklisted);
+        $criteria->compare('notifDeleteRide',$this->notifDeleteRide);
+        $criteria->compare('notifModification',$this->notifModification);
+        $criteria->compare('notifComment',$this->notifComment);
+        $criteria->compare('blacklisted',$this->blacklisted);
 		$criteria->compare('admin',$this->admin);
 		$criteria->compare('token',$this->token);
 		$criteria->compare('validbefore',$this->validbefore);
@@ -167,13 +164,14 @@ class User extends CActiveRecord
 		$mail->Host='mail.cpnv.ch';
 		//$mail->send();*/
 
-		/*$mail->IsSMTP();
+		$mail->IsSMTP();
 		$mail->setFrom('info@covoiturage.ch', 'covoiturage.ch');
 		$mail->setSubject($subject);
 		$mail->setTo($this->email);
 		$mail->Host='mail.cpnv.ch';
-*/
-        $mail->IsSMTP();
+        $mail->send();
+
+/*        $mail->IsSMTP();
         $mail->setFrom('email', 'nom');
         $mail->setTo($this->email);
         $mail->setSubject($subject);
@@ -185,7 +183,7 @@ class User extends CActiveRecord
         //$mail->SMTPDebug = 1;
         $mail->SMTPSecure = 'tls';
         $mail->IsHTML(true);
-        $mail->send();
+        $mail->send();*/
 
 	}
 }

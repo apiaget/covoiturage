@@ -80,12 +80,11 @@ class Api_UsersController extends Controller
 					'hidePhone' => (bool)$requestedUser->hideTelephone
 				),
 				'notifications' => array(
-					'notifComment' => (bool)$requestedUser->notifComment,
-					'notifDeleteRide' => (bool)$requestedUser->notifDeleteRide,
-					'notifRegistration' => (bool)$requestedUser->notifInscription,
-					'notifChange' => (bool)$requestedUser->notifModification,
-					'notifUnsubscribe' => (bool)$requestedUser->notifUnsuscribe,
-				)
+                    'notifRegistration' => (bool)$requestedUser->notifInscription,
+                    'notifDeleteRide' => (bool)$requestedUser->notifDeleteRide,
+                    'notifChange' => (bool)$requestedUser->notifModification,
+                    'notifComment' => (bool)$requestedUser->notifComment,
+                )
 			));
 			Yii::app()->end();
 
@@ -129,8 +128,6 @@ class Api_UsersController extends Controller
 			$userToUpdate->notifDeleteRide = isset($data['notifications']['notifDeleteRide']) ? $data['notifications']['notifDeleteRide'] : $userToUpdate->notifDeleteRide;
 			$userToUpdate->notifInscription = isset($data['notifications']['notifRegistration']) ? $data['notifications']['notifRegistration'] : $userToUpdate->notifInscription;
 			$userToUpdate->notifModification = isset($data['notifications']['notifChange']) ? $data['notifications']['notifChange'] : $userToUpdate->notifModification;
-			$userToUpdate->notifUnsuscribe = isset($data['notifications']['notifUnsubscribe']) ? $data['notifications']['notifUnsubscribe'] : $userToUpdate->notifUnsuscribe;
-
 			$userToUpdate->update();
 		}else{
 			throw new CHttpException(403,'You have no rights to update that user.');
@@ -203,11 +200,10 @@ class Api_UsersController extends Controller
 				$user->hideEmail = false;
 				$user->hideTelephone = false;
 				$user->notifInscription = true;
-				$user->notifComment = true;
-				$user->notifUnsuscribe = true;
-				$user->notifDeleteRide = true;
-				$user->notifModification = true;
-				$user->blacklisted = false;
+                $user->notifDeleteRide = true;
+                $user->notifModification = true;
+                $user->notifComment = true;
+                $user->blacklisted = false;
 				$user->admin = false;
 				$user->token = md5(uniqid($friendlyid, true));
 				$user->validbefore = date("Y-m-d H:i:s",strtotime("+1 month", strtotime(date('Y-m-d H:i:s', time()))));

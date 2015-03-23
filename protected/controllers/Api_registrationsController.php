@@ -81,13 +81,15 @@ class Api_RegistrationsController extends Controller
         //On veut indiquer au conducter que les inscriptions au trajet qu'il propose ont été modifiées
         $ride=Ride::model()->find('id=:rideId', array(':rideId'=>$id));
         $driver = $ride->driver;
-        $registrations = Registration::model()->findAll('user_fk = :user AND ride_fk = :ride AND date >= :today', array(':today' => $today, ':user' => $userRequest->id, ':ride' => $id));
-        $subject = "Covoiturage CPNV - Un utilisateur a modifié ses inscriptions à ton trajet";
-        $mail = new YiiMailer('modificationsinscriptions', array(
-            'ride' => $ride,
-            'registrations' => $registrations,
-        ));
-        $driver->sendEmail($mail,$subject);
+        if($driver->notifInscription) {
+            $registrations = Registration::model()->findAll('user_fk = :user AND ride_fk = :ride AND date >= :today', array(':today' => $today, ':user' => $userRequest->id, ':ride' => $id));
+            $subject = "Covoiturage CPNV - Un utilisateur a modifié ses inscriptions à ton trajet";
+            $mail = new YiiMailer('modificationsinscriptions', array(
+                'ride' => $ride,
+                'registrations' => $registrations,
+            ));
+            $driver->sendEmail($mail, $subject);
+        }
 
 		$registrations = array("registrations" => $registrations);
 		echo CJSON::encode($registrations);
