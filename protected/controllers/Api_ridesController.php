@@ -227,7 +227,9 @@ class Api_RidesController extends Controller
 	 */
 	public function actionView($id)
 	{
-		header('Content-type: ' . 'application/json');
+        $token = $_GET['token'];
+        header('Content-type: ' . 'application/json');
+        $userRequest = User::model()->find('token=:token', array(':token' => $token));
 
 		$requestedRide = Ride::model()->with('registrations')->with('driver')->find('t.id=:id and visibility=1', array(':id' => $id));
 		if($requestedRide != null) {
@@ -238,6 +240,7 @@ class Api_RidesController extends Controller
 			$rideArray = array(
 				"id" => $requestedRide->id,
 				"driver" => array("prenom" => $requestedRide->driver->firstname, "nom" => $requestedRide->driver->lastname),
+                "isDriver" => $userRequest->id==$requestedRide->driver->id ? true : false,
 				"departuretown" => array("id" => $requestedRide->departuretown->id, "name" => $requestedRide->departuretown->name),
 				"departure" => date("H:i", strtotime($requestedRide->departure)),
 				"arrivaltown" => array("id" => $requestedRide->arrivaltown->id, "name" => $requestedRide->arrivaltown->name),
